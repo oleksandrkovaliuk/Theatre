@@ -1,0 +1,49 @@
+@font-face {
+  font-family: SF-Display-Bold;
+  src: url(../fonts/SFPRODISPLAYBOLD.woff);
+}
+@font-face {
+  font-family: SF-Display-Medium;
+  src: url(../fonts/SFPRODISPLAYMEDIUM.woff);
+}
+@font-face {
+  font-family: SF-Display-Regular;
+  src: url(../fonts/SFPRODISPLAYREGULAR_1.woff);
+}
+@font-face {
+  font-family: SF-Display-SemiBold;
+  src: url(../fonts/SFPRODISPLAYSEMIBOLDITALIC_1.woff);
+}
+:root {
+  --font-SfBold: "SF-Display-bold", sans-serif;
+  --font-SfSemiBold: "SF-Display-Semibold", sans-serif;
+  --font-SfMedium: "SF-Display-Medium", sans-serif;
+  --font-SfRegular: "SF-Display-Regular", sans-serif;
+  --color-title: #282828;
+  --color-subtitle: #818181;
+  --color-lightgray: #c4c4c4;
+  --color-darkgray: #86837f;
+  --color-white: #ffffff;
+  --color-discription: #c7c7c7;
+  --color-red: #fa434b;
+  --color-grayBtn: #efefef;
+  --color-blacktxt: #1e201f;
+}
+body {
+  background-color: var(--color-white);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+img {
+  width: 100%;
+  display: block;
+}
+button,
+svg,
+li {
+  cursor: pointer;
+}

@@ -1,0 +1,21 @@
+.switcherContainer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  button {
+    background-color: unset;
+    border: none;
+    svg {
+      width: 50px;
+      height: 50px;
+      path{
+        fill: var(--color-white);
+      }
+    }
+    &:not(:first-child) {
+      svg {
+        rotate: 180deg;
+      }
+    }
+  }
+}

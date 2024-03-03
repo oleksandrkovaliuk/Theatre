@@ -1,0 +1,27 @@
+.slider_container {
+  position: relative;
+  .title {
+    color: var(--color-white);
+    font-size: 71px;
+    font-family: var(--font-SfBold);
+    max-width: 700px;
+    position: absolute;
+    bottom:50px;
+    left:50px;
+    z-index:5;
+  }
+  .mainSliderImgs {
+    height: 500px;
+    width: 100%;
+    position: relative;
+    img{
+        position: absolute;
+        top:-50%;
+    }
+  }
+  .switcherWrap{
+    position: absolute;
+    right:50px;
+    bottom:20px;
+  }
+}

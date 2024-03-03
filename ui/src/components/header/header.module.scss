@@ -1,1 +1,21 @@
-
+.header_container {
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-white);
+  padding: 8px 50px;
+  .leftNavBar{
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: flex-start;
+    list-style: none;
+    .header_nav {
+      color: var(--color-title);
+      font-family: var(--font-SfRegular);
+      font-size: 16px;
+      line-height: 18px;
+      letter-spacing: 0.2px;
+    }
+  }
+}

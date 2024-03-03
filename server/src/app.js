@@ -14,10 +14,6 @@ const app = express();
 
 const PORT = process.env.PORT;
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
-
 const setupRoutes = () => {
   app.use(cors(defaultCorsOptions));
 

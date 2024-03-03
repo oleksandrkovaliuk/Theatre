@@ -26,7 +26,7 @@ export const MainSlider = () => {
       <div className="mainSlider">
         <Slider ref={mainSliderRef} {...settings}>
           {maingSliderImgs.map((item) => (
-            <div className={m.mainSliderImgs}>
+            <div key={item.id} className={m.mainSliderImgs}>
               <img src={item.imgUrl} alt={item.id} />
             </div>
           ))}

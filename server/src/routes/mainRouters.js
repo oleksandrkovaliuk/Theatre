@@ -9,12 +9,26 @@ router.get("/infoAboutEvents", checkAuth, (req, res) => {
   try {
     db.query("SELECT * FROM events", (err, dbRes) => {
       if (err) {
-        res.status(500).json({ errorText: "Failed with getting data" });
+        return res.status(500).json({ errorText: "Failed with getting data" });
       }
-      res.status(200).json({ events: dbRes.rows });
+      res.status(200).json({ events: dbRes?.rows || [] });
     });
   } catch (error) {
     res.status(500).json({ errorText: `${error} err` });
   }
 });
+
+// router.get("/createEvent", checkAuth, (req, res) => {
+//   try {
+//     db.query("SELECT * FROM events", (err, dbRes) => {
+//       if (err) {
+//         res.status(500).json({ errorText: "Failed with getting data" });
+//       }
+//       res.status(200).json({ events: dbRes.rows });
+//     });
+//   } catch (error) {
+//     res.status(500).json({ errorText: `${error} err` });
+//   }
+// });
+
 module.exports = router;

@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: theaterData
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=theaterData
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - 5434:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:

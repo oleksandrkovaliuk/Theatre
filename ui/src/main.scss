@@ -23,6 +23,7 @@
   --color-subtitle: #818181;
   --color-lightgray: #c4c4c4;
   --color-darkgray: #86837f;
+  --color-bglightgray:#FBFBFB;
   --color-white: #ffffff;
   --color-discription: #c7c7c7;
   --color-red: #fa434b;
@@ -31,6 +32,13 @@
 }
 body {
   background-color: var(--color-white);
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+}
+.disable-scroll-page {
+  overflow: hidden;
+  height: 100%;
 }
 * {
   margin: 0;

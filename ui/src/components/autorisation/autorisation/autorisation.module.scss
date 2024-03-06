@@ -1,0 +1,162 @@
+.background {
+  position: fixed;
+  cursor: pointer;
+  inset: 0;
+  z-index: 6;
+}
+.blurMenuBg {
+  position: fixed;
+  left: 0;
+  right: 0;
+  margin: auto;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 20px;
+  z-index: 6;
+}
+.autorisationMenu {
+  position: fixed;
+  top: 12%;
+  left: 0;
+  right: 0;
+  max-width: 375px;
+  margin: auto;
+
+  z-index: 8;
+  background-color: transparent;
+  border: 2px solid var(--color-red);
+  border-radius: 20px;
+  padding: 10px 20px 20px;
+  .title {
+    color: var(--color-white);
+    font-family: var(--font-SfMedium);
+    font-size: 25px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .autorisationForm {
+    .submitBtn {
+      width: 100%;
+      border: unset;
+      background-color: var(--color-red);
+      padding: 10px;
+      border-radius: 10px;
+
+      color: var(--color-white);
+      font-family: var(--font-SfMedium);
+      font-size: 17px;
+      letter-spacing: 0.6px;
+      margin-bottom: 5px;
+    }
+    .errors {
+      width: 100%;
+      text-align: center;
+      color: var(--color-red);
+      font-family: var(--font-SfMedium);
+      font-size: 17px;
+      letter-spacing: 0.6px;
+    }
+    .autorisationField {
+      position: relative;
+      max-width: 300px;
+      .fieldDoneSvg {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 9%;
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+      .passwordValid {
+        list-style: none;
+        margin-left: 5px;
+        margin-top: 10px;
+        &:not(:last-child) {
+          margin-bottom: 5px;
+        }
+        li {
+          color: var(--color-white);
+          font-family: var(--font-SfMedium);
+          font-size: 14px;
+          letter-spacing: 0.6px;
+
+          display: flex;
+          gap: 4px;
+          align-items: center;
+          svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            display: none;
+            position: relative;
+          }
+          &.valid {
+            color: var(--color-red);
+            svg {
+              display: block;
+            }
+          }
+        }
+        b {
+          color: var(--color-white);
+          font-family: var(--font-SfBold);
+          font-size: 14px;
+        }
+      }
+      &:last-of-type {
+        margin-bottom: 20px;
+      }
+      &:not(:last-of-type) {
+        margin-bottom: 19px;
+      }
+      .autorisationInput {
+        padding: 8px 10px;
+        background-color: transparent;
+        border-radius: 6px;
+        border: unset;
+        border-bottom: 2px solid var(--color-red);
+
+        color: var(--color-white);
+        font-family: var(--font-SfMedium);
+        font-size: 17px;
+        letter-spacing: 0.6px;
+      }
+      .autorisationLabel {
+        position: absolute;
+        left: 10px;
+        top: 8px;
+
+        color: var(--color-white);
+        font-family: var(--font-SfMedium);
+        font-size: 17px;
+        letter-spacing: 0.6px;
+
+        transition: all 0.5s ease;
+        pointer-events: none;
+      }
+      .autorisationInput:active,
+      .autorisationInput:focus,
+      .autorisationInput:not(:placeholder-shown) {
+        outline: none;
+      }
+      .autorisationInput:active + .autorisationLabel,
+      .autorisationInput:focus + .autorisationLabel,
+      .autorisationInput:not(:placeholder-shown) + .autorisationLabel {
+        //   display: none;
+        color: var(--color-red);
+        transform: translateY(-23px);
+        font-size: 14px;
+        left: 2px;
+      }
+    }
+  }
+}

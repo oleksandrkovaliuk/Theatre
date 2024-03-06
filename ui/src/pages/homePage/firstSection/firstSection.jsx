@@ -1,14 +1,27 @@
-import React, { useContext } from "react";
+import React from "react";
 import f from "./first.module.scss";
 import { MainSlider } from "../../../components/mainSlider";
-import { EventsContext } from "../../../context/EventsContext";
 export const FirstSection = () => {
-  const { event } = useContext(EventsContext);
-  console.log(event , "eventss")
   return (
     <div className={f.firstSectionContainer}>
       <MainSlider />
-      {event?.map((item) => (<div>{item.datetime_column}</div>))}
+      <div className={f.bottomInfo}>
+        <div className={f.leftBlock}>
+          <div className={f.leftSubBlock}>
+            <span>date of creation</span>
+            <p>1932</p>
+          </div>
+          <div className={f.leftSubBlock}>
+            <span>2020-2021</span>
+            <p>34 shows</p>
+          </div>
+          <div className={f.leftSubBlock}>
+            <span>Absolutely for everyone</span>
+            <p>0+</p>
+          </div>
+        </div>
+        <h2 className={f.learnMore}>Learn More</h2>
+      </div>
     </div>
   );
 };

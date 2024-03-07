@@ -84,4 +84,32 @@ router.post("/logInUser", checkAuth, (req, res) => {
     return res.status(401).json({ errorText: "fields are empty" });
   }
 });
+// Check user with jwt token
+router.post("/checkUserWithJwtToken", checkAuth, (req, res) => {
+  const { jwt_token } = req.body;
+  if (jwt_token) {
+    const findUserWithJwtToken = "SELECT * FROM users where jwt = $1";
+    db.query(findUserWithJwtToken, [jwt_token], (err, dbRes) => {
+      console.log(dbRes.rows, "token");
+      if (err || !dbRes.rows.length) {
+        return res
+          .status(401)
+          .json({ errorText: "Could find user or error from db side" });
+      } else {
+        const verifyToken = jwt.verify(jwt_token, process.env.JWT_PASSWORD);
+        res
+          .status(200)
+          .json({
+            user: {
+              username: dbRes.rows[0].username,
+              email: dbRes.rows[0].email,
+              role: dbRes.rows[0].role,
+            },
+          });
+      }
+    });
+  } else {
+    return res.status(401).json({ errorText: "user unautorized yet" });
+  }
+});
 module.exports = router;

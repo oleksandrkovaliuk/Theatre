@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import a from "./autorisation.module.scss";
 import { emailValidation } from "../../../services/emailValidation";
 import { passwordValidation } from "../../../services/passwordValidation";
@@ -15,7 +15,8 @@ import {
 } from "./reducer/action";
 import { logIn, signInUser } from "../../../services/apiCallConfig";
 import { RedDoneIcon } from "../../../icons/redDoneIcon";
-export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
+import { userContext } from "../../../context/userInfoContext";
+export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
   const [
     {
       blurBgStyle,
@@ -29,6 +30,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     },
     dispathAction,
   ] = useReducer(reducerForAutorisation, InitialStates);
+  const { setUserInfo } = useContext(userContext);
   const checkUserNameValid = (event) => {
     console.log(event.target.value);
     if (event.target.value.length > 4) {
@@ -108,7 +110,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       } else {
         const res = await logIn({ email: emailValue, password: passValue });
         localStorage.setItem("user_jwt_token", JSON.stringify(res.jwtToken));
-        console.log(res.user.username, "name");
+        setUserInfo(res.user);
+        loginUser();
       }
       closeMenu();
     } catch (error) {
@@ -119,7 +122,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     const body = document.body;
     if (show) {
       body.classList.add("disable-scroll-page");
-      console.log(emailValue , "value")
+      console.log(emailValue, "value");
       dispathAction(setError(null));
       dispathAction(getPassValue(null));
       dispathAction(getEmailValue(null));

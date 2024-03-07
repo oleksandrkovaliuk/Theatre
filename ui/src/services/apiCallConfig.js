@@ -41,3 +41,5 @@ export const signInUser = async ({ username, email, password, role }) =>
   postMethod("signInNewUser", { username, email, password, role });
 export const logIn = async ({ email, password }) =>
   postMethod("logInUser", { email, password });
+export const checkUserWithJwtToke = async ({ jwt_token }) =>
+  postMethod("checkUserWithJwtToken", { jwt_token });

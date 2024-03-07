@@ -96,7 +96,6 @@ router.post("/checkUserWithJwtToken", checkAuth, (req, res) => {
           .status(401)
           .json({ errorText: "Could find user or error from db side" });
       } else {
-        const verifyToken = jwt.verify(jwt_token, process.env.JWT_PASSWORD);
         res
           .status(200)
           .json({

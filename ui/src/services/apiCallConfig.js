@@ -43,5 +43,3 @@ export const logIn = async ({ email, password }) =>
   postMethod("logInUser", { email, password });
 export const checkUserWithJwtToke = async ({ jwt_token }) =>
   postMethod("checkUserWithJwtToken", { jwt_token });
-export const checkUserLogined = async ({ jwt_token }) =>
-  postMethod("checkUserWithJwtToken", { jwt_token });

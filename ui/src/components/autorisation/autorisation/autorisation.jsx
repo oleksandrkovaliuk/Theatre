@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useRef } from "react";
 import a from "./autorisation.module.scss";
 import { emailValidation } from "../../../services/emailValidation";
 import { passwordValidation } from "../../../services/passwordValidation";
@@ -16,6 +16,12 @@ import {
 import { logIn, signInUser } from "../../../services/apiCallConfig";
 import { RedDoneIcon } from "../../../icons/redDoneIcon";
 import { userContext } from "../../../context/userInfoContext";
+
+const lowerCaseLetters = /[a-z]/g;
+const uppercase = /[A-Z]/g;
+const numbers = /[0-9]/g;
+const specialCharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   const { setUserInfo } = useContext(userContext);
 
@@ -32,6 +38,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     },
     dispathAction,
   ] = useReducer(reducerForAutorisation, InitialStates);
+
+  const inputsRef = useRef({});
 
   const checkUserNameValid = (event) => {
     console.log(event.target.value);
@@ -54,13 +62,21 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     }
   };
 
+  const changeInputValue = (event) => {
+    const target = event.target;
+    const inputName = target.name;
+    const inputValue = target.value;
+    inputsRef.current = {
+      ...inputsRef.current,
+      [inputName]: inputValue,
+    };
+
+    console.log(inputsRef.current, " inputsRef.current");
+  };
+
   const checkPassValidation = (event) => {
     // password signIn validation
     if (signIn) {
-      const lowerCaseLetters = /[a-z]/g;
-      const uppercase = /[A-Z]/g;
-      const numbers = /[0-9]/g;
-      const specialCharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
       const passLengthValid = document.getElementById("chapters_length");
       const passUpperCaseValid = document.getElementById("uppercase");
       const passLowerCaseValid = document.getElementById("lowercase");
@@ -168,8 +184,9 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                     id="username"
                     name="username"
                     className={a.autorisationInput}
-                    onChange={(event) => checkUserNameValid(event)}
-                  ></input>
+                    onChange={changeInputValue}
+                    // onChange={(event) => checkUserNameValid(event)}
+                  />
                   <label htmlFor="username" className={a.autorisationLabel}>
                     Username
                   </label>
@@ -187,7 +204,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                   id="email"
                   name="email"
                   className={a.autorisationInput}
-                  onChange={(event) => checkEmailValidation(event)}
+                  onChange={changeInputValue}
+                  // onChange={(event) => checkEmailValidation(event)}
                 ></input>
                 <label htmlFor="email" className={a.autorisationLabel}>
                   Email
@@ -205,7 +223,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                   id="password"
                   name="password"
                   className={a.autorisationInput}
-                  onChange={(event) => checkPassValidation(event)}
+                  onChange={changeInputValue}
+                  // onChange={(event) => checkPassValidation(event)}
                 />
                 <label htmlFor="password" className={a.autorisationLabel}>
                   Chose password
@@ -232,7 +251,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                 )}
               </div>
               <button
-                onClick={(event) => submitAutorisation(event)}
+                onClick={submitAutorisation}
                 style={
                   signIn
                     ? userNameValue && emailValue && passValue

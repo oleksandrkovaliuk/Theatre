@@ -1,0 +1,1 @@
+export { AutorisationMenu } from "./autorisation";

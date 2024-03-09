@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import h from "./header.module.scss";
 import { LogInSignIn } from "../autorisation/loginOrSignIn";
-import { getEvents } from "../../services/apiCallConfig";
-
 export const Header = () => {
   const navigation = useNavigate();
   const navigateTo = (link) => navigation(link);

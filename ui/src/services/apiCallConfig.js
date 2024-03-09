@@ -1,7 +1,7 @@
 export const URL = `http://localhost:${process.env.REACT_APP_SERVER_PORT}/api`;
 async function catchErrors(res) {
   if (!res.ok) {
-    const resMess = res?.json();
+    const resMess = await res?.json();
     throw Error(resMess?.errorText || resMess?.statusText);
   }
   return res;
@@ -9,8 +9,8 @@ async function catchErrors(res) {
 const headers = {
   "Content-Type": "application/json",
 };
-const getMethod = async (apiCall) =>
-   fetch(`${URL}/${apiCall}`, {
+const getMethod = async (apiCallUrl) =>
+  fetch(`${URL}/${apiCallUrl}`, {
     method: "GET",
     headers: {
       ...headers,
@@ -21,4 +21,25 @@ const getMethod = async (apiCall) =>
     .catch((err) => {
       throw Error(err);
     });
+
+const postMethod = async (apiCallUrl, info = {}) =>
+  fetch(`${URL}/${apiCallUrl}`, {
+    method: "POST",
+    headers: { ...headers },
+    body: JSON.stringify(info),
+  })
+    .then(catchErrors)
+    .then((res) => res.json())
+    .catch((err) => {
+      throw Error(err);
+    });
+// Work with get methods
 export const getEvents = async () => getMethod("infoAboutEvents");
+
+// Work with post methods
+export const signInUser = async ({ username, email, password, role }) =>
+  postMethod("signInNewUser", { username, email, password, role });
+export const logIn = async ({ email, password }) =>
+  postMethod("logInUser", { email, password });
+export const checkUserWithJwtToke = async ({ jwt_token }) =>
+  postMethod("checkUserWithJwtToken", { jwt_token });

@@ -1,0 +1,37 @@
+.firstSectionContainer {
+  .bottomInfo {
+    padding: 50px;
+    background-color: var(--color-bglightgray);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .leftBlock {
+      display: flex;
+      align-items: center;
+      gap: 50px;
+      .leftSubBlock {
+        span {
+          color: var(--color-subtitle);
+          font-family: var(--font-SfBold);
+          font-size: 12px;
+          letter-spacing: 0.2px;
+          margin-bottom: 5px;
+        }
+        p {
+          color: var(--color-title);
+          font-family: var(--font-SfBold);
+          font-size: 24px;
+          letter-spacing: 0.2px;
+        }
+      }
+    }
+    .learnMore {
+      color: var(--color-title);
+      font-family: var(--font-SfRegular);
+      font-size: 18px;
+      letter-spacing: 0.2px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}

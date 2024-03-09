@@ -25,7 +25,7 @@ const getMethod = async (apiCallUrl) =>
 const postMethod = async (apiCallUrl, info = {}) =>
   fetch(`${URL}/${apiCallUrl}`, {
     method: "POST",
-    headers: { ...headers },
+    headers: { ...headers, Authorization: `Bearer ${info?.jwt_token}` },
     body: JSON.stringify(info),
   })
     .then(catchErrors)
@@ -42,4 +42,6 @@ export const signInUser = async ({ username, email, password, role }) =>
 export const logIn = async ({ email, password }) =>
   postMethod("logInUser", { email, password });
 export const checkUserWithJwtToke = async ({ jwt_token }) =>
+  postMethod("checkUserWithJwtToken", { jwt_token });
+export const checkUserLogined = async ({ jwt_token }) =>
   postMethod("checkUserWithJwtToken", { jwt_token });

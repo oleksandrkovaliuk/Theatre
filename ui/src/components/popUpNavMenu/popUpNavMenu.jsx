@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import { NavLink } from "react-router-dom";
 import m from "./popUpNavMenu.module.scss";
-import { useContext } from "react";
 import { userContext } from "../../context/userInfoContext";
 import { CrownIcon } from "../../icons/crownIcon";
 import { LeftArrow } from "../../icons/leftArrow";
@@ -48,10 +48,10 @@ export const PopUpMenu = ({
                   <p>{user?.email}</p>
                 </div>
               )}
-              {data?.map((item) => {
+              {data?.map(({ link, name }) => {
                 return (
-                  <li key={item} className={m.menu_nav_list}>
-                    {item}
+                  <li key={link} className={m.menu_nav_list}>
+                    <NavLink to={link}>{name}</NavLink>
                   </li>
                 );
               })}

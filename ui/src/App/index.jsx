@@ -8,11 +8,11 @@ import { EventsContext } from "../context/EventsContext";
 import { userContext } from "../context/userInfoContext";
 export const App = () => {
   const [events, setEvents] = useState(null);
-  const [user, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   // User info
   const userContextValue = useMemo(() => {
-    return { user: user, setUserInfo: (info) => setUserInfo(info) };
-  }, [user]);
+    return { user: userInfo, setUserInfo: (info) => setUserInfo(info) };
+  }, [userInfo]);
   // Events info
   const eventsContextValue = useMemo(
     () => ({
@@ -34,7 +34,7 @@ export const App = () => {
   const getUserInfo = useCallback(async () => {
     try {
       const jwtToken = localStorage.getItem("user_jwt_token");
-      if (jwtToken?.length && user === null) {
+      if (jwtToken?.length && userInfo === null) {
         const res = await checkUserWithJwtToke({
           jwt_token: JSON.parse(jwtToken),
         });
@@ -43,7 +43,8 @@ export const App = () => {
     } catch (error) {
       console.error(error, "something wrong with getting user onloading");
     }
-  }, []);
+  }, [userInfo]);
+
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);

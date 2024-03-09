@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import a from "./autorisation.module.scss";
 import { emailValidation } from "../../../services/emailValidation";
 import { passwordValidation } from "../../../services/passwordValidation";
@@ -16,7 +16,9 @@ import {
 import { logIn, signInUser } from "../../../services/apiCallConfig";
 import { RedDoneIcon } from "../../../icons/redDoneIcon";
 import { userContext } from "../../../context/userInfoContext";
-export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
+export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
+  const { setUserInfo } = useContext(userContext);
+
   const [
     {
       blurBgStyle,
@@ -30,7 +32,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
     },
     dispathAction,
   ] = useReducer(reducerForAutorisation, InitialStates);
-  const { setUserInfo } = useContext(userContext);
+
   const checkUserNameValid = (event) => {
     console.log(event.target.value);
     if (event.target.value.length > 4) {
@@ -41,6 +43,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
       dispathAction(checkUserValid(false));
     }
   };
+
   const checkEmailValidation = (event) => {
     if (emailValidation(event.target.value)) {
       dispathAction(checkEmailValid(true));
@@ -50,6 +53,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
       dispathAction(checkEmailValid(false));
     }
   };
+
   const checkPassValidation = (event) => {
     // password signIn validation
     if (signIn) {
@@ -97,6 +101,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
         dispathAction(checkPassValid(false));
       }
   };
+
   const submitAutorisation = async (event) => {
     event.preventDefault();
     try {
@@ -111,7 +116,6 @@ export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
         const res = await logIn({ email: emailValue, password: passValue });
         localStorage.setItem("user_jwt_token", JSON.stringify(res.jwtToken));
         setUserInfo(res.user);
-        loginUser();
       }
       closeMenu();
     } catch (error) {
@@ -146,7 +150,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
         body.classList.remove("disable-scroll-page");
       }
     };
-  }, [show]);
+  }, [emailValue, show]);
   return (
     <>
       {show && (
@@ -202,7 +206,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu, loginUser }) => {
                   name="password"
                   className={a.autorisationInput}
                   onChange={(event) => checkPassValidation(event)}
-                ></input>
+                />
                 <label htmlFor="password" className={a.autorisationLabel}>
                   Chose password
                 </label>

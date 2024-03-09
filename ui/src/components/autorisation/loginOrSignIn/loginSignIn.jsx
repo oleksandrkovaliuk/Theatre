@@ -1,33 +1,63 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import l from "./loginSignIn.module.scss";
 import { AutorisationMenu } from "../autorisation";
 import { userContext } from "../../../context/userInfoContext";
 import { PopUpMenu } from "../../popUpNavMenu";
 import { UserIcon } from "../../../icons/userIcon";
 
+const userMenuLinks = [
+  {
+    link: "/yourEvents",
+    name: "Your events",
+  },
+  {
+    link: "/settings",
+    name: "Settings",
+  },
+];
+
+const adminMenuLinks = [
+  {
+    link: "/yourEvents",
+    name: "Your events",
+  },
+  {
+    link: "/createEvent",
+    name: "Create Event",
+  },
+  {
+    link: "/manageEvents",
+    name: "Manage Events",
+  },
+  {
+    link: "/manageNews",
+    name: "Manage News",
+  },
+  {
+    link: "/settings",
+    name: "Settings",
+  },
+];
+
 export const LogInSignIn = () => {
-  const [openSignIn, setToOpenSignIn] = useState(false);
-  const [openMenu, showAutorisationMenu] = useState(false);
-  const [navMenu, openNavMenu] = useState(false);
-  const [navMenuData, setNavMenuData] = useState(null);
-  const [posForNavMenu, setPostionForNavMenu] = useState(null);
-  const [loginned, setLogin] = useState(false);
   const { user, setUserInfo } = useContext(userContext);
-  const openLogInAutorisationMenu = () => {
-    showAutorisationMenu(true);
-  };
+
+  const [navMenu, setNavMenu] = useState(false);
+  const [openSignIn, setOpenSignIn] = useState(false);
+  const [openMenu, showAutorisationMenu] = useState(false);
+  const [posForNavMenu, setPostionForNavMenu] = useState(null);
+
   const openSignInAutorisationMenu = () => {
     showAutorisationMenu(true);
-    setToOpenSignIn(true);
+    setOpenSignIn(true);
   };
+
   const handleClosingMenu = () => {
     showAutorisationMenu(false);
-    setToOpenSignIn(false);
+    setOpenSignIn(false);
   };
-  const logInUser = () => {
-    setLogin(true);
-  };
-  const handleOpeningNavMenu = (event, category) => {
+
+  const handleOpeningNavMenu = (event) => {
     const position = event.target.getBoundingClientRect();
     if (position) {
       setPostionForNavMenu({
@@ -36,56 +66,40 @@ export const LogInSignIn = () => {
         width: position.width,
       });
     }
-    openNavMenu(true);
+    setNavMenu(true);
   };
+
   const closeNavMenu = () => {
-    openNavMenu(false);
+    setNavMenu(false);
     setPostionForNavMenu(null);
   };
+
   const logOutUser = () => {
     setUserInfo(null);
-    openNavMenu(false);
-    setNavMenuData([]);
-    setLogin(false);
+    setNavMenu(false);
+    localStorage.removeItem("user_jwt_token");
   };
-  useEffect(() => {
-    if (user !== null) {
-      if (user?.role === "admin") {
-        setNavMenuData([
-          "Create event",
-          "Manage events",
-          "Manage news",
-          "Settings",
-        ]);
-      } else {
-        setNavMenuData(["Your events", "Settings"]);
-      }
-      setLogin(true);
-    }
-    return () => setNavMenuData([]);
-  }, [user]);
+
+  const navMenuData = user?.role === "admin" ? adminMenuLinks : userMenuLinks;
   return (
     <>
       <AutorisationMenu
-        show={openMenu ? true : false}
-        signIn={openSignIn ? true : false}
+        show={!!openMenu}
+        signIn={!!openSignIn}
         closeMenu={() => handleClosingMenu()}
-        loginUser={() => logInUser()}
       />
       <PopUpMenu
-        logIn={loginned ? true : false}
-        showMenu={navMenu ? true : false}
+        logIn={!!user}
+        showMenu={!!navMenu}
         data={navMenuData}
         top={posForNavMenu?.top}
         height={posForNavMenu?.height}
         width={posForNavMenu?.width}
         closeMenu={() => closeNavMenu()}
       >
-        {!loginned ? (
+        {!user ? (
           <div className={l.logInSignInContainer}>
-            <button onClick={() => openLogInAutorisationMenu()}>
-              Login In
-            </button>
+            <button onClick={() => showAutorisationMenu(true)}>Login In</button>
             <div className={l.signInText}>
               <span>Don't have an account?</span>
               <button onClick={() => openSignInAutorisationMenu()}>

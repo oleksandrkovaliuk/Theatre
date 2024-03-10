@@ -13,8 +13,6 @@ export const App = () => {
   const userContextValue = useMemo(() => {
     return { user: userInfo, setUserInfo: (info) => setUserInfo(info) };
   }, [userInfo]);
-    return { user: userInfo, setUserInfo: (info) => setUserInfo(info) };
-  }, [userInfo]);
   // Events info
   const eventsContextValue = useMemo(
     () => ({

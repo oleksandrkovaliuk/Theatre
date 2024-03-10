@@ -8,7 +8,7 @@ export const InitialStates = {
   userNameValue: null,
   emailValue: null,
   passValue: null,
-  error:null,
+  errore:null,
 };
 
 export const reducerForAutorisation = (state, action) => {

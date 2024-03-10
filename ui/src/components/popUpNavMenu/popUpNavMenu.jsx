@@ -4,7 +4,6 @@ import m from "./popUpNavMenu.module.scss";
 import { userContext } from "../../context/userInfoContext";
 import { CrownIcon } from "../../icons/crownIcon";
 import { LeftArrow } from "../../icons/leftArrow";
-import { NavLink } from "react-router-dom";
 export const PopUpMenu = ({
   data,
   top,
@@ -49,7 +48,7 @@ export const PopUpMenu = ({
                   <p>{user?.email}</p>
                 </div>
               )}
-              {data?.map(({ link, name }) => {
+              {data?.map(({ item }) => {
                 return (
                   <li key={item} className={m.menu_nav_list}>
                     <NavLink to={item?.link}>{item?.name}</NavLink>

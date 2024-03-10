@@ -85,7 +85,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       }
     }
     if (inputName === "password") {
-    if (inputValue) {
+      if (inputValue) {
         if (passwordValidation(inputValue)) {
           dispathAction(checkPassValid(true));
           dispathAction(getPassValue(inputValue));
@@ -94,11 +94,11 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
         dispathAction(checkPassValid(false));
       }
 
-      if (testOnUpperCase(inputValue)) {
-        dispathAction(setAppercaseValid(true));
-      } else {
-        dispathAction(setAppercaseValid(false));
-      }
+      // if (testOnUpperCase(inputValue)) {
+      //   dispathAction(setAppercaseValid(true));
+      // } else {
+      //   dispathAction(setAppercaseValid(false));
+      // }
     }
   };
   // const checkPassValidation = (event) => {
@@ -149,7 +149,6 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     const body = document.body;
     if (show) {
       body.classList.add("disable-scroll-page");
-      console.log(emailValue, "value");
       dispathAction(setError(null));
       dispathAction(getPassValue(null));
       dispathAction(getEmailValue(null));
@@ -173,7 +172,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
         body.classList.remove("disable-scroll-page");
       }
     };
-  }, [emailValue, show, signIn]);
+  }, [show, signIn]);
   return (
     <>
       {show && !user && (

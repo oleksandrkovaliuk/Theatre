@@ -2,12 +2,27 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../database");
 const jwt = require("jsonwebtoken");
+
+const parsToken = (token) => token?.replace("Bearer", "")?.replace(" ", "");
+
 const checkAuth = (req, res, next) => {
-  next();
+  if (parsToken(req.headers?.authorization)) {
+    next();
+  } else {
+    return res.status(401).json({ errorText: "user unautorized yet" });
+  }
+};
+
+const checkRole = (req, res, next) => {
+  if (parsToken(req.headers?.authorization)) { // check if user role Admin
+    next();
+  } else {
+    return res.status(401).json({ errorText: "user unautorized yet" });
+  }
 };
 // Work with events
 
-router.get("/infoAboutEvents", checkAuth, (req, res) => {
+router.get("/infoAboutEvents", (req, res) => {
   try {
     db.query("SELECT * FROM events", (err, dbRes) => {
       if (err) {
@@ -22,7 +37,7 @@ router.get("/infoAboutEvents", checkAuth, (req, res) => {
 
 // Work with autorisation
 const checkQuery = "SELECT * FROM users WHERE email = $1";
-router.post("/signInNewUser", checkAuth, (req, res) => {
+router.post("/signInNewUser", (req, res) => {
   const { username, email, password, role } = req.body;
   if (req.body.length) {
     return res.status(401).json({ errorText: "fields are empty" });
@@ -71,7 +86,7 @@ router.post("/signInNewUser", checkAuth, (req, res) => {
     });
   }
 });
-router.post("/logInUser", checkAuth, (req, res) => {
+router.post("/logInUser", (req, res) => {
   const { email, password } = req.body;
   if (email && password) {
     db.query(checkQuery, [email], (err, dbRes) => {
@@ -102,34 +117,27 @@ router.post("/logInUser", checkAuth, (req, res) => {
 // Check user with jwt token
 router.post("/checkUserLoginned", checkAuth, (req, res) => {
   try {
-    const jwt_token = req.headers?.authorization
-      ?.replace("Bearer", "")
-      ?.replace(" ", "");
+    const jwt = parsToken(req.headers?.authorization);
+    const findUserWithJwtToken = "SELECT * FROM users where jwt = $1";
 
-    if (jwt_token) {
-      const findUserWithJwtToken = "SELECT * FROM users where jwt = $1";
-      const jwt = jwt_token;
-      db.query(findUserWithJwtToken, [jwt], (err, dbRes) => {
-        console.log(dbRes.rows, "token");
-        if (err || !dbRes.rows.length) {
-          return res
-            .status(401)
-            .json({ errorText: "Could find user or error from db side" });
-        } else {
-          res.status(200).json({
-            user: {
-              username: dbRes.rows[0].username,
-              email: dbRes.rows[0].email,
-              role: dbRes.rows[0].role,
-            },
-          });
-        }
-      });
-    } else {
-      return res.status(401).json({ errorText: "user unautorized yet" });
-    }
+    db.query(findUserWithJwtToken, [jwt], (err, dbRes) => {
+      console.log(dbRes.rows, "token");
+      if (err || !dbRes.rows.length) {
+        return res
+          .status(401)
+          .json({ errorText: "Could find user or error from db side" });
+      } else {
+        res.status(200).json({
+          user: {
+            username: dbRes.rows[0].username,
+            email: dbRes.rows[0].email,
+            role: dbRes.rows[0].role,
+          },
+        });
+      }
+    });
   } catch (error) {
-    console.log(error, ' error');
+    console.log(error, " error");
     return res.status(401).json({ errorText: "user unautorized yet" });
   }
 });

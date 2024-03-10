@@ -38,7 +38,6 @@ router.post("/signInNewUser", checkAuth, (req, res) => {
           { username: username, email: email, role: role },
           process.env.JWT_PASSWORD
         );
-        console.log(userToken, "token");
         db.query(
           "INSERT INTO users (username , email , password , role , jwt) VALUES($1 , $2 , $3 , $4 , $5) RETURNING *;",
           [username, email, password, role, userToken],
@@ -48,7 +47,23 @@ router.post("/signInNewUser", checkAuth, (req, res) => {
                 errorText: "Something went wrong whit inserting new user",
               });
             } else {
-              res.status(200).json({ errorText: "user succefully registered" });
+              db.query(checkQuery, [email], (err, dbRes) => {
+                if (err) {
+                  return res
+                    .status(401)
+                    .json({ errorText: "couldnt autorize user" });
+                } else {
+                  const user = dbRes.rows[0];
+                  return res.status(200).json({
+                    jwtToken: user.jwt,
+                    user: {
+                      username: user.username,
+                      email: user.email,
+                      role: user.role,
+                    },
+                  });
+                }
+              });
             }
           }
         );
@@ -85,26 +100,27 @@ router.post("/logInUser", checkAuth, (req, res) => {
   }
 });
 // Check user with jwt token
-router.post("/checkUserWithJwtToken", checkAuth, (req, res) => {
-  const { jwt_token } = req.body;
+router.post("/checkUserLoginned", checkAuth, (req, res) => {
+  const jwt_token = req.headers.authorization
+    .replace("Bearer", "")
+    .replace(" ", "");
   if (jwt_token) {
     const findUserWithJwtToken = "SELECT * FROM users where jwt = $1";
-    db.query(findUserWithJwtToken, [jwt_token], (err, dbRes) => {
+    const jwt = jwt_token;
+    db.query(findUserWithJwtToken, [jwt], (err, dbRes) => {
       console.log(dbRes.rows, "token");
       if (err || !dbRes.rows.length) {
         return res
           .status(401)
           .json({ errorText: "Could find user or error from db side" });
       } else {
-        res
-          .status(200)
-          .json({
-            user: {
-              username: dbRes.rows[0].username,
-              email: dbRes.rows[0].email,
-              role: dbRes.rows[0].role,
-            },
-          });
+        res.status(200).json({
+          user: {
+            username: dbRes.rows[0].username,
+            email: dbRes.rows[0].email,
+            role: dbRes.rows[0].role,
+          },
+        });
       }
     });
   } else {

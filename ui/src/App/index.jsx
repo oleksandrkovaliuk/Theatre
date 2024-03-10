@@ -3,7 +3,7 @@ import { Header } from "../components/header";
 import { Route, Routes } from "react-router-dom";
 import { UnfoundPage } from "../pages/404unfoundPage";
 import { HomePage } from "../pages/homePage";
-import { checkUserWithJwtToke, getEvents } from "../services/apiCallConfig";
+import { checkUserLoginned, getEvents } from "../services/apiCallConfig";
 import { EventsContext } from "../context/EventsContext";
 import { userContext } from "../context/userInfoContext";
 export const App = () => {
@@ -35,7 +35,7 @@ export const App = () => {
     try {
       const jwtToken = localStorage.getItem("user_jwt_token");
       if (jwtToken?.length && userInfo === null) {
-        const res = await checkUserWithJwtToke({
+        const res = await checkUserLoginned({
           jwt_token: JSON.parse(jwtToken),
         });
         setUserInfo(res.user);
@@ -44,7 +44,6 @@ export const App = () => {
       console.error(error, "something wrong with getting user onloading");
     }
   }, [userInfo]);
-
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);

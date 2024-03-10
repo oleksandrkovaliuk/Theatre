@@ -48,10 +48,10 @@ export const PopUpMenu = ({
                   <p>{user?.email}</p>
                 </div>
               )}
-              {data?.map(({ link, name }) => {
+              {data?.map(({ item }) => {
                 return (
-                  <li key={link} className={m.menu_nav_list}>
-                    <NavLink to={link}>{name}</NavLink>
+                  <li key={item} className={m.menu_nav_list}>
+                    <NavLink to={item?.link}>{item?.name}</NavLink>
                   </li>
                 );
               })}

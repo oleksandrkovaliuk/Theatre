@@ -8,6 +8,7 @@ export const SecondSection = () => {
     <div className={s.upcomingEvents}>
       <h1 className={s.title}>Upcoming premiers</h1>
       <div className={s.cardContainer}>
+        
         {event
           ?.sort((a, b) => a.id - b.id)
           .map((item) => (

@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useReducer, useRef } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import a from "./autorisation.module.scss";
 import { emailValidation } from "../../../services/emailValidation";
 import { passwordValidation } from "../../../services/passwordValidation";
@@ -16,15 +22,14 @@ import {
 import { logIn, signInUser } from "../../../services/apiCallConfig";
 import { RedDoneIcon } from "../../../icons/redDoneIcon";
 import { userContext } from "../../../context/userInfoContext";
-
-const lowerCaseLetters = /[a-z]/g;
-const uppercase = /[A-Z]/g;
-const numbers = /[0-9]/g;
-const specialCharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-
+import {
+  testOnLowerCase,
+  testOnNumber,
+  testOnSpecialCharacters,
+  testOnUpperCase,
+} from "../../../utilitis/patterForCheckPass";
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
-  const { setUserInfo } = useContext(userContext);
-
+  const { user, setUserInfo } = useContext(userContext);
   const [
     {
       blurBgStyle,
@@ -38,101 +43,94 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     },
     dispathAction,
   ] = useReducer(reducerForAutorisation, InitialStates);
-
-  const inputsRef = useRef({});
-
-  const checkUserNameValid = (event) => {
-    console.log(event.target.value);
-    if (event.target.value.length > 4) {
-      dispathAction(checkUserValid(true));
-      dispathAction(getUsernameValue(event.target.value));
-      console.log(userNameValue, "username");
-    } else {
-      dispathAction(checkUserValid(false));
-    }
-  };
-
-  const checkEmailValidation = (event) => {
-    if (emailValidation(event.target.value)) {
-      dispathAction(checkEmailValid(true));
-      dispathAction(getEmailValue(event.target.value));
-      console.log(emailValid, "email");
-    } else {
-      dispathAction(checkEmailValid(false));
-    }
-  };
-
-  const changeInputValue = (event) => {
-    const target = event.target;
-    const inputName = target.name;
-    const inputValue = target.value;
-    inputsRef.current = {
-      ...inputsRef.current,
-      [inputName]: inputValue,
-    };
-
-    console.log(inputsRef.current, " inputsRef.current");
-  };
-
-  const checkPassValidation = (event) => {
-    // password signIn validation
-    if (signIn) {
-      const passLengthValid = document.getElementById("chapters_length");
-      const passUpperCaseValid = document.getElementById("uppercase");
-      const passLowerCaseValid = document.getElementById("lowercase");
-      const passSpecialValid = document.getElementById("special");
-      const passNumberValid = document.getElementById("number");
-      if (lowerCaseLetters.test(event.target.value)) {
-        passLowerCaseValid.classList.add(`${a.valid}`);
+  // const checkUserNameValid = (event) => {
+  //   console.log(event.target.value);
+  //   if (event.target.value.length > 4) {
+  //     dispathAction(checkUserValid(true));
+  //     dispathAction(getUsernameValue(event.target.value));
+  //     console.log(userNameValue, "username");
+  //   } else {
+  //     dispathAction(checkUserValid(false));
+  //   }
+  // };
+  // const checkEmailValidation = (event) => {
+  //   if (emailValidation(event.target.value)) {
+  //     dispathAction(checkEmailValid(true));
+  //     dispathAction(getEmailValue(event.target.value));
+  //     console.log(emailValid, "email");
+  //   } else {
+  //     dispathAction(checkEmailValid(false));
+  //   }
+  // };
+  const checkInputsInfo = (event) => {
+    const elem = event.target;
+    const inputName = elem.name;
+    if (inputName === "email") {
+      if (emailValidation(elem.value)) {
+        dispathAction(checkEmailValid(true));
+        dispathAction(getEmailValue(event.target.value));
       } else {
-        passLowerCaseValid.classList.remove(`${a.valid}`);
-      }
-      if (uppercase.test(event.target.value)) {
-        passUpperCaseValid.classList.add(`${a.valid}`);
-      } else {
-        passUpperCaseValid.classList.remove(`${a.valid}`);
-      }
-      if (numbers.test(event.target.value)) {
-        passNumberValid.classList.add(`${a.valid}`);
-      } else {
-        passNumberValid.classList.remove(`${a.valid}`);
-      }
-      if (event.target.value.length >= 8) {
-        passLengthValid.classList.add(`${a.valid}`);
-      } else {
-        passLengthValid.classList.remove(`${a.valid}`);
-      }
-      if (specialCharacters.test(event.target.value)) {
-        passSpecialValid.classList.add(`${a.valid}`);
-      } else {
-        passSpecialValid.classList.remove(`${a.valid}`);
+        dispathAction(checkEmailValid(false));
       }
     }
-
-    if (event.target.value)
-      if (passwordValidation(event.target.value)) {
-        dispathAction(checkPassValid(true));
-        dispathAction(getPassValue(event.target.value));
+    if (inputName === "username") {
+      if (elem.value.length >= 4) {
+        dispathAction(checkUserValid(true));
+        dispathAction(getUsernameValue(event.target.value));
+      } else {
+        dispathAction(checkUserValid(false));
+      }
+    }
+    if (inputName === "password") {
+      if (event.target.value) {
+        if (passwordValidation(event.target.value)) {
+          dispathAction(checkPassValid(true));
+          dispathAction(getPassValue(event.target.value));
+        }
       } else {
         dispathAction(checkPassValid(false));
       }
+    }
   };
+  // const checkPassValidation = (event) => {
+  //   // password signIn validation
+  //   if (signIn) {
+  //     // if (testOnSpecialCharacters(event.target.value)) {
+  //     //   console.log(passValidation);
+  //     //   setPassValidation({ ...passValidation, special: true });
+  //     // } else {
+  //     //   setPassValidation({ special: false });
+  //     // }
+  //     // if (event.target.value >= 8) {
+  //     //   console.log(passValidation);
+  //     //   setPassValidation({ ...passValidation, length: true });
+  //     // } else {
+  //     //   setPassValidation({ length: false });
+  //     // }
+  //   }
 
+  //   if (event.target.value) {
+  //     if (passwordValidation(event.target.value)) {
+  //       dispathAction(checkPassValid(true));
+  //       dispathAction(getPassValue(event.target.value));
+  //     }
+  //   } else {
+  //     dispathAction(checkPassValid(false));
+  //   }
+  // };
   const submitAutorisation = async (event) => {
     event.preventDefault();
     try {
-      if (signIn) {
-        await signInUser({
-          username: userNameValue,
-          email: emailValue,
-          password: passValue,
-          role: "user",
-        });
-      } else {
-        const res = await logIn({ email: emailValue, password: passValue });
-        localStorage.setItem("user_jwt_token", JSON.stringify(res.jwtToken));
-        setUserInfo(res.user);
-      }
+      const res = signIn
+        ? await signInUser({
+            username: userNameValue,
+            email: emailValue,
+            password: passValue,
+            role: "user",
+          })
+        : await logIn({ email: emailValue, password: passValue });
+      localStorage.setItem("user_jwt_token", JSON.stringify(res.jwtToken));
+      setUserInfo(res.user);
       closeMenu();
     } catch (error) {
       dispathAction(setError(error.toString().split(":").pop()));
@@ -166,10 +164,10 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
         body.classList.remove("disable-scroll-page");
       }
     };
-  }, [emailValue, show]);
+  }, [show, signIn]);
   return (
     <>
-      {show && (
+      {show && !user && (
         <>
           <div onClick={closeMenu} className={a.background} />
           <div style={blurBgStyle} className={a.blurMenuBg} />
@@ -184,9 +182,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                     id="username"
                     name="username"
                     className={a.autorisationInput}
-                    onChange={changeInputValue}
-                    // onChange={(event) => checkUserNameValid(event)}
-                  />
+                    onChange={checkInputsInfo}
+                  ></input>
                   <label htmlFor="username" className={a.autorisationLabel}>
                     Username
                   </label>
@@ -204,8 +201,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                   id="email"
                   name="email"
                   className={a.autorisationInput}
-                  onChange={changeInputValue}
-                  // onChange={(event) => checkEmailValidation(event)}
+                  onChange={checkInputsInfo}
                 ></input>
                 <label htmlFor="email" className={a.autorisationLabel}>
                   Email
@@ -223,9 +219,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                   id="password"
                   name="password"
                   className={a.autorisationInput}
-                  onChange={changeInputValue}
-                  // onChange={(event) => checkPassValidation(event)}
-                />
+                  onChange={checkInputsInfo}
+                ></input>
                 <label htmlFor="password" className={a.autorisationLabel}>
                   Chose password
                 </label>

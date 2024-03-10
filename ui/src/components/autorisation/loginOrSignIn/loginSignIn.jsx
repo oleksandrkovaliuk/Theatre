@@ -4,74 +4,47 @@ import { AutorisationMenu } from "../autorisation";
 import { userContext } from "../../../context/userInfoContext";
 import { PopUpMenu } from "../../popUpNavMenu";
 import { UserIcon } from "../../../icons/userIcon";
-
-const userMenuLinks = [
-  {
-    link: "/yourEvents",
-    name: "Your events",
-  },
-  {
-    link: "/settings",
-    name: "Settings",
-  },
-];
-
-const adminMenuLinks = [
-  {
-    link: "/yourEvents",
-    name: "Your events",
-  },
-  {
-    link: "/createEvent",
-    name: "Create Event",
-  },
-  {
-    link: "/manageEvents",
-    name: "Manage Events",
-  },
-  {
-    link: "/manageNews",
-    name: "Manage News",
-  },
-  {
-    link: "/settings",
-    name: "Settings",
-  },
-];
+import {
+  adminDataList,
+  userDataList,
+} from "../../../utilitis/configForNavMenu";
 
 export const LogInSignIn = () => {
   const { user, setUserInfo } = useContext(userContext);
-
-  const [navMenu, setNavMenu] = useState(false);
+  const navMenuData = user?.role === "admin" ? adminDataList : userDataList;
   const [openSignIn, setOpenSignIn] = useState(false);
-  const [openMenu, showAutorisationMenu] = useState(false);
-  const [posForNavMenu, setPostionForNavMenu] = useState(null);
-
+  const [autorisationMenu, setAutorisationMenu] = useState(false);
+  const [navMenu, setNavMenu] = useState(false);
+  const [posForNavMenu, setPosForNavMenu] = useState(null);
+  const openLogInAutorisationMenu = () => {
+    setAutorisationMenu(true);
+    setOpenSignIn(false);
+  };
   const openSignInAutorisationMenu = () => {
-    showAutorisationMenu(true);
+    setAutorisationMenu(true);
     setOpenSignIn(true);
   };
 
   const handleClosingMenu = () => {
-    showAutorisationMenu(false);
+    setAutorisationMenu(false);
     setOpenSignIn(false);
   };
-
-  const handleOpeningNavMenu = (event) => {
+  const handleOpeningNavMenu = (event, category) => {
     const position = event.target.getBoundingClientRect();
     if (position) {
-      setPostionForNavMenu({
+      setPosForNavMenu({
         height: position.height,
         top: position.top,
         width: position.width,
       });
     }
     setNavMenu(true);
+    setNavMenu(true);
   };
 
   const closeNavMenu = () => {
     setNavMenu(false);
-    setPostionForNavMenu(null);
+    setPosForNavMenu(null);
   };
 
   const logOutUser = () => {
@@ -79,32 +52,29 @@ export const LogInSignIn = () => {
     setNavMenu(false);
     localStorage.removeItem("user_jwt_token");
   };
-
-  const navMenuData = user?.role === "admin" ? adminMenuLinks : userMenuLinks;
   return (
     <>
       <AutorisationMenu
-        show={!!openMenu}
-        signIn={!!openSignIn}
+        show={autorisationMenu}
+        signIn={openSignIn}
         closeMenu={() => handleClosingMenu()}
       />
       <PopUpMenu
         logIn={!!user}
-        showMenu={!!navMenu}
-        data={navMenuData}
+        showMenu={navMenu}
+        data={user ? navMenuData : []}
         top={posForNavMenu?.top}
         height={posForNavMenu?.height}
         width={posForNavMenu?.width}
         closeMenu={() => closeNavMenu()}
       >
         {!user ? (
+        {!user ? (
           <div className={l.logInSignInContainer}>
-            <button onClick={() => showAutorisationMenu(true)}>Login In</button>
+            <button onClick={openLogInAutorisationMenu}>Login In</button>
             <div className={l.signInText}>
               <span>Don't have an account?</span>
-              <button onClick={() => openSignInAutorisationMenu()}>
-                Sign In
-              </button>
+              <button onClick={openSignInAutorisationMenu}>Sign In</button>
             </div>
           </div>
         ) : (

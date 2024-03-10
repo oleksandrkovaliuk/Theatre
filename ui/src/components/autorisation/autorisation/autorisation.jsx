@@ -246,7 +246,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                 )}
               </div>
               <button
-                onClick={(event) => submitAutorisation(event)}
+                onClick={submitAutorisation}
                 style={
                   signIn
                     ? userNameValue && emailValue && passValue

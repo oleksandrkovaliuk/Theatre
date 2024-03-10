@@ -24,6 +24,7 @@ export const LogInSignIn = () => {
     setAutorisationMenu(true);
     setOpenSignIn(true);
   };
+
   const handleClosingMenu = () => {
     setAutorisationMenu(false);
     setOpenSignIn(false);
@@ -38,11 +39,14 @@ export const LogInSignIn = () => {
       });
     }
     setNavMenu(true);
+    setNavMenu(true);
   };
+
   const closeNavMenu = () => {
     setNavMenu(false);
     setPosForNavMenu(null);
   };
+
   const logOutUser = () => {
     setUserInfo(null);
     setNavMenu(false);
@@ -64,6 +68,7 @@ export const LogInSignIn = () => {
         width={posForNavMenu?.width}
         closeMenu={() => closeNavMenu()}
       >
+        {!user ? (
         {!user ? (
           <div className={l.logInSignInContainer}>
             <button onClick={openLogInAutorisationMenu}>Login In</button>

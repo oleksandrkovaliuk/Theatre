@@ -32,3 +32,7 @@ export const setError = (value) => ({
   type: Actions.SET_ERROR,
   payload: value,
 });
+export const setAppercaseValid = (value) => ({
+  type: Actions.SET_APPERCASE_VALID,
+  payload: value,
+});

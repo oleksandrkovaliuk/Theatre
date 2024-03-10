@@ -18,6 +18,7 @@ import {
   getUsernameValue,
   setStyleForBg,
   setError,
+  setAppercaseValid,
 } from "./reducer/action";
 import { logIn, signInUser } from "../../../services/apiCallConfig";
 import { RedDoneIcon } from "../../../icons/redDoneIcon";
@@ -65,30 +66,38 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   const checkInputsInfo = (event) => {
     const elem = event.target;
     const inputName = elem.name;
+    const inputValue = elem.value;
+
     if (inputName === "email") {
-      if (emailValidation(elem.value)) {
+      if (emailValidation(inputValue)) {
         dispathAction(checkEmailValid(true));
-        dispathAction(getEmailValue(event.target.value));
+        dispathAction(getEmailValue(inputValue));
       } else {
         dispathAction(checkEmailValid(false));
       }
     }
     if (inputName === "username") {
-      if (elem.value.length >= 4) {
+      if (inputValue.length >= 4) {
         dispathAction(checkUserValid(true));
-        dispathAction(getUsernameValue(event.target.value));
+        dispathAction(getUsernameValue(inputValue));
       } else {
         dispathAction(checkUserValid(false));
       }
     }
     if (inputName === "password") {
-      if (event.target.value) {
-        if (passwordValidation(event.target.value)) {
+    if (inputValue) {
+        if (passwordValidation(inputValue)) {
           dispathAction(checkPassValid(true));
-          dispathAction(getPassValue(event.target.value));
+          dispathAction(getPassValue(inputValue));
         }
       } else {
         dispathAction(checkPassValid(false));
+      }
+
+      if (testOnUpperCase(inputValue)) {
+        dispathAction(setAppercaseValid(true));
+      } else {
+        dispathAction(setAppercaseValid(false));
       }
     }
   };
@@ -129,7 +138,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
             role: "user",
           })
         : await logIn({ email: emailValue, password: passValue });
-      localStorage.setItem("user_jwt_token", JSON.stringify(res.jwtToken));
+      localStorage.setItem("user_jwt_token", res.jwtToken);
       setUserInfo(res.user);
       closeMenu();
     } catch (error) {
@@ -164,7 +173,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
         body.classList.remove("disable-scroll-page");
       }
     };
-  }, [show, signIn]);
+  }, [emailValue, show, signIn]);
   return (
     <>
       {show && !user && (

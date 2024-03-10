@@ -22,19 +22,22 @@ const getMethod = async (apiCallUrl) =>
       throw Error(err);
     });
 
-const postMethod = async (apiCallUrl, info = {}) =>
-  fetch(`${URL}/${apiCallUrl}`, {
+const postMethod = async (apiCallUrl, info = {}) => {
+  const jwtToken = localStorage.getItem("user_jwt_token");
+
+  return fetch(`${URL}/${apiCallUrl}`, {
     method: "POST",
-    headers: info?.jwt_token
-      ? { ...headers, Authorization: `Bearer ${info?.jwt_token}` }
+    headers: jwtToken
+      ? { ...headers, Authorization: `Bearer ${jwtToken}` }
       : { ...headers },
-    body: info?.jwt_token ? "" : JSON.stringify(info),
+    body: JSON.stringify(info),
   })
     .then(catchErrors)
     .then((res) => res.json())
     .catch((err) => {
       throw Error(err);
     });
+};
 // Work with get methods
 export const getEvents = async () => getMethod("infoAboutEvents");
 
@@ -43,5 +46,4 @@ export const signInUser = async ({ username, email, password, role }) =>
   postMethod("signInNewUser", { username, email, password, role });
 export const logIn = async ({ email, password }) =>
   postMethod("logInUser", { email, password });
-export const checkUserLoginned = async ({ jwt_token }) =>
-  postMethod("checkUserLoginned", { jwt_token });
+export const checkUserLoginned = async () => postMethod("checkUserLoginned");

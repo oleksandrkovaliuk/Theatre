@@ -33,17 +33,13 @@ export const App = () => {
   // Working with user info
   const getUserInfo = useCallback(async () => {
     try {
-      const jwtToken = localStorage.getItem("user_jwt_token");
-      if (jwtToken?.length && userInfo === null) {
-        const res = await checkUserLoginned({
-          jwt_token: JSON.parse(jwtToken),
-        });
-        setUserInfo(res.user);
-      }
+      const res = await checkUserLoginned();
+      setUserInfo(res.user);
     } catch (error) {
       console.error(error, "something wrong with getting user onloading");
     }
-  }, [userInfo]);
+  }, []);
+
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);

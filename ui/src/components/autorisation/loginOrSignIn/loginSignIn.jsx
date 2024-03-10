@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import l from "./loginSignIn.module.scss";
 import { AutorisationMenu } from "../autorisation";
 import { userContext } from "../../../context/userInfoContext";
 import { PopUpMenu } from "../../popUpNavMenu";
@@ -9,13 +8,22 @@ import {
   userDataList,
 } from "../../../utilitis/configForNavMenu";
 
+import l from "./loginSignIn.module.scss";
+
+const UserRole = {
+  ADMIN: "admin",
+};
+
 export const LogInSignIn = () => {
   const { user, setUserInfo } = useContext(userContext);
-  const navMenuData = user?.role === "admin" ? adminDataList : userDataList;
+  const navMenuData =
+    user?.role === UserRole.ADMIN ? adminDataList : userDataList;
+
   const [openSignIn, setOpenSignIn] = useState(false);
   const [autorisationMenu, setAutorisationMenu] = useState(false);
   const [navMenu, setNavMenu] = useState(false);
   const [posForNavMenu, setPosForNavMenu] = useState(null);
+
   const openLogInAutorisationMenu = () => {
     setAutorisationMenu(true);
     setOpenSignIn(false);
@@ -29,7 +37,7 @@ export const LogInSignIn = () => {
     setAutorisationMenu(false);
     setOpenSignIn(false);
   };
-  const handleOpeningNavMenu = (event, category) => {
+  const handleOpeningNavMenu = (event) => {
     const position = event.target.getBoundingClientRect();
     if (position) {
       setPosForNavMenu({
@@ -57,7 +65,7 @@ export const LogInSignIn = () => {
       <AutorisationMenu
         show={autorisationMenu}
         signIn={openSignIn}
-        closeMenu={() => handleClosingMenu()}
+        closeMenu={handleClosingMenu}
       />
       <PopUpMenu
         logIn={!!user}
@@ -66,9 +74,8 @@ export const LogInSignIn = () => {
         top={posForNavMenu?.top}
         height={posForNavMenu?.height}
         width={posForNavMenu?.width}
-        closeMenu={() => closeNavMenu()}
+        closeMenu={closeNavMenu}
       >
-        {!user ? (
         {!user ? (
           <div className={l.logInSignInContainer}>
             <button onClick={openLogInAutorisationMenu}>Login In</button>
@@ -78,16 +85,13 @@ export const LogInSignIn = () => {
             </div>
           </div>
         ) : (
-          <button onClick={() => logOutUser()} className={l.logOutBtn}>
+          <button onClick={logOutUser} className={l.logOutBtn}>
             Log out
           </button>
         )}
       </PopUpMenu>
       <div className={l.leftNavWrap}>
-        <button
-          onClick={(event) => handleOpeningNavMenu(event)}
-          className={l.accountBtn}
-        >
+        <button onClick={handleOpeningNavMenu} className={l.accountBtn}>
           <UserIcon />
         </button>
       </div>

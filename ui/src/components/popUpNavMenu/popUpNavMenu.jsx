@@ -31,6 +31,7 @@ export const PopUpMenu = ({
       }
     };
   }, [showMenu]);
+
   return (
     <>
       {showMenu && (
@@ -48,10 +49,10 @@ export const PopUpMenu = ({
                   <p>{user?.email}</p>
                 </div>
               )}
-              {data?.map(({ item }) => {
+              {data?.map(({ link, name }) => {
                 return (
-                  <li key={item} className={m.menu_nav_list}>
-                    <NavLink to={item?.link}>{item?.name}</NavLink>
+                  <li key={link} className={m.menu_nav_list}>
+                    <NavLink to={link}>{name}</NavLink>
                   </li>
                 );
               })}

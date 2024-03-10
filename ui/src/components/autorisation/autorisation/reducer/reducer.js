@@ -8,10 +8,22 @@ export const InitialStates = {
   userNameValue: null,
   emailValue: null,
   passValue: null,
-  errore:null,
+  errore: null,
+  passwordValidate: {
+    uppercase: false,
+  },
 };
 
 export const reducerForAutorisation = (state, action) => {
+  if (action.type === Actions.SET_APPERCASE_VALID) {
+    return {
+      ...state,
+      passwordValidate: {
+        ...state.passwordValidate,
+        uppercase: action.payload,
+      },
+    };
+  }
   if (action.type === Actions.SET_STYLE) {
     return {
       ...state,

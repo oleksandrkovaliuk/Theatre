@@ -32,7 +32,23 @@ export const setError = (value) => ({
   type: Actions.SET_ERROR,
   payload: value,
 });
-export const setAppercaseValid = (value) => ({
-  type: Actions.SET_APPERCASE_VALID,
+export const checkPasswordOnUpperCase = (value) => ({
+  type: Actions.CHECK_PASSWORD_ON_UPPERCASE,
+  payload: value,
+});
+export const checkPasswordOnLowerCase = (value) => ({
+  type: Actions.CHECK_PASSWORD_ON_LOWERCASE,
+  payload: value,
+});
+export const checkPasswordOnLength = (value) => ({
+  type: Actions.CHECK_PASSWORD_LENGTH,
+  payload: value,
+});
+export const checkPasswordOnSpecialSign = (value) => ({
+  type: Actions.CHECK_PASSWORD_ON_SPECIAL_SIGNS,
+  payload: value,
+});
+export const checkPasswordONumber = (value) => ({
+  type: Actions.CHECK_PASSWORD_ON_NUMBER,
   payload: value,
 });

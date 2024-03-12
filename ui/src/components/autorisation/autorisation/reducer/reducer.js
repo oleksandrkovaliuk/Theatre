@@ -9,21 +9,16 @@ export const InitialStates = {
   emailValue: null,
   passValue: null,
   errore: null,
-  passwordValidate: {
+  passwordCheck: {
     uppercase: false,
+    lowercase: false,
+    passlength: false,
+    specialSign: false,
+    number: false,
   },
 };
 
 export const reducerForAutorisation = (state, action) => {
-  if (action.type === Actions.SET_APPERCASE_VALID) {
-    return {
-      ...state,
-      passwordValidate: {
-        ...state.passwordValidate,
-        uppercase: action.payload,
-      },
-    };
-  }
   if (action.type === Actions.SET_STYLE) {
     return {
       ...state,
@@ -70,6 +65,51 @@ export const reducerForAutorisation = (state, action) => {
     return {
       ...state,
       error: action.payload,
+    };
+  }
+  if (action.type === Actions.CHECK_PASSWORD_ON_UPPERCASE) {
+    return {
+      ...state,
+      passwordCheck: {
+        ...state.passwordCheck,
+        uppercase: action.payload,
+      },
+    };
+  }
+  if (action.type === Actions.CHECK_PASSWORD_ON_LOWERCASE) {
+    return {
+      ...state,
+      passwordCheck: {
+        ...state.passwordCheck,
+        lowercase: action.payload,
+      },
+    };
+  }
+  if (action.type === Actions.CHECK_PASSWORD_ON_SPECIAL_SIGNS) {
+    return {
+      ...state,
+      passwordCheck: {
+        ...state.passwordCheck,
+        specialSign: action.payload,
+      },
+    };
+  }
+  if (action.type === Actions.CHECK_PASSWORD_LENGTH) {
+    return {
+      ...state,
+      passwordCheck: {
+        ...state.passwordCheck,
+        passlength: action.payload,
+      },
+    };
+  }
+  if (action.type === Actions.CHECK_PASSWORD_ON_NUMBER) {
+    return {
+      ...state,
+      passwordCheck: {
+        ...state.passwordCheck,
+        number: action.payload,
+      },
     };
   }
 };

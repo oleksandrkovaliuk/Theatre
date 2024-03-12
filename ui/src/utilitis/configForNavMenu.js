@@ -3,10 +3,6 @@ export const userDataList = [
     link: "/yourEvents",
     name: "Your event",
   },
-  {
-    link: "/settings",
-    name: "Settings",
-  },
 ];
 export const adminDataList = [
   { link: "/createEvent", name: "Create event" },

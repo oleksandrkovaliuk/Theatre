@@ -18,7 +18,11 @@ import {
   getUsernameValue,
   setStyleForBg,
   setError,
-  setAppercaseValid,
+  checkPasswordONumber,
+  checkPasswordOnLength,
+  checkPasswordOnSpecialSign,
+  checkPasswordOnLowerCase,
+  checkPasswordOnUpperCase,
 } from "./reducer/action";
 import { logIn, signInUser } from "../../../services/apiCallConfig";
 import { RedDoneIcon } from "../../../icons/redDoneIcon";
@@ -41,28 +45,10 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       emailValue,
       passValue,
       error,
+      passwordCheck,
     },
     dispathAction,
   ] = useReducer(reducerForAutorisation, InitialStates);
-  // const checkUserNameValid = (event) => {
-  //   console.log(event.target.value);
-  //   if (event.target.value.length > 4) {
-  //     dispathAction(checkUserValid(true));
-  //     dispathAction(getUsernameValue(event.target.value));
-  //     console.log(userNameValue, "username");
-  //   } else {
-  //     dispathAction(checkUserValid(false));
-  //   }
-  // };
-  // const checkEmailValidation = (event) => {
-  //   if (emailValidation(event.target.value)) {
-  //     dispathAction(checkEmailValid(true));
-  //     dispathAction(getEmailValue(event.target.value));
-  //     console.log(emailValid, "email");
-  //   } else {
-  //     dispathAction(checkEmailValid(false));
-  //   }
-  // };
   const checkInputsInfo = (event) => {
     const elem = event.target;
     const inputName = elem.name;
@@ -85,48 +71,51 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       }
     }
     if (inputName === "password") {
-      if (inputValue) {
-        if (passwordValidation(inputValue)) {
-          dispathAction(checkPassValid(true));
-          dispathAction(getPassValue(inputValue));
-        }
-      } else {
+      if (passwordValidation(inputValue)) {
+        console.log("valid")
+        dispathAction(checkPassValid(true));
+        dispathAction(getPassValue(inputValue));
+      } else if (!passwordValidation(inputValue)) {
         dispathAction(checkPassValid(false));
       }
-
-      // if (testOnUpperCase(inputValue)) {
-      //   dispathAction(setAppercaseValid(true));
-      // } else {
-      //   dispathAction(setAppercaseValid(false));
-      // }
+      if (testOnLowerCase(inputValue)) {
+        console.log("yes");
+        dispathAction(checkPasswordOnLowerCase(true));
+      } else if (!testOnLowerCase(inputValue)) {
+        dispathAction(checkPasswordOnLowerCase(false));
+      }
+      if (testOnUpperCase(inputValue)) {
+        console.log("yes upper");
+        dispathAction(checkPasswordOnUpperCase(true));
+      } else if (!testOnUpperCase(inputValue)) {
+        dispathAction(checkPasswordOnUpperCase(false));
+      }
+      if (testOnNumber(inputValue)) {
+        console.log("yes upper");
+        dispathAction(checkPasswordONumber(true));
+      } else if (!testOnNumber(inputValue)) {
+        dispathAction(checkPasswordONumber(false));
+      }
+      if (testOnNumber(inputValue)) {
+        console.log("yes upper");
+        dispathAction(checkPasswordONumber(true));
+      } else if (!testOnNumber(inputValue)) {
+        dispathAction(checkPasswordONumber(false));
+      }
+      if (testOnSpecialCharacters(inputValue)) {
+        console.log("yes upper");
+        dispathAction(checkPasswordOnSpecialSign(true));
+      } else if (!testOnSpecialCharacters(inputValue)) {
+        dispathAction(checkPasswordOnSpecialSign(false));
+      }
+      if (inputValue?.length >= 8) {
+        console.log("yes upper");
+        dispathAction(checkPasswordOnLength(true));
+      } else if (inputValue?.length < 8) {
+        dispathAction(checkPasswordOnLength(false));
+      }
     }
   };
-  // const checkPassValidation = (event) => {
-  //   // password signIn validation
-  //   if (signIn) {
-  //     // if (testOnSpecialCharacters(event.target.value)) {
-  //     //   console.log(passValidation);
-  //     //   setPassValidation({ ...passValidation, special: true });
-  //     // } else {
-  //     //   setPassValidation({ special: false });
-  //     // }
-  //     // if (event.target.value >= 8) {
-  //     //   console.log(passValidation);
-  //     //   setPassValidation({ ...passValidation, length: true });
-  //     // } else {
-  //     //   setPassValidation({ length: false });
-  //     // }
-  //   }
-
-  //   if (event.target.value) {
-  //     if (passwordValidation(event.target.value)) {
-  //       dispathAction(checkPassValid(true));
-  //       dispathAction(getPassValue(event.target.value));
-  //     }
-  //   } else {
-  //     dispathAction(checkPassValid(false));
-  //   }
-  // };
   const submitAutorisation = async (event) => {
     event.preventDefault();
     try {
@@ -153,6 +142,11 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       dispathAction(getPassValue(null));
       dispathAction(getEmailValue(null));
       dispathAction(getUsernameValue(null));
+      dispathAction(checkPasswordOnLowerCase(false));
+      dispathAction(checkPasswordOnUpperCase(false));
+      dispathAction(checkPasswordONumber(false));
+      dispathAction(checkPasswordOnSpecialSign(false));
+      dispathAction(checkPasswordOnLength(false));
     }
     const autoMenu = document
       .getElementById("autorisationMenu")
@@ -222,7 +216,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
               </div>
               <div className={a.autorisationField}>
                 <input
-                  placeholder=" "
+                  placeholder=""
                   type="password"
                   id="password"
                   name="password"
@@ -234,20 +228,35 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                 </label>
                 {signIn && (
                   <ul className={a.passwordValid}>
-                    <li id="chapters_length">
+                    <li
+                      className={passwordCheck.passlength ? `${a.valid}` : ""}
+                      id="chapters_length"
+                    >
                       <RedDoneIcon />
                       8-20 chapters
                     </li>
-                    <li id="uppercase">
+                    <li
+                      className={passwordCheck.uppercase ? `${a.valid}` : ""}
+                      id="uppercase"
+                    >
                       <RedDoneIcon />1 uppercase (A-Z)
                     </li>
-                    <li id="lowercase">
+                    <li
+                      className={passwordCheck.lowercase ? `${a.valid}` : ""}
+                      id="lowercase"
+                    >
                       <RedDoneIcon />1 lowercase (a-z)
                     </li>
-                    <li id="special">
+                    <li
+                      className={passwordCheck.specialSign ? `${a.valid}` : ""}
+                      id="special"
+                    >
                       <RedDoneIcon />1 special (!@#$)
                     </li>
-                    <li id="number">
+                    <li
+                      className={passwordCheck.number ? `${a.valid}` : ""}
+                      id="number"
+                    >
                       <RedDoneIcon />1 number (!@#$)
                     </li>
                   </ul>

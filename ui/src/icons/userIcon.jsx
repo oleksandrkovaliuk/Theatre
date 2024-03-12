@@ -1,6 +1,6 @@
 import React from "react";
 
-export const UserIcon = () => {
+export const UserIcon = ({ active }) => {
   return (
     <svg
       width="512.000000pt"
@@ -9,7 +9,7 @@ export const UserIcon = () => {
     >
       <g
         transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-        fill="#000000"
+        fill={active ? "var(--color-red)" : "#000000"}
         stroke="none"
       >
         <path

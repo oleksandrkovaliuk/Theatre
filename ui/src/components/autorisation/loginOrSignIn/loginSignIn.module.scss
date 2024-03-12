@@ -1,8 +1,57 @@
+.settings_logOut {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+  a {
+    &:hover {
+      svg {
+        path {
+          transition: all 0.3s ease-in-out;
+          fill: var(--color-red);
+        }
+      }
+    }
+  }
+  svg,
+  a {
+    width: 26px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  button {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    background-color: var(--color-red);
+    border: unset;
+    border-radius: 6px;
+    transition: background 0.2s ease-in-out;
+    svg {
+      transition: fill 0.4s ease-in-out;
+      path {
+        fill: var(--color-white);
+      }
+    }
+    &:hover {
+      background-color: var(--color-white);
+      svg {
+        path {
+          fill: var(--color-red);
+        }
+      }
+    }
+  }
+}
 .logInSignInContainer {
+  max-width: 400px;
+  margin-left: auto;
   button {
     padding: 8px 10px;
     background-color: unset;
-    border: unset;
+    border: none;
     border-radius: 11px;
 
     color: var(--color-title);
@@ -13,9 +62,9 @@
     position: relative;
     transition: all 0.2s ease-in-out;
     &:first-child {
-      border: 1px solid var(--color-red);
       width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      border: 1px solid var(--color-red);
       &:hover {
         color: var(--color-white);
         background-color: var(--color-red);
@@ -69,7 +118,6 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    cursor: pointer;
     svg {
       width: 25px;
       height: 25px;

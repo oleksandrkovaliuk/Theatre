@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { NavLink, useLocation, useSearchParams } from "react-router-dom";
 import { AutorisationMenu } from "../autorisation";
 import { userContext } from "../../../context/userInfoContext";
 import { PopUpMenu } from "../../popUpNavMenu";
@@ -9,15 +10,13 @@ import {
 } from "../../../utilitis/configForNavMenu";
 
 import l from "./loginSignIn.module.scss";
-
-const UserRole = {
-  ADMIN: "admin",
-};
+import { LogOutIcon } from "../../../icons/logOutIcon";
+import { SettingsIcon } from "../../../icons/settingsIcon";
 
 export const LogInSignIn = () => {
   const { user, setUserInfo } = useContext(userContext);
   const navMenuData =
-    user?.role === UserRole.ADMIN ? adminDataList : userDataList;
+    user?.role === process.env.REACT_APP_ADMIN ? adminDataList : userDataList;
 
   const [openSignIn, setOpenSignIn] = useState(false);
   const [autorisationMenu, setAutorisationMenu] = useState(false);
@@ -37,16 +36,13 @@ export const LogInSignIn = () => {
     setAutorisationMenu(false);
     setOpenSignIn(false);
   };
-  const handleOpeningNavMenu = (event) => {
-    const position = event.target.getBoundingClientRect();
-    if (position) {
+  const handleOpeningNavMenu = () => {
+    const header = document.getElementById("header").getBoundingClientRect();
+    if (header) {
       setPosForNavMenu({
-        height: position.height,
-        top: position.top,
-        width: position.width,
+        top: header.height,
       });
     }
-    setNavMenu(true);
     setNavMenu(true);
   };
 
@@ -54,10 +50,8 @@ export const LogInSignIn = () => {
     setNavMenu(false);
     setPosForNavMenu(null);
   };
-
   const logOutUser = () => {
     setUserInfo(null);
-    setNavMenu(false);
     localStorage.removeItem("user_jwt_token");
   };
   return (
@@ -72,8 +66,6 @@ export const LogInSignIn = () => {
         showMenu={navMenu}
         data={user ? navMenuData : []}
         top={posForNavMenu?.top}
-        height={posForNavMenu?.height}
-        width={posForNavMenu?.width}
         closeMenu={closeNavMenu}
       >
         {!user ? (
@@ -85,14 +77,23 @@ export const LogInSignIn = () => {
             </div>
           </div>
         ) : (
-          <button onClick={logOutUser} className={l.logOutBtn}>
-            Log out
-          </button>
+          <div className={l.settings_logOut}>
+            <NavLink to={"/settings"}>
+              <SettingsIcon />
+            </NavLink>
+            <button onClick={logOutUser}>
+              <LogOutIcon />
+            </button>
+          </div>
         )}
       </PopUpMenu>
       <div className={l.leftNavWrap}>
-        <button onClick={handleOpeningNavMenu} className={l.accountBtn}>
-          <UserIcon />
+        <button
+          onClick={handleOpeningNavMenu}
+          onMouseOver={!navMenu ? handleOpeningNavMenu : null}
+          className={l.accountBtn}
+        >
+          <UserIcon active={navMenu} />
         </button>
       </div>
     </>

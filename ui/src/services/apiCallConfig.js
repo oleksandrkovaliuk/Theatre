@@ -47,3 +47,17 @@ export const signInUser = async ({ username, email, password, role }) =>
 export const logIn = async ({ email, password }) =>
   postMethod("logInUser", { email, password });
 export const checkUserLoginned = async () => postMethod("checkUserLoginned");
+export const creatingEvent = async ({
+  eventName,
+  eventDisc,
+  eventDate,
+  eventAge,
+  eventImg,
+}) =>
+  postMethod("createNewEvent", {
+    eventName,
+    eventDisc,
+    eventDate,
+    eventAge,
+    eventImg,
+  });

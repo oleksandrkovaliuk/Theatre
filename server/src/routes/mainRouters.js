@@ -14,8 +14,24 @@ const checkAuth = (req, res, next) => {
 };
 
 const checkRole = (req, res, next) => {
-  if (parsToken(req.headers?.authorization)) { // check if user role Admin
-    next();
+  const checkUserRoleQuery = "SELECT * FROM users WHERE jwt = $1";
+  if (req.headers?.authorization) {
+    db.query(
+      checkUserRoleQuery,
+      [parsToken(req.headers.authorization)],
+      (err, dbRes) => {
+        if (err) {
+          return res
+            .status(401)
+            .json({ errorText: "failed with checking role in users data" });
+        }
+        if (dbRes.rows[0].role === "admin") {
+          next();
+        } else {
+          return res.status(401).json({ errorText: "this user is not admin" });
+        }
+      }
+    );
   } else {
     return res.status(401).json({ errorText: "user unautorized yet" });
   }
@@ -32,6 +48,38 @@ router.get("/infoAboutEvents", (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ errorText: `${error} err` });
+  }
+});
+
+router.post("/createNewEvent", checkRole, (req, res) => {
+  const { eventName, eventDisc, eventDate, eventAge, eventImg } = req.body;
+  console.log(req.body);
+  try {
+    if (!eventName || !eventDisc || !eventDate || !eventAge || !eventImg) {
+      return res
+        .status(401)
+        .json({ errorText: "not enough info to create event" });
+    }
+    db.query(
+      "INSERT INTO events (name , disc , startingtime , age , imgUrl) VALUES($1 , $2 , $3 , $4 , $5) RETURNING *;",
+      [eventName, eventDisc, eventDate, eventAge, eventImg],
+      (err, dbRes) => {
+        if (err) {
+          console.log(err, "error");
+          res
+            .status(401)
+            .json({ errorText: "failed with inserting new event into table" });
+        } else {
+          return res.status(200).json({
+            succesfull: `event "${dbRes.rows[0].name}" succesfully created`,
+          });
+        }
+      }
+    );
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ errorText: "failed with creating new event" });
   }
 });
 
@@ -88,12 +136,11 @@ router.post("/signInNewUser", (req, res) => {
 });
 router.post("/logInUser", (req, res) => {
   const { email, password } = req.body;
+  console.log(password, "pass");
   if (email && password) {
     db.query(checkQuery, [email], (err, dbRes) => {
-      if (err) {
-        return res
-          .status(401)
-          .json({ errorText: "this user is no registered yet" });
+      if (!dbRes.rows[0] || err) {
+        res.status(401).json({ errorText: "this user is not registered yet" });
       } else {
         const user = dbRes.rows[0];
         if (user.password.toString() === password.toString()) {
@@ -141,4 +188,5 @@ router.post("/checkUserLoginned", checkAuth, (req, res) => {
     return res.status(401).json({ errorText: "user unautorized yet" });
   }
 });
+
 module.exports = router;

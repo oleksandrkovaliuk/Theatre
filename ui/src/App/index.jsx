@@ -1,14 +1,27 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Header } from "../components/header";
 import { Route, Routes } from "react-router-dom";
 import { UnfoundPage } from "../pages/404unfoundPage";
 import { HomePage } from "../pages/homePage";
 import { checkUserLoginned, getEvents } from "../services/apiCallConfig";
-import { EventsContext } from "../context/EventsContext";
+import { EventsContext } from "../context/eventsContext";
 import { userContext } from "../context/userInfoContext";
+import { CreateEventPage } from "../pages/creatingEventPage";
+import { NotificationContext } from "../context/notificationContext";
+import { Notification } from "../components/nitification";
 export const App = () => {
+  const { setNotificationMessage } = useContext(NotificationContext);
   const [events, setEvents] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [currentMassage, setCurrentMessage] = useState(null);
+  const [error, isError] = useState(false);
   // User info
   const userContextValue = useMemo(() => {
     return { user: userInfo, setUserInfo: (info) => setUserInfo(info) };
@@ -21,13 +34,39 @@ export const App = () => {
     }),
     [events]
   );
+
+  const messageValue = useMemo(() => {
+    return {
+      messageError: error,
+      currentMessage: currentMassage,
+      notificationMessage: message,
+      setNotificationMessage: (mess) => {
+        if (mess.toString().includes("Error")) {
+          setMessage(mess.toString().split(":").pop());
+          setCurrentMessage(mess.toString().split(":").pop());
+          isError(true);
+        } else {
+          setMessage(mess.toString().split(":").pop());
+          setCurrentMessage(mess.toString().split(":").pop());
+          isError(false);
+        }
+
+        if (mess) {
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        }
+      },
+    };
+  }, [message]);
+
   // Working with events
   const fetchEvents = useCallback(async () => {
     try {
       const res = await getEvents();
       setEvents(res.events);
     } catch (error) {
-      console.error("failed with caling for events");
+      setNotificationMessage(error);
     }
   }, []);
   // Working with user info
@@ -36,10 +75,9 @@ export const App = () => {
       const res = await checkUserLoginned();
       setUserInfo(res.user);
     } catch (error) {
-      console.error(error, "something wrong with getting user onloading");
+      setNotificationMessage(error);
     }
   }, []);
-
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
@@ -50,11 +88,15 @@ export const App = () => {
   return (
     <userContext.Provider value={userContextValue}>
       <EventsContext.Provider value={eventsContextValue}>
-        <Header />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="*" element={<UnfoundPage />} />
-        </Routes>
+        <NotificationContext.Provider value={messageValue}>
+          <Notification />
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="*" element={<UnfoundPage />} />
+            <Route path="/createEvent" element={<CreateEventPage />} />
+          </Routes>
+        </NotificationContext.Provider>
       </EventsContext.Provider>
     </userContext.Provider>
   );

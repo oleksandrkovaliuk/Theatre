@@ -17,7 +17,6 @@ import {
   getPassValue,
   getUsernameValue,
   setStyleForBg,
-  setError,
   checkPasswordONumber,
   checkPasswordOnLength,
   checkPasswordOnSpecialSign,
@@ -33,18 +32,18 @@ import {
   testOnSpecialCharacters,
   testOnUpperCase,
 } from "../../../utilitis/patterForCheckPass";
+import { NotificationContext } from "../../../context/notificationContext";
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   const { user, setUserInfo } = useContext(userContext);
+  const { setNotificationMessage } = useContext(NotificationContext);
   const [
     {
       blurBgStyle,
       userValid,
       emailValid,
-      passValid,
       userNameValue,
       emailValue,
       passValue,
-      error,
       passwordCheck,
     },
     dispathAction,
@@ -72,7 +71,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     }
     if (inputName === "password") {
       if (passwordValidation(inputValue)) {
-        console.log("valid")
+        console.log("valid");
+        console.log(inputValue, "value");
         dispathAction(checkPassValid(true));
         dispathAction(getPassValue(inputValue));
       } else if (!passwordValidation(inputValue)) {
@@ -129,16 +129,19 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
         : await logIn({ email: emailValue, password: passValue });
       localStorage.setItem("user_jwt_token", res.jwtToken);
       setUserInfo(res.user);
+      setNotificationMessage(
+        signIn ? "succesfully registered" : "succesfully loggined"
+      );
       closeMenu();
     } catch (error) {
-      dispathAction(setError(error.toString().split(":").pop()));
+      console.log(error, "error");
+      setNotificationMessage(error);
     }
   };
   useEffect(() => {
     const body = document.body;
     if (show) {
       body.classList.add("disable-scroll-page");
-      dispathAction(setError(null));
       dispathAction(getPassValue(null));
       dispathAction(getEmailValue(null));
       dispathAction(getUsernameValue(null));
@@ -180,7 +183,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                 <div className={a.autorisationField}>
                   <input
                     placeholder=" "
-                    type="username"
+                    type="text"
                     id="username"
                     name="username"
                     className={a.autorisationInput}

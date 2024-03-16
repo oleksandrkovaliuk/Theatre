@@ -61,12 +61,6 @@ export const reducerForAutorisation = (state, action) => {
       passValue: action.payload,
     };
   }
-  if (action.type === Actions.SET_ERROR) {
-    return {
-      ...state,
-      error: action.payload,
-    };
-  }
   if (action.type === Actions.CHECK_PASSWORD_ON_UPPERCASE) {
     return {
       ...state,

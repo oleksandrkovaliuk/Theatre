@@ -20,8 +20,7 @@ export const PopUpMenu = ({
     [m.show]: showMenu,
   });
   useEffect(() => {
-    const { pathname } = location;
-    if (pathname.length >= 0) {
+    if (location.pathname.length >= 0) {
       closeMenu();
     }
   }, [location]);
@@ -75,10 +74,7 @@ export const PopUpMenu = ({
                 <span>Navigation</span>
                 {data?.map(({ link, name }) => {
                   return (
-                    <li
-                      key={link}
-                      className={m.navigation_nav_list}
-                    >
+                    <li key={link} className={m.navigation_nav_list}>
                       <NavLink to={link}>{name}</NavLink>
                     </li>
                   );

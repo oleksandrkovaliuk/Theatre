@@ -12,9 +12,11 @@ import {
 import l from "./loginSignIn.module.scss";
 import { LogOutIcon } from "../../../icons/logOutIcon";
 import { SettingsIcon } from "../../../icons/settingsIcon";
+import { NotificationContext } from "../../../context/notificationContext";
 
 export const LogInSignIn = () => {
   const { user, setUserInfo } = useContext(userContext);
+  const { setNotificationMessage } = useContext(NotificationContext);
   const navMenuData =
     user?.role === process.env.REACT_APP_ADMIN ? adminDataList : userDataList;
 
@@ -52,6 +54,7 @@ export const LogInSignIn = () => {
   };
   const logOutUser = () => {
     setUserInfo(null);
+    setNotificationMessage("succesfully logout");
     localStorage.removeItem("user_jwt_token");
   };
   return (

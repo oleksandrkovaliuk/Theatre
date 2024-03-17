@@ -71,45 +71,32 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     }
     if (inputName === "password") {
       if (passwordValidation(inputValue)) {
-        console.log("valid");
-        console.log(inputValue, "value");
         dispathAction(checkPassValid(true));
         dispathAction(getPassValue(inputValue));
       } else if (!passwordValidation(inputValue)) {
         dispathAction(checkPassValid(false));
       }
       if (testOnLowerCase(inputValue)) {
-        console.log("yes");
         dispathAction(checkPasswordOnLowerCase(true));
       } else if (!testOnLowerCase(inputValue)) {
         dispathAction(checkPasswordOnLowerCase(false));
       }
       if (testOnUpperCase(inputValue)) {
-        console.log("yes upper");
         dispathAction(checkPasswordOnUpperCase(true));
       } else if (!testOnUpperCase(inputValue)) {
         dispathAction(checkPasswordOnUpperCase(false));
       }
       if (testOnNumber(inputValue)) {
-        console.log("yes upper");
-        dispathAction(checkPasswordONumber(true));
-      } else if (!testOnNumber(inputValue)) {
-        dispathAction(checkPasswordONumber(false));
-      }
-      if (testOnNumber(inputValue)) {
-        console.log("yes upper");
         dispathAction(checkPasswordONumber(true));
       } else if (!testOnNumber(inputValue)) {
         dispathAction(checkPasswordONumber(false));
       }
       if (testOnSpecialCharacters(inputValue)) {
-        console.log("yes upper");
         dispathAction(checkPasswordOnSpecialSign(true));
       } else if (!testOnSpecialCharacters(inputValue)) {
         dispathAction(checkPasswordOnSpecialSign(false));
       }
       if (inputValue?.length >= 8) {
-        console.log("yes upper");
         dispathAction(checkPasswordOnLength(true));
       } else if (inputValue?.length < 8) {
         dispathAction(checkPasswordOnLength(false));

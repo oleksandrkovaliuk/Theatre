@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { NotificationContext } from "../../context/notificationContext";
 import { infoAboutEventById } from "../../services/apiCallConfig";
 import { CloseBold } from "../../icons/close";
+import { Download } from "../../icons/download";
 
 export const EventCard = ({
   eventInfoFromdb,
@@ -20,14 +21,7 @@ export const EventCard = ({
   const { setNotificationMessage } = useContext(NotificationContext);
   const ref = useRef(null);
   const [stylesForBg, setStylesForBg] = useState({});
-  const [editAbleCardInfo, setEditAbleCardInfo] = useState({
-    // id: "",
-    // name: "",
-    // disc: "",
-    // date: "",
-    // age: "",
-    // imgurl: "",
-  })
+  const [editAbleCardInfo, setEditAbleCardInfo] = useState({});
   const [transformCardInEditMode, setTransformCardInEditMode] = useState(false);
   const getInfoAboutClickedEvent = async (event) => {
     const currentCardId = event.currentTarget.closest("div").getAttribute("id");
@@ -36,13 +30,6 @@ export const EventCard = ({
         if (!transformCardInEditMode) {
           const res = await infoAboutEventById({ id: currentCardId });
           setEditAbleCardInfo(res.eventInfo);
-          // id: res.eventInfo.id,
-          // name: res.eventInfo.name,
-          // disc: res.eventInfo.disc,
-          // date: res.eventInfo.startingtime,
-          // age: res.eventInfo.age,
-          // imgurl: res.eventInfo.imgurl,
-          // }
           setTransformCardInEditMode(true);
         } else {
           setTransformCardInEditMode(false);
@@ -70,13 +57,14 @@ export const EventCard = ({
         width: ref.current.getBoundingClientRect().width,
       });
     }
-  }, [ref, eventName, eventDisc, eventInfoFromdb]);
+  }, [ref, eventName, eventDisc, eventInfoFromdb, transformCardInEditMode]);
   return (
     <div
       style={{
         backgroundImage: `url(${
           eventInfoFromdb ? eventInfoFromdb?.imgurl : eventUrlImg
         })`,
+        border: transformCardInEditMode ? "2px solid var(--color-red)" : "none",
       }}
       id={itemId}
       className={s.eventCard}
@@ -85,6 +73,12 @@ export const EventCard = ({
         <button onClick={getInfoAboutClickedEvent} className={s.editButton}>
           {transformCardInEditMode ? <CloseBold /> : <EditStick />}
         </button>
+      )}
+      {transformCardInEditMode && (
+        <label className={s.uploadImg}>
+          <input type="file" id="uploadImg" name="uploadImg" />
+          <Download />
+        </label>
       )}
       <div className={s.timeAndAgeTopBlock}>
         {transformCardInEditMode ? (
@@ -103,9 +97,20 @@ export const EventCard = ({
             )}
           </button>
         )}
-        <button className={s.age}>
-          {eventInfoFromdb ? eventInfoFromdb?.age : eventInfoAge}
-        </button>
+        {transformCardInEditMode ? (
+          <input
+            placeholder={editAbleCardInfo.age}
+            type="text"
+            id="itemAge"
+            name="itemAge"
+            className={s.changeAge}
+            onChange={(event) => updateInfoAboutEvent(event, "itemAge")}
+          />
+        ) : (
+          <button className={s.age}>
+            {eventInfoFromdb ? eventInfoFromdb?.age : eventInfoAge}
+          </button>
+        )}
       </div>
       <div className={s.eventNameAndDisc}>
         <div
@@ -116,8 +121,30 @@ export const EventCard = ({
           }}
         />
         <div ref={ref} className={s.text}>
-          <h2>{eventInfoFromdb ? eventInfoFromdb?.name : eventName}</h2>
-          <p>{eventInfoFromdb ? eventInfoFromdb?.disc : eventDisc}</p>
+          {transformCardInEditMode ? (
+            <input
+              placeholder={editAbleCardInfo.name}
+              type="text"
+              id="itemName"
+              name="itemName"
+              className={s.changeName}
+              onChange={(event) => updateInfoAboutEvent(event, "itemName")}
+            />
+          ) : (
+            <h2>{eventInfoFromdb ? eventInfoFromdb?.name : eventName}</h2>
+          )}
+          {transformCardInEditMode ? (
+            <input
+              placeholder={editAbleCardInfo.disc}
+              type="text"
+              id="itemDisc"
+              name="itemDisc"
+              className={s.changeName}
+              onChange={(event) => updateInfoAboutEvent(event, "itemDisc")}
+            />
+          ) : (
+            <p>{eventInfoFromdb ? eventInfoFromdb?.disc : eventDisc}</p>
+          )}
         </div>
       </div>
     </div>

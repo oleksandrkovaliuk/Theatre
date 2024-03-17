@@ -23,6 +23,40 @@
       }
     }
   }
+  .uploadImg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: unset;
+    border: 2px solid transparent;
+    border-radius: 11px;
+    padding: 5px;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+      border: 2px solid var(--color-red);
+      svg {
+        path {
+          fill: var(--color-red);
+        }
+      }
+    }
+    svg {
+      width: 40px;
+      height: 40px;
+      path {
+        fill: var(--color-white);
+      }
+    }
+    input[type="file"] {
+      display: none;
+    }
+  }
+  input:active,
+  input:focus,
+  input:not(:placeholder-shown) {
+    outline: none;
+  }
   .timeAndAgeTopBlock {
     position: absolute;
     top: 10px;
@@ -31,7 +65,8 @@
     gap: 10px;
     align-items: center;
     button,
-    .changeDate {
+    .changeDate,
+    .changeAge {
       border: unset;
       border-radius: 11px;
       padding: 5px 8px;
@@ -50,9 +85,17 @@
         color: var(--color-white);
       }
     }
-    .age {
+    .age,
+    .changeAge {
       background-color: var(--color-white);
       color: var(--color-title);
+    }
+    .changeAge {
+      max-width: 40px;
+      border-radius: 2px;
+      &::placeholder {
+        color: var(--color-title);
+      }
     }
   }
   .eventNameAndDisc {
@@ -78,13 +121,25 @@
       position: relative;
       padding-inline: 10px;
       padding-block: 5px;
-      h2 {
+      .changeName,
+      .changeDisc {
+        border: unset;
+        border-bottom: 2px solid var(--color-red);
+        background-color: unset;
+        padding: 4px;
+        border-radius: 3px;
+      }
+      h2,
+      .changeName,
+      .changeName::placeholder {
         color: var(--color-white);
         font-family: var(--font-SfMedium);
         font-size: 20px;
         margin-bottom: 10px;
       }
-      p {
+      p,
+      .changeDisc,
+      .changeDisc::placeholder {
         color: var(--color-white);
         font-family: var(--font-SfRegular);
         font-size: 12px;

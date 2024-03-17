@@ -1,0 +1,27 @@
+.manegeEvents_page {
+  padding-inline: 50px;
+  padding-top: 100px;
+  .manegeEvents {
+    color: var(--color-title);
+    font-family: var(--font-SfMedium);
+    font-size: 25px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .eventsEditable {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    overflow: auto;
+    padding-block: 20px;
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--color-subtitle);
+      border-radius: 40px;
+      border: unset;
+      cursor: pointer;
+    }
+  }
+}

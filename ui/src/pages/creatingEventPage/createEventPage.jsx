@@ -132,7 +132,7 @@ export const CreateEventPage = () => {
       dispathAction(setEventDisc("disc"));
     }
     if (!eventDate.length) {
-      dispathAction(setEventDate("2004-02-23 20:08"));
+      dispathAction(setEventDate(formatTime(new Date())));
     }
     if (!eventAge.length) {
       dispathAction(setEventAge("00+"));

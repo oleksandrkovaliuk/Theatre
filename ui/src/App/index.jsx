@@ -15,6 +15,7 @@ import { userContext } from "../context/userInfoContext";
 import { CreateEventPage } from "../pages/creatingEventPage";
 import { NotificationContext } from "../context/notificationContext";
 import { Notification } from "../components/nitification";
+import { MageneEvents } from "../pages/manegeEventsPage";
 export const App = () => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const [events, setEvents] = useState(null);
@@ -46,8 +47,8 @@ export const App = () => {
           setCurrentMessage(mess.toString().split(":").pop());
           isError(true);
         } else {
-          setMessage(mess.toString().split(":").pop());
-          setCurrentMessage(mess.toString().split(":").pop());
+          setMessage(mess.toString());
+          setCurrentMessage(mess.toString());
           isError(false);
         }
 
@@ -95,6 +96,7 @@ export const App = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="*" element={<UnfoundPage />} />
             <Route path="/createEvent" element={<CreateEventPage />} />
+            <Route path="/manageEvents" element={<MageneEvents />} />
           </Routes>
         </NotificationContext.Provider>
       </EventsContext.Provider>

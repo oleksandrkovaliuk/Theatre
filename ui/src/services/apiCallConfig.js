@@ -40,7 +40,8 @@ const postMethod = async (apiCallUrl, info = {}) => {
 };
 // Work with get methods
 export const getEvents = async () => getMethod("infoAboutEvents");
-
+export const infoAboutEventById = async ({ id }) =>
+  postMethod("infoAboutEventById", { id });
 // Work with post methods
 export const signInUser = async ({ username, email, password, role }) =>
   postMethod("signInNewUser", { username, email, password, role });

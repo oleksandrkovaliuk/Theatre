@@ -25,7 +25,7 @@ export const SecondSection = () => {
         {event
           ?.sort((a, b) => b.id - a.id)
           .map((item) => (
-            <EventCard eventInfoFromdb={item} />
+            <EventCard key={item.id} eventInfoFromdb={item} />
           ))}
       </div>
     </div>

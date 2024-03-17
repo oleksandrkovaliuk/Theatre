@@ -83,6 +83,25 @@ router.post("/createNewEvent", checkRole, (req, res) => {
   }
 });
 
+router.post("/infoAboutEventById", (req, res) => {
+  const { id } = req.body;
+  try {
+    if (id) {
+      db.query("SELECT * FROM events WHERE id=$1", [id], (err, dbRes) => {
+        if (err) {
+          return res
+            .status(401)
+            .json({ errorText: "failed with searching for event" });
+        }
+        return res.status(200).json({ eventInfo: dbRes.rows[0] });
+      });
+    }
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ errorText: "failed with getting data by id" });
+  }
+});
 // Work with autorisation
 const checkQuery = "SELECT * FROM users WHERE email = $1";
 router.post("/signInNewUser", (req, res) => {

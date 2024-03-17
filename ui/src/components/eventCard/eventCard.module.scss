@@ -8,6 +8,21 @@
   background-size: cover;
   border-radius: 20px;
   cursor: pointer;
+  .editButton {
+    position: absolute;
+    right: -10px;
+    top: -20px;
+    background-color: unset;
+    border: unset;
+    padding: 5px;
+    svg {
+      width: 30px;
+      height: 30px;
+      path {
+        fill: var(--color-red);
+      }
+    }
+  }
   .timeAndAgeTopBlock {
     position: absolute;
     top: 10px;
@@ -15,16 +30,25 @@
     display: flex;
     gap: 10px;
     align-items: center;
-    button {
+    button,
+    .changeDate {
       border: unset;
       border-radius: 11px;
       padding: 5px 8px;
       font-size: var(--font-SfMedium);
       font-size: 14px;
     }
-    .eventStarting {
+    .eventStarting,
+    .changeDate {
       background-color: var(--color-red);
       color: var(--color-white);
+    }
+    .changeDate {
+      max-width: 100px;
+      border-radius: 2px;
+      &::placeholder {
+        color: var(--color-white);
+      }
     }
     .age {
       background-color: var(--color-white);

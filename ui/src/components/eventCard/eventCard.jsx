@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import s from "./eventCard.module.scss";
 import { formatTime } from "../../services/formatTime";
 import { EditStick } from "../../icons/edit";
-import { useContext } from "react";
 import { NotificationContext } from "../../context/notificationContext";
 import { infoAboutEventById } from "../../services/apiCallConfig";
 import { CloseBold } from "../../icons/close";

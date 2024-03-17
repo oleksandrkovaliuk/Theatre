@@ -6,169 +6,170 @@
   max-width: 1000px;
   margin: auto;
   gap: 40px;
-  .formToCreateEvent {
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    .submitChanges {
-      position: fixed;
-      left: 0;
-      right: 0;
-      padding: 10px 15px;
-      max-width: 500px;
-      margin: auto;
-      width: 100%;
-      background-color: var(--color-red);
-      border-radius: 8px;
-      border: unset;
-      border: 2px solid var(--color-red);
+}
 
-      transition: all 0.7s ease-in-out;
-      a {
+.formToCreateEvent {
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  .submitChanges {
+    position: fixed;
+    left: 0;
+    right: 0;
+    padding: 10px 15px;
+    max-width: 500px;
+    margin: auto;
+    width: 100%;
+    background-color: var(--color-red);
+    border-radius: 8px;
+    border: unset;
+    border: 2px solid var(--color-red);
+
+    transition: all 0.7s ease-in-out;
+    a {
+      color: var(--color-white);
+      font-family: var(--font-SfMedium);
+      font-size: 17px;
+      letter-spacing: 0.6px;
+      text-decoration: unset;
+    }
+    &:hover {
+      border: 2px solid var(--color-red);
+      background-color: transparent;
+      color: var(--color-red);
+    }
+  }
+  .creatingTool {
+    background-color: var(--color-bglightgray);
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 5.817px 11.763px 58.813px 0px rgba(199, 199, 199, 0.6);
+    margin-bottom: 10px;
+    .title {
+      color: var(--color-title);
+      font-family: var(--font-SfMedium);
+      font-size: 25px;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    .inputsWrap {
+      position: relative;
+      max-width: 400px;
+      .notes {
+        color: var(--color-red);
+
+        font-family: var(--font-SfRegular);
+        font-size: 13px;
+        text-align: left;
+        margin-top: 5px;
+
+        b {
+          text-transform: uppercase;
+        }
+      }
+      &:not(:last-child) {
+        margin-bottom: 30px;
+      }
+      .discTextArea {
+        padding: 8px 10px;
+        background-color: transparent;
+        border-radius: 4px;
+        border: unset;
+        border: 2px solid var(--color-title);
+        width: unset;
+        width: 100%;
+        resize: none;
+        min-height: 150px;
+
+        color: var(--color-title);
+        font-family: var(--font-SfMedium);
+        font-size: 17px;
+        letter-spacing: 0.6px;
+      }
+      .discLabel {
+        top: 10px;
+        left: 10px;
+        background-color: var(--color-bglightgray);
+        border-radius: 5px;
+        transition: all 0.2s ease-in-out;
+      }
+      .discTextArea:active + .discLabel,
+      .discTextArea:focus + .discLabel,
+      .discTextArea:not(:placeholder-shown) + .discLabel {
+        color: var(--color-red);
+        transform: translateY(-18px);
+        font-size: 14px;
+        padding-inline: 3px;
+      }
+      .eventInfoInput {
+        padding: 8px 10px;
+        background-color: transparent;
+        border: unset;
+        border-bottom: 2px solid var(--color-title);
+        width: 100%;
+
+        color: var(--color-title);
+        font-family: var(--font-SfMedium);
+        font-size: 17px;
+        letter-spacing: 0.6px;
+      }
+      .eventInfoLabel,
+      .discLabel {
+        position: absolute;
+
+        color: var(--color-title);
+        font-family: var(--font-SfMedium);
+        font-size: 17px;
+        letter-spacing: 0.6px;
+
+        transition: all 0.5s ease;
+        pointer-events: none;
+      }
+      .eventInfoLabel {
+        left: 10px;
+        top: 8px;
+      }
+      .eventInfoInput:active,
+      .discTextArea:active,
+      .eventInfoInput:focus,
+      .discTextArea:focus,
+      .eventInfoInput:not(:placeholder-shown),
+      .discTextArea:not(:placeholder-shown) {
+        outline: none;
+      }
+      .eventInfoInput:active + .eventInfoLabel,
+      .eventInfoInput:focus + .eventInfoLabel,
+      .eventInfoInput:not(:placeholder-shown) + .eventInfoLabel {
+        //   display: none;
+        color: var(--color-red);
+        transform: translateY(-23px);
+        font-size: 14px;
+        left: 2px;
+      }
+    }
+    .uploadImgWrap {
+      position: relative;
+      input[type="file"] {
+        display: none;
+      }
+      .uploadingImgBtn {
+        display: flex;
+        justify-content: center;
+        padding: 8px 10px;
+        background-color: var(--color-title);
+        border-radius: 8px;
+        border: 2px solid var(--color-title);
+
         color: var(--color-white);
         font-family: var(--font-SfMedium);
         font-size: 17px;
         letter-spacing: 0.6px;
-        text-decoration: unset;
-      }
-      &:hover {
-        border: 2px solid var(--color-red);
-        background-color: transparent;
-        color: var(--color-red);
-      }
-    }
-    .creatingTool {
-      background-color: var(--color-bglightgray);
-      padding: 10px 20px;
-      border-radius: 20px;
-      box-shadow: 5.817px 11.763px 58.813px 0px rgba(199, 199, 199, 0.6);
-      margin-bottom: 10px;
-      .title {
-        color: var(--color-title);
-        font-family: var(--font-SfMedium);
-        font-size: 25px;
-        text-align: left;
-        margin-bottom: 20px;
-      }
-      .inputsWrap {
-        position: relative;
-        max-width: 400px;
-        .notes {
-          color: var(--color-red);
-
-          font-family: var(--font-SfRegular);
-          font-size: 13px;
-          text-align: left;
-          margin-top: 5px;
-
-          b {
-            text-transform: uppercase;
-          }
-        }
-        &:not(:last-child) {
-          margin-bottom: 30px;
-        }
-        .discTextArea {
-          padding: 8px 10px;
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+        &:hover {
+          border: 2px solid var(--color-red);
           background-color: transparent;
-          border-radius: 4px;
-          border: unset;
-          border: 2px solid var(--color-title);
-          width: unset;
-          width: 100%;
-          resize: none;
-          min-height: 150px;
-
-          color: var(--color-title);
-          font-family: var(--font-SfMedium);
-          font-size: 17px;
-          letter-spacing: 0.6px;
-        }
-        .discLabel {
-          top: 10px;
-          left: 10px;
-          background-color: var(--color-bglightgray);
-          border-radius: 5px;
-          transition: all 0.2s ease-in-out;
-        }
-        .discTextArea:active + .discLabel,
-        .discTextArea:focus + .discLabel,
-        .discTextArea:not(:placeholder-shown) + .discLabel {
           color: var(--color-red);
-          transform: translateY(-18px);
-          font-size: 14px;
-          padding-inline: 3px;
-        }
-        .eventInfoInput {
-          padding: 8px 10px;
-          background-color: transparent;
-          border: unset;
-          border-bottom: 2px solid var(--color-title);
-          width: 100%;
-
-          color: var(--color-title);
-          font-family: var(--font-SfMedium);
-          font-size: 17px;
-          letter-spacing: 0.6px;
-        }
-        .eventInfoLabel,
-        .discLabel {
-          position: absolute;
-
-          color: var(--color-title);
-          font-family: var(--font-SfMedium);
-          font-size: 17px;
-          letter-spacing: 0.6px;
-
-          transition: all 0.5s ease;
-          pointer-events: none;
-        }
-        .eventInfoLabel {
-          left: 10px;
-          top: 8px;
-        }
-        .eventInfoInput:active,
-        .discTextArea:active,
-        .eventInfoInput:focus,
-        .discTextArea:focus,
-        .eventInfoInput:not(:placeholder-shown),
-        .discTextArea:not(:placeholder-shown) {
-          outline: none;
-        }
-        .eventInfoInput:active + .eventInfoLabel,
-        .eventInfoInput:focus + .eventInfoLabel,
-        .eventInfoInput:not(:placeholder-shown) + .eventInfoLabel {
-          //   display: none;
-          color: var(--color-red);
-          transform: translateY(-23px);
-          font-size: 14px;
-          left: 2px;
-        }
-      }
-      .uploadImgWrap {
-        position: relative;
-        input[type="file"] {
-          display: none;
-        }
-        .uploadingImgBtn {
-          display: flex;
-          justify-content: center;
-          padding: 8px 10px;
-          background-color: var(--color-title);
-          border-radius: 8px;
-          border: 2px solid var(--color-title);
-
-          color: var(--color-white);
-          font-family: var(--font-SfMedium);
-          font-size: 17px;
-          letter-spacing: 0.6px;
-          transition: all 0.3s ease-in-out;
-          cursor: pointer;
-          &:hover {
-            border: 2px solid var(--color-red);
-            background-color: transparent;
-            color: var(--color-red);
-          }
         }
       }
     }

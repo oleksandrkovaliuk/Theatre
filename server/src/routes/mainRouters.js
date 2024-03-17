@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../database");
 const jwt = require("jsonwebtoken");
+const { USER_ROLE } = require("../enums");
 
 const parsToken = (token) => token?.replace("Bearer", "")?.replace(" ", "");
 
@@ -25,7 +26,7 @@ const checkRole = (req, res, next) => {
             .status(401)
             .json({ errorText: "failed with checking role in users data" });
         }
-        if (dbRes.rows[0].role === "admin") {
+        if (dbRes.rows[0].role === USER_ROLE.ADMIN) {
           next();
         } else {
           return res.status(401).json({ errorText: "this user is not admin" });

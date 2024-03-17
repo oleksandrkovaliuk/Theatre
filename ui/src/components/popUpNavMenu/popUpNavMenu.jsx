@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import classNames from "classnames";
 import m from "./popUpNavMenu.module.scss";
 import { userContext } from "../../context/userInfoContext";
-import { CrownIcon } from "../../icons/crownIcon";
+import { USER_ROLE } from "../../shared/enums";
 export const PopUpMenu = ({
   data,
   top,
@@ -20,10 +20,11 @@ export const PopUpMenu = ({
     [m.show]: showMenu,
   });
   useEffect(() => {
-    if (location.pathname.length >= 0) {
+    if (location.pathname.length >= 1) {
       closeMenu();
     }
-  }, [location]);
+  }, [closeMenu, location]);
+
   useEffect(() => {
     const body = document.body;
     if (showMenu) {
@@ -41,7 +42,7 @@ export const PopUpMenu = ({
         body.classList.remove("disable-scroll-page");
       }
     };
-  }, [showMenu]);
+  }, [showMenu, top]);
 
   return (
     <>
@@ -61,7 +62,7 @@ export const PopUpMenu = ({
             <div className={m.userInfo}>
               <span>Account Info</span>
               <p>
-                {user?.role === "admin" && "admin"}
+                {user?.role === USER_ROLE.ADMIN && "admin"}
                 <span>/</span>
                 {user?.username}
               </p>

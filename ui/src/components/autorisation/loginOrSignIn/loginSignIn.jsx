@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
-import { NavLink, useLocation, useSearchParams } from "react-router-dom";
+import React, { useCallback, useContext, useState } from "react";
+import { USER_ROLE } from "../../../shared/enums";
+import { NavLink } from "react-router-dom";
 import { AutorisationMenu } from "../autorisation";
 import { userContext } from "../../../context/userInfoContext";
 import { PopUpMenu } from "../../popUpNavMenu";
@@ -18,7 +19,7 @@ export const LogInSignIn = () => {
   const { user, setUserInfo } = useContext(userContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const navMenuData =
-    user?.role === process.env.REACT_APP_ADMIN ? adminDataList : userDataList;
+    user?.role === USER_ROLE.ADMIN ? adminDataList : userDataList;
 
   const [openSignIn, setOpenSignIn] = useState(false);
   const [autorisationMenu, setAutorisationMenu] = useState(false);
@@ -48,10 +49,11 @@ export const LogInSignIn = () => {
     setNavMenu(true);
   };
 
-  const closeNavMenu = () => {
+  const closeNavMenu = useCallback(() => {
     setNavMenu(false);
     setPosForNavMenu(null);
-  };
+  }, []);
+
   const logOutUser = () => {
     setUserInfo(null);
     setNotificationMessage("succesfully logout");

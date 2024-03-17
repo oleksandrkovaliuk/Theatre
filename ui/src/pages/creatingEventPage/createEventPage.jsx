@@ -25,10 +25,13 @@ import {
 import { formatTime } from "../../services/formatTime";
 import { creatingEvent } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { validationOnImgType } from "../../services/validateImgType";
 export const CreateEventPage = () => {
+  const navigate = useNavigate();
+
   const { setNotificationMessage } = useContext(NotificationContext);
+
   const [
     { checkAllField, eventName, eventDisc, eventDate, eventAge, eventImg },
     dispathAction,
@@ -119,7 +122,9 @@ export const CreateEventPage = () => {
         eventAge: eventAge,
         eventImg: eventImg,
       });
+      // setCommingEvents();
       setNotificationMessage(res.succesfull);
+      navigate("/");
     } catch (error) {
       setNotificationMessage(error);
     }
@@ -144,7 +149,14 @@ export const CreateEventPage = () => {
         });
       });
     }
-  }, [eventName, eventDisc, eventDate, eventAge, eventImg]);
+  }, [eventName, eventDisc, eventDate, eventAge, eventImg, pathToDefaulImg]);
+
+  const isDisabledSubmitBtn =
+    checkAllField.checkNameField &&
+    checkAllField.checkDiscField &&
+    checkAllField.checkDateField &&
+    checkAllField.checkAgeField &&
+    checkAllField.checkImgUploaded;
 
   return (
     <div className={c.createEventSection}>
@@ -183,7 +195,7 @@ export const CreateEventPage = () => {
           <div className={c.inputsWrap}>
             <input
               placeholder=" "
-              type="text"
+              type="datetime-local"
               id="eventDate"
               name="eventDate"
               className={c.eventInfoInput}
@@ -228,25 +240,18 @@ export const CreateEventPage = () => {
                 name="uploadingimgEvent"
                 className={c.eventInfoInput}
                 onChange={uploadEventImg}
-              ></input>
+              />
               Upload img for your event
             </label>
           </div>
         </div>
         <button
-          style={
-            checkAllField.checkNameField &&
-            checkAllField.checkDiscField &&
-            checkAllField.checkDateField &&
-            checkAllField.checkAgeField &&
-            checkAllField.checkImgUploaded
-              ? { bottom: "5%" }
-              : { bottom: "-100%" }
-          }
+          disabled={!isDisabledSubmitBtn}
+          style={isDisabledSubmitBtn ? { bottom: "5%" } : { bottom: "-100%" }}
           className={c.submitChanges}
           onClick={submitCreatingEvent}
         >
-          <NavLink to={"/"}> Create new event</NavLink>
+          Create new event
         </button>
       </form>
       <div className={c.previewView}>

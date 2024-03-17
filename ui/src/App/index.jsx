@@ -16,80 +16,47 @@ import { CreateEventPage } from "../pages/creatingEventPage";
 import { NotificationContext } from "../context/notificationContext";
 import { Notification } from "../components/nitification";
 import { MageneEvents } from "../pages/manegeEventsPage";
+import { NotificationProvider } from "../context/NotificationProvider";
 export const App = () => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const [events, setEvents] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [currentMassage, setCurrentMessage] = useState(null);
-  const [error, isError] = useState(false);
+
   // User info
   const userContextValue = useMemo(() => {
-    return { user: userInfo, setUserInfo: (info) => setUserInfo(info) };
+    return { user: userInfo, setUserInfo };
   }, [userInfo]);
   // Events info
   const eventsContextValue = useMemo(
     () => ({
-      event: events,
-      setCommingEvents: (data) => setEvents(data),
+      events,
+      setCommingEvents: setEvents,
     }),
     [events]
   );
 
-  const messageValue = useMemo(() => {
-    return {
-      messageError: error,
-      currentMessage: currentMassage,
-      notificationMessage: message,
-      setNotificationMessage: (mess) => {
-        if (mess.toString().includes("Error")) {
-          setMessage(mess.toString().split(":").pop());
-          setCurrentMessage(mess.toString().split(":").pop());
-          isError(true);
-        } else {
-          setMessage(mess.toString());
-          setCurrentMessage(mess.toString());
-          isError(false);
-        }
-
-        if (mess) {
-          setTimeout(() => {
-            setMessage(null);
-          }, 5000);
-        }
-      },
-    };
-  }, [message]);
-
-  // Working with events
-  const fetchEvents = useCallback(async () => {
+  const getAllData = useCallback(async () => {
     try {
-      const res = await getEvents();
-      setEvents(res.events);
+      const [userRes, eventsRes] = await Promise.all([
+        checkUserLoginned(),
+        getEvents(),
+      ]);
+
+      setUserInfo(userRes.user);
+      setEvents(eventsRes.events);
     } catch (error) {
       setNotificationMessage(error);
     }
-  }, []);
-  // Working with user info
-  const getUserInfo = useCallback(async () => {
-    try {
-      const res = await checkUserLoginned();
-      setUserInfo(res.user);
-    } catch (error) {
-      setNotificationMessage(error);
-    }
-  }, []);
+  }, [setNotificationMessage]);
+
   useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
-  // on page loading
-  useEffect(() => {
-    getUserInfo();
-  }, [getUserInfo]);
+    getAllData();
+  }, [getAllData]);
+
   return (
     <userContext.Provider value={userContextValue}>
       <EventsContext.Provider value={eventsContextValue}>
-        <NotificationContext.Provider value={messageValue}>
+        <NotificationProvider>
           <Notification />
           <Header />
           <Routes>
@@ -98,7 +65,7 @@ export const App = () => {
             <Route path="/createEvent" element={<CreateEventPage />} />
             <Route path="/manageEvents" element={<MageneEvents />} />
           </Routes>
-        </NotificationContext.Provider>
+        </NotificationProvider>
       </EventsContext.Provider>
     </userContext.Provider>
   );

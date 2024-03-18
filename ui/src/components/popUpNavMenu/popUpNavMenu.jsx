@@ -20,7 +20,11 @@ export const PopUpMenu = ({
     [m.show]: showMenu,
   });
   useEffect(() => {
-    if (location.pathname.length >= 1) {
+    if (
+      (location.pathname !== "/" && showMenu) ||
+      (location.pathname === "/" && showMenu)
+    ) {
+      console.log("hello");
       closeMenu();
     }
   }, [closeMenu, location]);

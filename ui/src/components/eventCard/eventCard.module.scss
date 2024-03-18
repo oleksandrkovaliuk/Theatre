@@ -8,142 +8,142 @@
   background-size: cover;
   border-radius: 20px;
   cursor: pointer;
-  .editButton {
-    position: absolute;
-    right: -10px;
-    top: -20px;
-    background-color: unset;
-    border: unset;
-    padding: 5px;
-    svg {
-      width: 30px;
-      height: 30px;
-      path {
-        fill: var(--color-red);
-      }
-    }
-  }
-  .uploadImg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: unset;
-    border: 2px solid transparent;
-    border-radius: 11px;
-    padding: 5px;
-    transition: all 0.3s ease-in-out;
-    &:hover {
-      border: 2px solid var(--color-red);
-      svg {
-        path {
-          fill: var(--color-red);
-        }
-      }
-    }
-    svg {
-      width: 40px;
-      height: 40px;
-      path {
-        fill: var(--color-white);
-      }
-    }
-    input[type="file"] {
-      display: none;
-    }
-  }
   input:active,
   input:focus,
   input:not(:placeholder-shown) {
     outline: none;
   }
-  .timeAndAgeTopBlock {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    button,
-    .changeDate,
-    .changeAge {
-      border: unset;
-      border-radius: 11px;
-      padding: 5px 8px;
-      font-size: var(--font-SfMedium);
-      font-size: 14px;
+}
+.editButton {
+  position: absolute;
+  right: -10px;
+  top: -20px;
+  background-color: unset;
+  border: unset;
+  padding: 5px;
+  svg {
+    width: 30px;
+    height: 30px;
+    path {
+      fill: var(--color-red);
     }
-    .eventStarting,
-    .changeDate {
-      background-color: var(--color-red);
-      color: var(--color-white);
-    }
-    .changeDate {
-      max-width: 100px;
-      border-radius: 2px;
-      &::placeholder {
-        color: var(--color-white);
-      }
-    }
-    .age,
-    .changeAge {
-      background-color: var(--color-white);
-      color: var(--color-title);
-    }
-    .changeAge {
-      max-width: 40px;
-      border-radius: 2px;
-      &::placeholder {
-        color: var(--color-title);
+  }
+}
+.uploadImg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: unset;
+  border: 2px solid transparent;
+  border-radius: 11px;
+  padding: 5px;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    border: 2px solid var(--color-red);
+    svg {
+      path {
+        fill: var(--color-red);
       }
     }
   }
-  .eventNameAndDisc {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    max-width: 300px;
-    text-align: left;
-    overflow: hidden;
-    .textbg {
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.1),
-        rgba(255, 255, 255, 0)
-      );
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      width: 300px;
-      position: absolute;
-      border-radius: 15px;
+  svg {
+    width: 40px;
+    height: 40px;
+    path {
+      fill: var(--color-white);
     }
-    .text {
-      position: relative;
-      padding-inline: 10px;
-      padding-block: 5px;
-      .changeName,
-      .changeDisc {
-        border: unset;
-        border-bottom: 2px solid var(--color-red);
-        background-color: unset;
-        padding: 4px;
-        border-radius: 3px;
-      }
-      h2,
-      .changeName,
-      .changeName::placeholder {
-        color: var(--color-white);
-        font-family: var(--font-SfMedium);
-        font-size: 20px;
-        margin-bottom: 10px;
-      }
-      p,
-      .changeDisc,
-      .changeDisc::placeholder {
-        color: var(--color-white);
-        font-family: var(--font-SfRegular);
-        font-size: 12px;
-      }
+  }
+  input[type="file"] {
+    display: none;
+  }
+}
+.timeAndAgeTopBlock {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  button,
+  .changeDate,
+  .changeAge {
+    border: unset;
+    border-radius: 11px;
+    padding: 5px 8px;
+    font-size: var(--font-SfMedium);
+    font-size: 14px;
+  }
+  .eventStarting,
+  .changeDate {
+    background-color: var(--color-red);
+    color: var(--color-white);
+  }
+  .changeDate {
+    max-width: 200px;
+    border-radius: 2px;
+    &::placeholder {
+      color: var(--color-white);
+    }
+  }
+  .age,
+  .changeAge {
+    background-color: var(--color-white);
+    color: var(--color-title);
+  }
+  .changeAge {
+    max-width: 40px;
+    border-radius: 2px;
+    &::placeholder {
+      color: var(--color-title);
+    }
+  }
+}
+.eventNameAndDisc {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  max-width: 300px;
+  text-align: left;
+  overflow: hidden;
+  .textbg {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0)
+    );
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    width: 300px;
+    position: absolute;
+    border-radius: 15px;
+  }
+  .text {
+    position: relative;
+    padding-inline: 10px;
+    padding-block: 5px;
+    .changeName,
+    .changeDisc {
+      border: unset;
+      border-bottom: 2px solid var(--color-red);
+      background-color: unset;
+      padding: 4px;
+      border-radius: 3px;
+    }
+    h2,
+    .changeName,
+    .changeName::placeholder {
+      color: var(--color-white);
+      font-family: var(--font-SfMedium);
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    p,
+    .changeDisc,
+    .changeDisc::placeholder {
+      color: var(--color-white);
+      font-family: var(--font-SfRegular);
+      font-size: 12px;
     }
   }
 }

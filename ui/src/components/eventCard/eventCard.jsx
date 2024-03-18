@@ -6,6 +6,7 @@ import { NotificationContext } from "../../context/notificationContext";
 import { infoAboutEventById } from "../../services/apiCallConfig";
 import { CloseBold } from "../../icons/close";
 import { Download } from "../../icons/download";
+import { EventsContext } from "../../context/eventsContext";
 
 export const EventCard = ({
   eventInfoFromdb,
@@ -17,18 +18,17 @@ export const EventCard = ({
   editAble,
   itemId,
 }) => {
+  const { events } = useContext(EventsContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const ref = useRef(null);
   const [stylesForBg, setStylesForBg] = useState({});
-  const [editAbleCardInfo, setEditAbleCardInfo] = useState({});
+  const [editAbleCardInfo, setEditAbleCardInfo] = useState(null);
   const [transformCardInEditMode, setTransformCardInEditMode] = useState(false);
   const getInfoAboutClickedEvent = async (event) => {
     const currentCardId = event.currentTarget.closest("div").getAttribute("id");
     try {
       if (currentCardId) {
         if (!transformCardInEditMode) {
-          const res = await infoAboutEventById({ id: currentCardId });
-          setEditAbleCardInfo(res.eventInfo);
           setTransformCardInEditMode(true);
         } else {
           setTransformCardInEditMode(false);
@@ -43,7 +43,7 @@ export const EventCard = ({
     if (inputName === "itemDate") {
       console.log(inputValue);
       if (formatTime(inputValue) !== "invalid date" && inputValue.length) {
-        setEditAbleCardInfo({ startingtime: inputValue });
+        // setEditAbleCardInfo({ startingtime: inputValue });
       } else {
         setNotificationMessage(`please follow example YYYY-MM-DD HH:MIN`);
       }
@@ -82,8 +82,8 @@ export const EventCard = ({
       <div className={s.timeAndAgeTopBlock}>
         {transformCardInEditMode ? (
           <input
-            placeholder={formatTime(editAbleCardInfo.startingtime)}
-            type="text"
+            placeholder={formatTime(eventInfoFromdb.startingtime)}
+            type="datetime-local"
             id="itemDate"
             name="itemDate"
             className={s.changeDate}
@@ -98,7 +98,7 @@ export const EventCard = ({
         )}
         {transformCardInEditMode ? (
           <input
-            placeholder={editAbleCardInfo.age}
+            placeholder={eventInfoFromdb.age}
             type="text"
             id="itemAge"
             name="itemAge"
@@ -122,7 +122,7 @@ export const EventCard = ({
         <div ref={ref} className={s.text}>
           {transformCardInEditMode ? (
             <input
-              placeholder={editAbleCardInfo.name}
+              placeholder={eventInfoFromdb.name}
               type="text"
               id="itemName"
               name="itemName"
@@ -134,11 +134,11 @@ export const EventCard = ({
           )}
           {transformCardInEditMode ? (
             <input
-              placeholder={editAbleCardInfo.disc}
+              placeholder={eventInfoFromdb.disc}
               type="text"
               id="itemDisc"
               name="itemDisc"
-              className={s.changeName}
+              className={s.changeDisc}
               onChange={(event) => updateInfoAboutEvent(event, "itemDisc")}
             />
           ) : (

@@ -52,7 +52,6 @@ export const App = () => {
   useEffect(() => {
     getAllData();
   }, [getAllData]);
-
   return (
     <userContext.Provider value={userContextValue}>
       <EventsContext.Provider value={eventsContextValue}>

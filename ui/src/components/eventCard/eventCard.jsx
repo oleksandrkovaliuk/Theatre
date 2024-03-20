@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+  useReducer,
+} from "react";
 import s from "./eventCard.module.scss";
 import { formatTime } from "../../services/formatTime";
 import { EditStick } from "../../icons/edit";
@@ -7,7 +13,8 @@ import { infoAboutEventById } from "../../services/apiCallConfig";
 import { CloseBold } from "../../icons/close";
 import { Download } from "../../icons/download";
 import { EventsContext } from "../../context/eventsContext";
-
+import { InitState, reducer } from "./reducer/reduce";
+import { setChangedEvent } from "./reducer/action";
 export const EventCard = ({
   eventInfoFromdb,
   eventInfoAge,
@@ -18,17 +25,36 @@ export const EventCard = ({
   editAble,
   itemId,
 }) => {
+  const [{ changedEvents }, dispathAction] = useReducer(reducer, InitState);
   const { events } = useContext(EventsContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const ref = useRef(null);
   const [stylesForBg, setStylesForBg] = useState({});
-  const [editAbleCardInfo, setEditAbleCardInfo] = useState(null);
   const [transformCardInEditMode, setTransformCardInEditMode] = useState(false);
   const getInfoAboutClickedEvent = async (event) => {
-    const currentCardId = event.currentTarget.closest("div").getAttribute("id");
     try {
-      if (currentCardId) {
+      if (itemId) {
         if (!transformCardInEditMode) {
+          dispathAction(
+            setChangedEvent({ id: itemId, name: eventInfoFromdb.name })
+          );
+          // if (!transformCardInEditMode) {
+          //   if (!changedEvents.length) {
+          //     dispathAction(
+          //       setChangedEvent(
+          //         changedEvents?.push({ name: eventInfoFromdb.name, id: itemId })
+          //       )
+          //     );
+          //   }
+          //   if (changedEvents.length && !item) {
+          //     dispathAction(
+          //       setChangedEvent(
+          //         changedEvents?.push({ name: eventInfoFromdb.name, id: itemId })
+          //       )
+          //     );
+          //   } else {
+          //     dispathAction(setChangedEvent({ ...item, hui: "hui" }));
+          //   }
           setTransformCardInEditMode(true);
         } else {
           setTransformCardInEditMode(false);
@@ -40,15 +66,24 @@ export const EventCard = ({
   };
   const updateInfoAboutEvent = (event, inputName) => {
     const inputValue = event.currentTarget.value;
+    const f = changedEvents.find((item) => item.name === eventInfoFromdb.name);
     if (inputName === "itemDate") {
       console.log(inputValue);
       if (formatTime(inputValue) !== "invalid date" && inputValue.length) {
-        // setEditAbleCardInfo({ startingtime: inputValue });
+        dispathAction(
+          setChangedEvent({
+            id: itemId,
+            name: eventInfoFromdb.name,
+            time: inputValue,
+          })
+        );
+        console.log(changedEvents, "events");
       } else {
         setNotificationMessage(`please follow example YYYY-MM-DD HH:MIN`);
       }
     }
   };
+  console.log(changedEvents, "events");
   useEffect(() => {
     if (ref.current) {
       setStylesForBg({
@@ -63,7 +98,12 @@ export const EventCard = ({
         backgroundImage: `url(${
           eventInfoFromdb ? eventInfoFromdb?.imgurl : eventUrlImg
         })`,
-        border: transformCardInEditMode ? "2px solid var(--color-red)" : "none",
+        border: transformCardInEditMode
+          ? "2px solid var(--color-red)"
+          : "2px solid transparent",
+        transform: transformCardInEditMode
+          ? "translateY(-30px)"
+          : "translateY(0px)",
       }}
       id={itemId}
       className={s.eventCard}

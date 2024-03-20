@@ -7,12 +7,35 @@
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: 20px;
+  transition: all 0.4s ease-in-out;
   cursor: pointer;
   input:active,
   input:focus,
   input:not(:placeholder-shown) {
     outline: none;
   }
+  // .saveChanges {
+  //   position: absolute;
+  //   bottom: -10%;
+  //   left: 50%;
+  //   transform: translateX(-50%);
+  //   padding: 4px;
+  //   background-color: var(--color-red);
+  //   border: unset;
+  //   border: 2px solid var(--color-red);
+  //   color: var(--color-white);
+  //   border-radius: 8px;
+
+  //   font-family: var(--font-SfMedium);
+  //   font-size: 17px;
+  //   letter-spacing: 0.6px;
+  //   text-decoration: unset;
+  //   transition: all 0.3s ease-in-out;
+  //   &:hover {
+  //     background-color: transparent;
+  //     color: var(--color-red);
+  //   }
+  // }
 }
 .editButton {
   position: absolute;

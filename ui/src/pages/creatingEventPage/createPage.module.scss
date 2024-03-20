@@ -25,14 +25,13 @@
     border: unset;
     border: 2px solid var(--color-red);
 
+    color: var(--color-white);
+    font-family: var(--font-SfMedium);
+    font-size: 17px;
+    letter-spacing: 0.6px;
+    text-decoration: unset;
+
     transition: all 0.7s ease-in-out;
-    a {
-      color: var(--color-white);
-      font-family: var(--font-SfMedium);
-      font-size: 17px;
-      letter-spacing: 0.6px;
-      text-decoration: unset;
-    }
     &:hover {
       border: 2px solid var(--color-red);
       background-color: transparent;

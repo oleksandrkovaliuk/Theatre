@@ -41,7 +41,6 @@ export const App = () => {
         checkUserLoginned(),
         getEvents(),
       ]);
-
       setUserInfo(userRes.user);
       setEvents(eventsRes.events);
     } catch (error) {

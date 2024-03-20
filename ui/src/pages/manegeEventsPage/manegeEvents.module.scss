@@ -11,8 +11,8 @@
   .eventsEditable {
     display: flex;
     align-items: center;
-    gap: 40px;
-    overflow: auto;
+    gap: 20px;
+    flex-wrap: wrap;
     padding-block: 20px;
     &::-webkit-scrollbar {
       height: 6px;

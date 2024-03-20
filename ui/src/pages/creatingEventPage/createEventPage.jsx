@@ -31,7 +31,6 @@ export const CreateEventPage = () => {
   const navigate = useNavigate();
 
   const { setNotificationMessage } = useContext(NotificationContext);
-
   const [
     { checkAllField, eventName, eventDisc, eventDate, eventAge, eventImg },
     dispathAction,
@@ -123,6 +122,7 @@ export const CreateEventPage = () => {
         eventImg: eventImg,
       });
       // setCommingEvents();
+
       setNotificationMessage(res.succesfull);
       navigate("/");
     } catch (error) {

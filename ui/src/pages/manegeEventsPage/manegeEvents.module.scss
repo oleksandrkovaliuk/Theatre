@@ -1,3 +1,30 @@
+.submitAllChanges {
+  position: fixed;
+  left: 0;
+  right: 0;
+  padding: 10px 15px;
+  max-width: 500px;
+  margin: auto;
+  width: 100%;
+  background-color: var(--color-red);
+  border-radius: 9px;
+  border: unset;
+  border: 2px solid var(--color-red);
+  z-index: 5;
+
+  color: var(--color-white);
+  font-family: var(--font-SfMedium);
+  font-size: 17px;
+  letter-spacing: 0.6px;
+  text-decoration: unset;
+
+  transition: all 0.9s ease-in-out;
+  &:hover {
+    border: 2px solid var(--color-red);
+    background-color: transparent;
+    color: var(--color-red);
+  }
+}
 .manegeEvents_page {
   padding-inline: 50px;
   padding-top: 100px;

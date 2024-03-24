@@ -4,6 +4,8 @@ const db = require("../../database");
 const jwt = require("jsonwebtoken");
 const { USER_ROLE } = require("../enums");
 
+const updatingEventsQuery =
+  "UPDATE events SET name = $1 ,  disc = $2 , startingtime = $4 , age = $5 , imgurl = $6 WHERE id = $3";
 const parsToken = (token) => token?.replace("Bearer", "")?.replace(" ", "");
 
 const checkAuth = (req, res, next) => {
@@ -84,23 +86,87 @@ router.post("/createNewEvent", checkRole, (req, res) => {
   }
 });
 
-router.post("/infoAboutEventById", (req, res) => {
-  const { id } = req.body;
-  try {
-    if (id) {
-      db.query("SELECT * FROM events WHERE id=$1", [id], (err, dbRes) => {
+router.post("/callForChangeSingleEvent", checkRole, (req, res) => {
+  const { id, currentDate, currentAge, currentName, currentDisc, currentImg } =
+    req.body;
+  console.log(currentImg);
+  if (
+    id &&
+    currentDate &&
+    currentAge &&
+    currentName &&
+    currentDisc &&
+    currentImg
+  ) {
+    console.log(id, currentDate, currentAge, currentName, currentDisc, "info");
+    db.query(
+      updatingEventsQuery,
+      [currentName, currentDisc, id, currentDate, currentAge, currentImg],
+      (err, dbRes) => {
         if (err) {
           return res
             .status(401)
-            .json({ errorText: "failed with searching for event" });
+            .json({ errorText: "Failed with updating data into events db" });
+        } else {
+          return res.status(200).json({
+            text: "your events succesfully changed",
+          });
         }
-        return res.status(200).json({ eventInfo: dbRes.rows[0] });
+      }
+    );
+  } else {
+    return res
+      .status(401)
+      .json({ errorText: "wrong upcoming info about event" });
+  }
+});
+
+router.post("/callForChangeMultipleEvents", checkRole, async (req, res) => {
+  const { dataWithChangedEvents } = req.body;
+  try {
+    if (dataWithChangedEvents.length) {
+      await dataWithChangedEvents.forEach((item) => {
+        db.query(
+          updatingEventsQuery,
+          [
+            item.currentName,
+            item.currentDisc,
+            item.id,
+            item.currentDate,
+            item.currentAge,
+          ],
+          (err) => {
+            if (err) {
+              console.log(err, "error");
+            } else {
+              console.log("succesfully changed");
+            }
+          }
+        );
+      });
+      Promise.all([dataWithChangedEvents]).then(() => {
+        return res.status(200).json({ text: "your events succesfully aded" });
       });
     }
   } catch (error) {
+    return res.status(401).json({ errorText: "failed with getting data" });
+  }
+});
+
+router.post("/callToDeleteEvent", checkRole, (req, res) => {
+  const { id } = req.body;
+  if (id) {
+    db.query("DELETE FROM events WHERE id = $1", [id], (err, dbRes) => {
+      if (err) {
+        res.status(401).json({ errorText: "Failed with deliting event" });
+      } else {
+        return res.status(200);
+      }
+    });
+  } else {
     return res
       .status(401)
-      .json({ errorText: "failed with getting data by id" });
+      .json({ errorText: "failed with getting info about event to delete" });
   }
 });
 // Work with autorisation

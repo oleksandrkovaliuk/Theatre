@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from "react";
 import { USER_ROLE } from "../../../shared/enums";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AutorisationMenu } from "../autorisation";
 import { userContext } from "../../../context/userInfoContext";
 import { PopUpMenu } from "../../popUpNavMenu";
@@ -25,6 +25,7 @@ export const LogInSignIn = () => {
   const [autorisationMenu, setAutorisationMenu] = useState(false);
   const [navMenu, setNavMenu] = useState(false);
   const [posForNavMenu, setPosForNavMenu] = useState(null);
+  const navigate = useNavigate();
 
   const openLogInAutorisationMenu = () => {
     setAutorisationMenu(true);
@@ -58,6 +59,7 @@ export const LogInSignIn = () => {
     setUserInfo(null);
     setNotificationMessage("succesfully logout");
     localStorage.removeItem("user_jwt_token");
+    navigate("/");
   };
   return (
     <>

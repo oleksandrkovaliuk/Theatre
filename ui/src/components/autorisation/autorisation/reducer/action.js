@@ -28,10 +28,6 @@ export const getPassValue = (value) => ({
   type: Actions.GET_PASS,
   payload: value,
 });
-export const setError = (value) => ({
-  type: Actions.SET_ERROR,
-  payload: value,
-});
 export const checkPasswordOnUpperCase = (value) => ({
   type: Actions.CHECK_PASSWORD_ON_UPPERCASE,
   payload: value,

@@ -40,13 +40,15 @@ const postMethod = async (apiCallUrl, info = {}) => {
 };
 // Work with get methods
 export const getEvents = async () => getMethod("infoAboutEvents");
-export const infoAboutEventById = async ({ id }) =>
-  postMethod("infoAboutEventById", { id });
 // Work with post methods
+
+// Working with autorisation
 export const signInUser = async ({ username, email, password, role }) =>
   postMethod("signInNewUser", { username, email, password, role });
 export const logIn = async ({ email, password }) =>
   postMethod("logInUser", { email, password });
+
+// Working with modifying events (Admin side)
 export const checkUserLoginned = async () => postMethod("checkUserLoginned");
 export const creatingEvent = async ({
   eventName,
@@ -62,3 +64,24 @@ export const creatingEvent = async ({
     eventAge,
     eventImg,
   });
+export const callForChangeSingleEvent = ({
+  id,
+  currentDate,
+  currentAge,
+  currentName,
+  currentDisc,
+  currentImg,
+}) =>
+  postMethod("callForChangeSingleEvent", {
+    id,
+    currentDate,
+    currentAge,
+    currentName,
+    currentDisc,
+    currentImg,
+  });
+export const callForChangeMultipleEvents = ({ dataWithChangedEvents }) =>
+  postMethod("callForChangeMultipleEvents", { dataWithChangedEvents });
+export const callToDeleteEvent = ({ id }) => {
+  postMethod("callToDeleteEvent", { id });
+};

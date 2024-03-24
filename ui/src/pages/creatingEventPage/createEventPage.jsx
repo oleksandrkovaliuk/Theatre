@@ -27,6 +27,7 @@ import { creatingEvent } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
 import { useNavigate } from "react-router-dom";
 import { validationOnImgType } from "../../services/validateImgType";
+import { uploadEventImg } from "../../services/uploadingEventsImgs";
 export const CreateEventPage = () => {
   const navigate = useNavigate();
 
@@ -35,8 +36,8 @@ export const CreateEventPage = () => {
     { checkAllField, eventName, eventDisc, eventDate, eventAge, eventImg },
     dispathAction,
   ] = useReducer(ReducerForCreateEvent, InitialValue);
-  const pathToEventFolder = ref(fbStorage, `eventsImgs/${eventName}/`);
-  const pathToDefaulImg = ref(fbStorage, "eventsImgs/defaultImg");
+  // const pathToEventFolder = ref(fbStorage, `eventsImgs/${eventName}/`);
+  // const pathToDefaulImg = ref(fbStorage, "eventsImgs/defaultImg");
   const setUpEventInfo = (event, fieldName) => {
     const inputValue = event.target.value;
     if (fieldName === "setEventName") {
@@ -77,35 +78,11 @@ export const CreateEventPage = () => {
       dispathAction(setEventAge(inputValue));
     }
   };
-  const uploadEventImg = async (event) => {
-    const uploadingImg = event.target.files[0];
-    const insertImgIntoFolder = ref(
-      fbStorage,
-      `eventsImgs/${eventName}/${uploadingImg?.name}`
-    );
-    console.log(uploadingImg?.type, "type");
+  const handleUploadingImg = async (event) => {
     try {
-      if (validationOnImgType(uploadingImg?.type)) {
-        await listAll(pathToEventFolder)
-          .then((res) => {
-            if (res.items.length) {
-              res.items.map((item) => deleteObject(item));
-            }
-            return res;
-          })
-          .then(() => {
-            uploadBytes(insertImgIntoFolder, uploadingImg).then(() => {
-              listAll(pathToEventFolder).then((res) => {
-                getDownloadURL(res.items[0]).then((url) => {
-                  dispathAction(setEventImg(url));
-                  dispathAction(checkImgUploaded(true));
-                });
-              });
-            });
-          });
-      } else {
-        setNotificationMessage("this type of file cannot be uploaded");
-      }
+      const resUrl = await uploadEventImg(event, eventName);
+      dispathAction(setEventImg(resUrl));
+      dispathAction(checkImgUploaded(true));
     } catch (error) {
       dispathAction(checkImgUploaded(false));
       setNotificationMessage(error);
@@ -142,14 +119,7 @@ export const CreateEventPage = () => {
     if (!eventAge.length) {
       dispathAction(setEventAge("00+"));
     }
-    if (!eventImg.length) {
-      listAll(pathToDefaulImg).then((res) => {
-        getDownloadURL(res.items[0]).then((url) => {
-          dispathAction(setEventImg(url));
-        });
-      });
-    }
-  }, [eventName, eventDisc, eventDate, eventAge, eventImg, pathToDefaulImg]);
+  }, [eventName, eventDisc, eventDate, eventAge, eventImg]);
 
   const isDisabledSubmitBtn =
     checkAllField.checkNameField &&
@@ -175,6 +145,11 @@ export const CreateEventPage = () => {
             <label htmlFor="eventName" className={c.eventInfoLabel}>
               Event name
             </label>
+            {!checkAllField.checkNameField && (
+              <p className={c.notes}>
+                name should be longer then <b>4 chapters</b>
+              </p>
+            )}
           </div>
           <div className={c.inputsWrap}>
             <textarea
@@ -188,9 +163,11 @@ export const CreateEventPage = () => {
             <label htmlFor="eventDisc" className={c.discLabel}>
               Event Discription
             </label>
-            <p className={c.notes}>
-              discribtion should be longer then<b> 20 chapters</b>
-            </p>
+            {!checkAllField.checkDiscField && (
+              <p className={c.notes}>
+                discribtion should be longer then<b> 20 chapters</b>
+              </p>
+            )}
           </div>
           <div className={c.inputsWrap}>
             <input
@@ -204,9 +181,11 @@ export const CreateEventPage = () => {
             <label htmlFor="eventDate" className={c.eventInfoLabel}>
               Event date
             </label>
-            <p className={c.notes}>
-              Please follow the example<b> "yyyy-mm-dd hh:mm"</b>
-            </p>
+            {!checkAllField.checkDateField && (
+              <p className={c.notes}>
+                Please follow the example<b> "yyyy-mm-dd hh:mm"</b>
+              </p>
+            )}
           </div>
           <div className={c.inputsWrap}>
             <input
@@ -220,9 +199,11 @@ export const CreateEventPage = () => {
             <label htmlFor="age" className={c.eventInfoLabel}>
               For wich age category this event is
             </label>
-            <p className={c.notes}>
-              Please follow the example<b> "14+"</b>
-            </p>
+            {!checkAllField.checkAgeField && (
+              <p className={c.notes}>
+                Please follow the example<b> "14+"</b>
+              </p>
+            )}
           </div>
           <div className={c.uploadImgWrap}>
             <label
@@ -239,7 +220,7 @@ export const CreateEventPage = () => {
                 id="uploadingimgEvent"
                 name="uploadingimgEvent"
                 className={c.eventInfoInput}
-                onChange={uploadEventImg}
+                onChange={handleUploadingImg}
               />
               Upload img for your event
             </label>
@@ -260,7 +241,11 @@ export const CreateEventPage = () => {
           eventDisc={eventDisc}
           eventStarignTime={eventDate}
           eventInfoAge={eventAge}
-          eventUrlImg={eventImg}
+          eventUrlImg={
+            !eventImg?.length
+              ? "https://firebasestorage.googleapis.com/v0/b/theater-53375.appspot.com/o/eventsImgs%2FdefaultImg%2F507863-1847246849.jpg?alt=media&token=bc8c8d88-3a03-4a38-8e06-56f0c4b24a94"
+              : eventImg
+          }
         />
       </div>
     </div>

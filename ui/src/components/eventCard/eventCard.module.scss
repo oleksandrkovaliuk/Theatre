@@ -1,49 +1,30 @@
-.eventCard {
-  position: relative;
-  max-width: 335px;
-  min-width: 335px;
-  min-height: 450px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 20px;
-  transition: all 0.4s ease-in-out;
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 3;
+  background-color: #0000000f;
+  opacity: 0.4;
   cursor: pointer;
-  input:active,
-  input:focus,
-  input:not(:placeholder-shown) {
-    outline: none;
-  }
-  // .saveChanges {
-  //   position: absolute;
-  //   bottom: -10%;
-  //   left: 50%;
-  //   transform: translateX(-50%);
-  //   padding: 4px;
-  //   background-color: var(--color-red);
-  //   border: unset;
-  //   border: 2px solid var(--color-red);
-  //   color: var(--color-white);
-  //   border-radius: 8px;
-
-  //   font-family: var(--font-SfMedium);
-  //   font-size: 17px;
-  //   letter-spacing: 0.6px;
-  //   text-decoration: unset;
-  //   transition: all 0.3s ease-in-out;
-  //   &:hover {
-  //     background-color: transparent;
-  //     color: var(--color-red);
-  //   }
-  // }
 }
-.editButton {
-  position: absolute;
-  right: -10px;
-  top: -20px;
-  background-color: unset;
-  border: unset;
-  padding: 5px;
+.doubleCheckMenu {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 500px;
+  width: 100%;
+  background-color: var(--color-bglightgray);
+  border-radius: 15px;
+  padding: 14px 15px;
+  box-shadow: 5.817px 11.763px 58.813px 0px rgba(199, 199, 199, 0.6);
   svg {
     width: 30px;
     height: 30px;
@@ -51,6 +32,97 @@
       fill: var(--color-red);
     }
   }
+  .doubleCheckQuestion {
+    width: 100%;
+    h1 {
+      max-width: 300px;
+
+      color: var(--color-title);
+      font-family: var(--font-SfRegular);
+      font-size: 22px;
+      text-align: left;
+      margin-bottom: 15px;
+    }
+    .doubleCheckButtons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      button {
+        width: 100%;
+        padding: 7px 10px;
+        border-radius: 8px;
+        font-family: var(--font-SfMedium);
+        font-size: 15px;
+        text-align: center;
+
+        transition: all 0.3s ease-in-out;
+        &:first-child {
+          color: var(--color-white);
+          border: 2px solid var(--color-red);
+          background-color: var(--color-red);
+          &:hover {
+            color: var(--color-red);
+            background-color: transparent;
+          }
+        }
+        &:last-child {
+          color: var(--color-red);
+          background-color: transparent;
+          border: 2px solid var(--color-red);
+          &:hover {
+            color: var(--color-white);
+            background-color: var(--color-red);
+          }
+        }
+      }
+    }
+  }
+}
+.eventCard {
+  position: relative;
+  max-width: 335px;
+  min-width: 335px;
+  min-height: 450px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 20px;
+  z-index: 2;
+  transition: all 0.4s ease-in-out;
+  cursor: pointer;
+  input:active,
+  input:focus,
+  input:not(:placeholder-shown) {
+    outline: none;
+  }
+}
+.editButton,
+.deleteButton {
+  position: absolute;
+  right: -10px;
+  top: -20px;
+  background-color: unset;
+  border: unset;
+  padding: 5px;
+  button {
+    background-color: unset;
+    border: unset;
+  }
+  svg {
+    width: 30px;
+    height: 30px;
+    path {
+      fill: var(--color-red);
+    }
+  }
+}
+.deleteButton {
+  right: unset;
+  top: unset;
+  left: 50%;
+  transform: translateY(-50%);
+  bottom: -13%;
+  padding: unset;
 }
 .uploadImg {
   position: absolute;
@@ -63,9 +135,9 @@
   padding: 5px;
   transition: all 0.3s ease-in-out;
   &:hover {
-    border: 2px solid var(--color-red);
     svg {
       path {
+        transition: all 0.3s ease-in-out;
         fill: var(--color-red);
       }
     }

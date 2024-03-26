@@ -12,6 +12,9 @@ import {
   checkDateField,
   checkAgeField,
   checkImgUploaded,
+  setTypeOfHall,
+  setHallSeats,
+  checkHallField,
 } from "./reducer/action";
 import { EventCard } from "../../components/eventCard";
 import { fbStorage } from "../../firebase";
@@ -28,16 +31,24 @@ import { NotificationContext } from "../../context/notificationContext";
 import { useNavigate } from "react-router-dom";
 import { validationOnImgType } from "../../services/validateImgType";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
+import { functionSetUpSeats } from "../../services/hallSeatsArraysForDB";
 export const CreateEventPage = () => {
   const navigate = useNavigate();
 
   const { setNotificationMessage } = useContext(NotificationContext);
   const [
-    { checkAllField, eventName, eventDisc, eventDate, eventAge, eventImg },
+    {
+      checkAllField,
+      eventName,
+      eventDisc,
+      eventDate,
+      eventAge,
+      eventImg,
+      hallSeats,
+      typeOfHall,
+    },
     dispathAction,
   ] = useReducer(ReducerForCreateEvent, InitialValue);
-  // const pathToEventFolder = ref(fbStorage, `eventsImgs/${eventName}/`);
-  // const pathToDefaulImg = ref(fbStorage, "eventsImgs/defaultImg");
   const setUpEventInfo = (event, fieldName) => {
     const inputValue = event.target.value;
     if (fieldName === "setEventName") {
@@ -77,12 +88,26 @@ export const CreateEventPage = () => {
       }
       dispathAction(setEventAge(inputValue));
     }
+    if (fieldName === "setHallEvent") {
+      const setUpSeats = functionSetUpSeats(inputValue);
+      if (setUpSeats) {
+        dispathAction(setTypeOfHall(inputValue));
+        dispathAction(setHallSeats(setUpSeats));
+        dispathAction(checkHallField(true));
+      } else {
+        dispathAction(checkHallField(false));
+        setNotificationMessage("please chose the hall");
+      }
+    }
   };
   const handleUploadingImg = async (event) => {
     try {
       const resUrl = await uploadEventImg(event, eventName);
-      dispathAction(setEventImg(resUrl));
-      dispathAction(checkImgUploaded(true));
+      if (resUrl.url) {
+        dispathAction(setEventImg(resUrl.url));
+        dispathAction(checkImgUploaded(true));
+      }
+      setNotificationMessage(resUrl.message);
     } catch (error) {
       dispathAction(checkImgUploaded(false));
       setNotificationMessage(error);
@@ -97,8 +122,9 @@ export const CreateEventPage = () => {
         eventDate: eventDate,
         eventAge: eventAge,
         eventImg: eventImg,
+        hall: typeOfHall,
+        eventseats: hallSeats,
       });
-      // setCommingEvents();
 
       setNotificationMessage(res.succesfull);
       navigate("/");
@@ -126,7 +152,8 @@ export const CreateEventPage = () => {
     checkAllField.checkDiscField &&
     checkAllField.checkDateField &&
     checkAllField.checkAgeField &&
-    checkAllField.checkImgUploaded;
+    checkAllField.checkImgUploaded &&
+    checkAllField.checkHallField;
 
   return (
     <div className={c.createEventSection}>
@@ -204,6 +231,22 @@ export const CreateEventPage = () => {
                 Please follow the example<b> "14+"</b>
               </p>
             )}
+          </div>
+          <div className={c.choseTheHall}>
+            <label htmlFor="selectTheHallForEvent">
+              Select hall which you wanna use for this event
+              <select
+                id="selectTheHallForEvent"
+                onChange={(event) => setUpEventInfo(event, "setHallEvent")}
+                name="halls"
+              >
+                <option disabled={true && typeOfHall} value="">
+                  Select a hall
+                </option>
+                <option value="sml">Small hall(26 person)</option>
+                <option value="big">Big hall(52 person)</option>
+              </select>
+            </label>
           </div>
           <div className={c.uploadImgWrap}>
             <label

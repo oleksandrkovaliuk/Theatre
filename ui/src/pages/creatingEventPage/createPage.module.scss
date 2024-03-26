@@ -100,7 +100,8 @@
         font-size: 14px;
         padding-inline: 3px;
       }
-      .eventInfoInput {
+      .eventInfoInput,
+      select {
         padding: 8px 10px;
         background-color: transparent;
         border: unset;
@@ -139,7 +140,6 @@
       .eventInfoInput:active + .eventInfoLabel,
       .eventInfoInput:focus + .eventInfoLabel,
       .eventInfoInput:not(:placeholder-shown) + .eventInfoLabel {
-        //   display: none;
         color: var(--color-red);
         transform: translateY(-23px);
         font-size: 14px;
@@ -169,6 +169,47 @@
           border: 2px solid var(--color-red);
           background-color: transparent;
           color: var(--color-red);
+        }
+      }
+    }
+    .choseTheHall {
+      margin-bottom: 30px;
+      max-width: 400px;
+      text-align: left;
+      label {
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+
+        color: var(--color-title);
+        font-family: var(--font-SfMedium);
+        font-size: 17px;
+        letter-spacing: 0.6px;
+        select {
+          padding: 8px 10px;
+          background-color: transparent;
+          border: unset;
+          border-bottom: 2px solid var(--color-title);
+          width: 100%;
+
+          color: var(--color-title);
+          font-family: var(--font-SfMedium);
+          font-size: 17px;
+          letter-spacing: 0.6px;
+          &:active,
+          &:focus,
+          &:not(:placeholder-shown) {
+            outline: none;
+          }
+          option {
+            color: var(--color-title);
+            font-family: var(--font-SfMedium);
+            font-size: 15px;
+            letter-spacing: 0.6px;
+            background-color: transparent;
+
+            border: unset;
+          }
         }
       }
     }

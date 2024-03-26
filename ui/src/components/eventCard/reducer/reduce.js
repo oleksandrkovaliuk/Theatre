@@ -10,6 +10,7 @@ export const InitState = {
   stylesForBg: {},
   transformCardInEditMode: false,
   doubleCheckMenu: false,
+  showBookEvent: false,
 };
 export const reducer = (state, action) => {
   if (action.type === ActionForEventCard.SET_CHANGED_EVENT) {
@@ -64,6 +65,12 @@ export const reducer = (state, action) => {
     return {
       ...state,
       doubleCheckMenu: action.payload,
+    };
+  }
+  if (action.type === ActionForEventCard.SHOW_BOOK_EVENT_BUTTON) {
+    return {
+      ...state,
+      showBookEvent: action.payload,
     };
   }
 };

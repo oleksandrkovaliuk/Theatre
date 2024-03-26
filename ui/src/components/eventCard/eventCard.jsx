@@ -23,12 +23,14 @@ import {
   setStylesForBg,
   setTransformCardInEditMode,
   setDoubleCheckMenu,
+  setBookEventButton,
 } from "./reducer/action";
 import { SaveChanges } from "../../icons/saveChanges";
 import { Bin } from "../../icons/bid";
 import { Error } from "../../icons/error";
 import { callToDeleteEvent } from "../../services/apiCallConfig";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
+import { NavLink } from "react-router-dom";
 export const EventCard = ({
   eventInfoFromdb,
   eventInfoAge,
@@ -52,6 +54,7 @@ export const EventCard = ({
       stylesForBg,
       transformCardInEditMode,
       doubleCheckMenu,
+      showBookEvent,
     },
     dispathAction,
   ] = useReducer(reducer, InitState);
@@ -175,12 +178,19 @@ export const EventCard = ({
   const handleUploadingImg = async (event) => {
     try {
       const resUrl = await uploadEventImg(event, eventInfoFromdb.name);
-      console.log(resUrl);
-      dispathAction(setNewImgEvent(resUrl));
-      console.log(updatedImg);
+      if (resUrl.url) {
+        dispathAction(setNewImgEvent(resUrl.url));
+      }
+      setNotificationMessage(resUrl.message);
     } catch (error) {
       setNotificationMessage(error);
     }
+  };
+  const handleShowBookEvents = () => {
+    dispathAction(setBookEventButton(true));
+  };
+  const handleCloseBookEvents = () => {
+    dispathAction(setBookEventButton(false));
   };
   // Block scroll on opened double check menu
   useEffect(() => {
@@ -229,151 +239,170 @@ export const EventCard = ({
         </div>
       )}
       <div
-        style={{
-          backgroundImage: `url(${
-            updatedImg.length
-              ? updatedImg
-              : eventInfoFromdb
-              ? eventInfoFromdb?.imgurl
-              : eventUrlImg
-          })`,
-          border: transformCardInEditMode
-            ? "2px solid var(--color-red)"
-            : "2px solid transparent",
-          transform: transformCardInEditMode
-            ? "translateY(-30px)"
-            : "translateY(0px)",
-          zIndex: transformCardInEditMode && 3,
-          cursor: transformCardInEditMode && "unset",
-        }}
-        id={itemId}
-        className={s.eventCard}
+        className={s.eventCardContainer}
+        onMouseOver={!editAble && eventInfoFromdb ? handleShowBookEvents : null}
+        onMouseOut={!editAble && eventInfoFromdb ? handleCloseBookEvents : null}
       >
-        {editAble && (
-          <>
-            <button onClick={getInfoAboutClickedEvent} className={s.editButton}>
-              {transformCardInEditMode ? (
-                isInputsChanged ? (
-                  <SaveChanges clickAction={handleSubmitChangedInput} />
-                ) : (
-                  <CloseBold />
-                )
-              ) : (
-                <EditStick />
-              )}
-            </button>
-            {transformCardInEditMode && (
+        {showBookEvent && (
+          <NavLink to={`/bookEvent?id=${eventInfoFromdb?.id}`}>
+            <button className={s.bookEventButton}>Book event</button>
+          </NavLink>
+        )}
+        <div
+          style={{
+            backgroundImage: `url(${
+              updatedImg.length
+                ? updatedImg
+                : eventInfoFromdb
+                ? eventInfoFromdb?.imgurl
+                : eventUrlImg
+            })`,
+            border: transformCardInEditMode
+              ? "2px solid var(--color-red)"
+              : "2px solid transparent",
+            transform:
+              transformCardInEditMode || showBookEvent
+                ? "translateY(-30px)"
+                : "translateY(0px)",
+            zIndex: transformCardInEditMode && 3,
+            cursor: transformCardInEditMode && "unset",
+          }}
+          id={itemId}
+          className={s.eventCard}
+        >
+          {editAble && (
+            <>
               <button
-                onClick={showDoubleCheckMenuForDeleting}
-                className={s.deleteButton}
+                onClick={getInfoAboutClickedEvent}
+                className={s.editButton}
               >
-                <Bin />
+                {transformCardInEditMode ? (
+                  isInputsChanged ? (
+                    <SaveChanges clickAction={handleSubmitChangedInput} />
+                  ) : (
+                    <CloseBold />
+                  )
+                ) : (
+                  <EditStick />
+                )}
+              </button>
+              {transformCardInEditMode && (
+                <button
+                  onClick={showDoubleCheckMenuForDeleting}
+                  className={s.deleteButton}
+                >
+                  <Bin />
+                </button>
+              )}
+            </>
+          )}
+          {transformCardInEditMode && (
+            <label className={s.uploadImg}>
+              <input
+                type="file"
+                onChange={handleUploadingImg}
+                id="uploadImg"
+                name="uploadImg"
+              />
+              <Download />
+            </label>
+          )}
+          <div className={s.timeAndAgeTopBlock}>
+            {transformCardInEditMode ? (
+              <input
+                placeholder={formatTime(
+                  updatedDate.length
+                    ? updatedDate
+                    : eventInfoFromdb.startingtime
+                )}
+                type="datetime-local"
+                id="itemDate"
+                name="itemDate"
+                className={s.changeDate}
+                onChange={(event) => updateInfoAboutEvent(event, "itemDate")}
+              />
+            ) : (
+              <button className={s.eventStarting}>
+                {formatTime(
+                  updatedDate.length
+                    ? updatedDate
+                    : eventInfoFromdb
+                    ? eventInfoFromdb?.startingtime
+                    : eventStarignTime
+                )}
               </button>
             )}
-          </>
-        )}
-        {transformCardInEditMode && (
-          <label className={s.uploadImg}>
-            <input
-              type="file"
-              onChange={handleUploadingImg}
-              id="uploadImg"
-              name="uploadImg"
-            />
-            <Download />
-          </label>
-        )}
-        <div className={s.timeAndAgeTopBlock}>
-          {transformCardInEditMode ? (
-            <input
-              placeholder={formatTime(
-                updatedDate.length ? updatedDate : eventInfoFromdb.startingtime
-              )}
-              type="datetime-local"
-              id="itemDate"
-              name="itemDate"
-              className={s.changeDate}
-              onChange={(event) => updateInfoAboutEvent(event, "itemDate")}
-            />
-          ) : (
-            <button className={s.eventStarting}>
-              {formatTime(
-                updatedDate.length
-                  ? updatedDate
-                  : eventInfoFromdb
-                  ? eventInfoFromdb?.startingtime
-                  : eventStarignTime
-              )}
-            </button>
-          )}
-          {transformCardInEditMode ? (
-            <input
-              placeholder={updatedAge.length ? updatedAge : eventInfoFromdb.age}
-              type="text"
-              id="itemAge"
-              name="itemAge"
-              className={s.changeAge}
-              onChange={(event) => updateInfoAboutEvent(event, "itemAge")}
-            />
-          ) : (
-            <button className={s.age}>
-              {updatedAge.length
-                ? updatedAge
-                : eventInfoFromdb
-                ? eventInfoFromdb?.age
-                : eventInfoAge}
-            </button>
-          )}
-        </div>
-        <div className={s.eventNameAndDisc}>
-          <div
-            className={s.textbg}
-            style={{
-              height: `${stylesForBg.height}px`,
-              width: `${stylesForBg.width}px`,
-            }}
-          />
-          <div ref={ref} className={s.text}>
             {transformCardInEditMode ? (
               <input
                 placeholder={
-                  updatedName.length ? updatedName : eventInfoFromdb.name
+                  updatedAge.length ? updatedAge : eventInfoFromdb.age
                 }
                 type="text"
-                id="itemName"
-                name="itemName"
-                className={s.changeName}
-                onChange={(event) => updateInfoAboutEvent(event, "itemName")}
+                id="itemAge"
+                name="itemAge"
+                className={s.changeAge}
+                onChange={(event) => updateInfoAboutEvent(event, "itemAge")}
               />
             ) : (
-              <h2>
-                {updatedName.length
-                  ? updatedName
+              <button className={s.age}>
+                {updatedAge.length
+                  ? updatedAge
                   : eventInfoFromdb
-                  ? eventInfoFromdb?.name
-                  : eventName}
-              </h2>
+                  ? eventInfoFromdb?.age
+                  : eventInfoAge}
+              </button>
             )}
-            {transformCardInEditMode ? (
-              <input
-                placeholder={
-                  updatedDisc.length ? updatedDisc : eventInfoFromdb.disc
-                }
-                type="text"
-                id="itemDisc"
-                name="itemDisc"
-                className={s.changeDisc}
-                onChange={(event) => updateInfoAboutEvent(event, "itemDisc")}
-              />
-            ) : (
-              <p>
-                {updatedDisc.length
-                  ? updatedDisc
-                  : eventInfoFromdb
-                  ? eventInfoFromdb?.disc
-                  : eventDisc}
-              </p>
-            )}
+          </div>
+          <div className={s.eventNameAndDisc}>
+            <div
+              className={s.textbg}
+              style={{
+                height: `${stylesForBg.height}px`,
+                width: `${stylesForBg.width}px`,
+              }}
+            />
+            <div ref={ref} className={s.text}>
+              {transformCardInEditMode ? (
+                <input
+                  placeholder={
+                    updatedName.length ? updatedName : eventInfoFromdb.name
+                  }
+                  type="text"
+                  id="itemName"
+                  name="itemName"
+                  className={s.changeName}
+                  onChange={(event) => updateInfoAboutEvent(event, "itemName")}
+                />
+              ) : (
+                <h2>
+                  {updatedName.length
+                    ? updatedName
+                    : eventInfoFromdb
+                    ? eventInfoFromdb?.name
+                    : eventName}
+                </h2>
+              )}
+              {transformCardInEditMode ? (
+                <input
+                  placeholder={
+                    updatedDisc.length ? updatedDisc : eventInfoFromdb.disc
+                  }
+                  type="text"
+                  id="itemDisc"
+                  name="itemDisc"
+                  className={s.changeDisc}
+                  onChange={(event) => updateInfoAboutEvent(event, "itemDisc")}
+                />
+              ) : (
+                <p>
+                  {updatedDisc.length
+                    ? updatedDisc
+                    : eventInfoFromdb
+                    ? eventInfoFromdb?.disc
+                    : eventDisc}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

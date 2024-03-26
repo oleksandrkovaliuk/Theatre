@@ -79,6 +79,26 @@
     }
   }
 }
+.eventCardContainer {
+  position: relative;
+  .bookEventButton {
+    position: absolute;
+    bottom: -10px;
+    width: 100%;
+    padding: 5px 8px;
+    border-radius: 8px;
+
+    background-color: var(--color-red);
+    border: 2px solid var(--color-red);
+
+    color: var(--color-white);
+    font-family: var(--font-SfMedium);
+    font-size: 15px;
+    text-align: center;
+
+    transition: all 0.3s ease-in-out;
+  }
+}
 .eventCard {
   position: relative;
   max-width: 335px;

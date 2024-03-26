@@ -20,7 +20,7 @@ export const PopUpMenu = ({
     [m.show]: showMenu,
   });
   useEffect(() => {
-    console.log('render');
+    console.log("render");
     closeMenu();
   }, [closeMenu, location.pathname]);
 
@@ -41,7 +41,7 @@ export const PopUpMenu = ({
         body.classList.remove("disable-scroll-page");
       }
     };
-  }, [showMenu, top]);
+  }, [showMenu, top, children]);
 
   return (
     <>

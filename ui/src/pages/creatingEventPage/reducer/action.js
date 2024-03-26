@@ -40,3 +40,15 @@ export const checkImgUploaded = (value) => ({
   type: Actions.CHECK_IMG_UPLOADED,
   payload: value,
 });
+export const setTypeOfHall = (value) => ({
+  type: Actions.SET_TYPE_HALL,
+  payload: value,
+});
+export const setHallSeats = (value) => ({
+  type: Actions.SET_HALL_SEATS,
+  payload: value,
+});
+export const checkHallField = (value) => ({
+  type: Actions.CHECK_HALL_FIELD,
+  payload: value,
+});

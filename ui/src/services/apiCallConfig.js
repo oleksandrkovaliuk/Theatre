@@ -56,6 +56,8 @@ export const creatingEvent = async ({
   eventDate,
   eventAge,
   eventImg,
+  hall,
+  eventseats,
 }) =>
   postMethod("createNewEvent", {
     eventName,
@@ -63,6 +65,8 @@ export const creatingEvent = async ({
     eventDate,
     eventAge,
     eventImg,
+    hall,
+    eventseats,
   });
 export const callForChangeSingleEvent = ({
   id,

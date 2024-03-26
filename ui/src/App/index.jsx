@@ -17,6 +17,7 @@ import { NotificationContext } from "../context/notificationContext";
 import { Notification } from "../components/nitification";
 import { MageneEvents } from "../pages/manegeEventsPage";
 import { NotificationProvider } from "../context/NotificationProvider";
+import { BookEvent } from "../pages/bookEventPage";
 export const App = () => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const [events, setEvents] = useState(null);
@@ -62,6 +63,7 @@ export const App = () => {
             <Route path="*" element={<UnfoundPage />} />
             <Route path="/createEvent" element={<CreateEventPage />} />
             <Route path="/manageEvents" element={<MageneEvents />} />
+            <Route path="/bookEvent" element={<BookEvent />} />
           </Routes>
         </NotificationProvider>
       </EventsContext.Provider>

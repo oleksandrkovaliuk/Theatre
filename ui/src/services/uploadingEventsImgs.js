@@ -15,21 +15,22 @@ export const uploadEventImg = async (event, eventName) => {
     fbStorage,
     `eventsImgs/${eventName}/${uploadingImg?.name}`
   );
-  if (!validationOnImgType(uploadingImg?.type)) {
-    return null;
-  }
 
   try {
-    const res = await listAll(pathToEventFolder);
-    if (res.items.length) {
-      await Promise.all(res.items.map((item) => deleteObject(item)));
+    if (validationOnImgType(uploadingImg.type)) {
+      const res = await listAll(pathToEventFolder);
+      if (res.items.length) {
+        await Promise.all(res.items.map((item) => deleteObject(item)));
+      }
+
+      await uploadBytes(insertImgIntoFolder, uploadingImg);
+
+      const resWithUpdatedImg = await listAll(pathToEventFolder);
+      const returnedUrl = await getDownloadURL(resWithUpdatedImg.items[0]);
+      return { url: returnedUrl, message: "your img succesfully uploaded" };
+    } else {
+      return { message: "you cannot upload this type of file" };
     }
-
-    await uploadBytes(insertImgIntoFolder, uploadingImg);
-
-    const resWithUpdatedImg = await listAll(pathToEventFolder);
-    const returnedUrl = await getDownloadURL(resWithUpdatedImg.items[0]);
-    return returnedUrl;
   } catch (error) {
     return null;
   }

@@ -55,7 +55,15 @@ router.get("/infoAboutEvents", (req, res) => {
 });
 
 router.post("/createNewEvent", checkRole, (req, res) => {
-  const { eventName, eventDisc, eventDate, eventAge, eventImg } = req.body;
+  const {
+    eventName,
+    eventDisc,
+    eventDate,
+    eventAge,
+    eventImg,
+    hall,
+    eventseats,
+  } = req.body;
   console.log(req.body);
   try {
     if (!eventName || !eventDisc || !eventDate || !eventAge || !eventImg) {
@@ -64,8 +72,8 @@ router.post("/createNewEvent", checkRole, (req, res) => {
         .json({ errorText: "not enough info to create event" });
     }
     db.query(
-      "INSERT INTO events (name , disc , startingtime , age , imgUrl) VALUES($1 , $2 , $3 , $4 , $5) RETURNING *;",
-      [eventName, eventDisc, eventDate, eventAge, eventImg],
+      "INSERT INTO events (name , disc , startingtime , age , imgUrl , hall , eventseats) VALUES($1 , $2 , $3 , $4 , $5 , $6 , $7) RETURNING *;",
+      [eventName, eventDisc, eventDate, eventAge, eventImg, hall, eventseats],
       (err, dbRes) => {
         if (err) {
           console.log(err, "error");

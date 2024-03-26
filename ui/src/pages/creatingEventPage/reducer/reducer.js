@@ -6,12 +6,15 @@ export const InitialValue = {
   eventDate: "",
   eventAge: "",
   eventImg: "",
+  typeOfHall: "",
+  hallSeats: null,
   checkAllField: {
     checkNameField: false,
     checkDiscField: false,
     checkDateField: false,
     checkAgeField: false,
     checkImgUploaded: false,
+    checkHallField: false,
   },
 };
 
@@ -74,6 +77,27 @@ export const ReducerForCreateEvent = (state, action) => {
         ...state.checkAllField,
         checkImgUploaded: action.payload,
       },
+    };
+  }
+  if (action.type === Actions.CHECK_HALL_FIELD) {
+    return {
+      ...state,
+      checkAllField: {
+        ...state.checkAllField,
+        checkHallField: action.payload,
+      },
+    };
+  }
+  if (action.type === Actions.SET_TYPE_HALL) {
+    return {
+      ...state,
+      typeOfHall: action.payload,
+    };
+  }
+  if (action.type === Actions.SET_HALL_SEATS) {
+    return {
+      ...state,
+      hallSeats: action.payload,
     };
   }
 };

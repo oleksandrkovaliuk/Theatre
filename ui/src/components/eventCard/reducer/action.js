@@ -54,3 +54,9 @@ export const setDoubleCheckMenu = (value) => {
     payload: value,
   };
 };
+export const setBookEventButton = (value) => {
+  return {
+    type: ActionForEventCard.SHOW_BOOK_EVENT_BUTTON,
+    payload: value,
+  };
+};

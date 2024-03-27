@@ -10,7 +10,8 @@
   .bookEventWrap {
     display: flex;
     gap: 40px;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: space-between;
   }
 }
 .infoAboutEventContainer {
@@ -73,5 +74,95 @@
     font-size: 17px;
     font-family: var(--font-SfRegular);
     color: var(--color-title);
+  }
+}
+.seats_block {
+  max-width: 750px;
+  flex-shrink: 0;
+  padding-block: 40px;
+  .screenFormContainer {
+    text-align: center;
+    max-width: 500px;
+    margin: auto;
+    background-color: var(--color-red);
+    padding: 10px 10px;
+    border-radius: 5px;
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    box-shadow: 0px 4.763px 10px 0px rgba(0, 0, 0, 0.2);
+    margin-bottom: 50px;
+    span {
+      font-size: 22px;
+      font-family: var(--font-SfBold);
+      color: var(--color-white);
+      text-align: center;
+      line-height: 100%;
+    }
+  }
+  .seats {
+    .seatRow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      &:last-child {
+        margin-top: 20px;
+        .seat {
+          &:nth-child(3) {
+            margin-left: 50px;
+          }
+          &:nth-last-child(3) {
+            margin-right: 50px;
+          }
+        }
+      }
+      &:first-child {
+        margin-bottom: 20px;
+        .seat {
+          &:nth-child(3) {
+            margin-left: 50px;
+          }
+          &:nth-last-child(3) {
+            margin-right: 50px;
+          }
+        }
+      }
+      .seat {
+        position: relative;
+        padding-inline: 30px;
+        padding-block: 30px;
+        background-color: var(--color-lightgray);
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        &:hover {
+          transform: translateY(-10px);
+          box-shadow: 0px 2.763px 10px 0px rgba(0, 0, 0, 0.3);
+          span {
+            color: var(--color-red);
+          }
+        }
+        span {
+          position: absolute;
+          display: inline-block;
+          bottom: -20px;
+          transform: translateX(-50%);
+
+          font-size: 16px;
+          font-family: var(--font-SfMedium);
+          color: var(--color-title);
+        }
+      }
+    }
+  }
+}
+@media (max-width: 800px) {
+  .bookEvent_wrap {
+    flex-direction: column;
+    justify-content: center;
   }
 }

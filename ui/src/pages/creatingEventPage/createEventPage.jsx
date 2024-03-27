@@ -90,6 +90,7 @@ export const CreateEventPage = () => {
     }
     if (fieldName === "setHallEvent") {
       const setUpSeats = functionSetUpSeats(inputValue);
+      console.log(setUpSeats);
       if (setUpSeats) {
         dispathAction(setTypeOfHall(inputValue));
         dispathAction(setHallSeats(setUpSeats));

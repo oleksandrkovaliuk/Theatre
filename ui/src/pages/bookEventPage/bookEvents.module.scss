@@ -1,5 +1,92 @@
+.navigationSteps {
+  padding: 30px 50px 50px;
+  font-size: 16px;
+  font-family: var(--font-SfRegular);
+  font-weight: unset;
+  .goBack {
+    margin-left: 10px;
+    padding: 3px 7px;
+    border-radius: 5px;
+    border: 1.6px solid var(--color-red);
+    background-color: var(--color-red);
+    color: var(--color-white);
+    font-size: 16px;
+    font-family: var(--font-SfRegular);
+
+    transition: all 0.4s ease-in-out;
+    &:hover {
+      color: var(--color-red);
+      background-color: transparent;
+    }
+  }
+}
+.proccesMenu {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -100%;
+  padding: 20px 20px;
+  margin: 20px 50px;
+  background-color: var(--color-bglightgray);
+  box-shadow: 0px 4.763px 10px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 4;
+
+  transition: all 0.4s ease;
+  span,
+  b {
+    display: inline-block;
+    font-size: 20px;
+    font-family: var(--font-SfBold);
+    color: var(--color-title);
+  }
+  .chosenItemsWrap {
+    .chosenSeats {
+      margin-left: 5px;
+      font-family: var(--font-SfMedium);
+      color: var(--color-red);
+    }
+  }
+  .subtotalAndProccesButton {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    gap: 20px;
+    .subtotal {
+      display: flex;
+      gap: 2px;
+      span:nth-child(2) {
+        margin-left: 0px;
+        font-family: var(--font-SfMedium);
+        font-weight: unset;
+        color: var(--color-red);
+      }
+    }
+    .proccesButton {
+      padding: 10px 5px;
+      width: 100%;
+      background-color: var(--color-red);
+      border: 2px solid var(--color-red);
+      border-radius: 8px;
+
+      font-family: var(--font-SfMedium);
+      font-size: 17px;
+      color: var(--color-white);
+
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        background-color: transparent;
+        color: var(--color-red);
+      }
+    }
+  }
+}
 .bookEvent_container {
-  padding: 100px 50px;
+  padding-inline: 50px;
   h1 {
     color: var(--color-title);
     font-family: var(--font-SfMedium);
@@ -8,10 +95,11 @@
     margin-bottom: 50px;
   }
   .bookEventWrap {
-    display: flex;
+    display: flex !important;
     gap: 40px;
     align-items: flex-start;
     justify-content: space-between;
+    transition: all 0.6s ease-in-out;
   }
 }
 .infoAboutEventContainer {
@@ -100,6 +188,7 @@
     }
   }
   .seats {
+    margin-bottom: 30px;
     .seatRow {
       display: flex;
       justify-content: center;
@@ -137,11 +226,12 @@
         border-radius: 5px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
+        border: unset;
         cursor: pointer;
         transition: all 0.3s ease;
         &:hover {
           transform: translateY(-10px);
-          box-shadow: 0px 2.763px 10px 0px rgba(0, 0, 0, 0.3);
+          // box-shadow: 0px 2.763px 10px 0px rgba(0, 0, 0, 0.3);
           span {
             color: var(--color-red);
           }
@@ -156,6 +246,32 @@
           font-family: var(--font-SfMedium);
           color: var(--color-title);
         }
+      }
+    }
+  }
+  .seatsInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    .seatInfoBlock {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background-color: var(--color-bglightgray);
+      box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      span {
+        font-size: 16px;
+        font-family: var(--font-SfMedium);
+        color: var(--color-title);
+      }
+      .seatColor {
+        padding: 10px;
+        border-radius: 3px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
       }
     }
   }

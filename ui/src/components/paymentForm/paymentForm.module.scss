@@ -1,0 +1,22 @@
+.payment_form {
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+  .submitPayment {
+    padding: 8px 10px;
+    background-color: var(--color-red);
+    border: 2px solid var(--color-red);
+    border-radius: 8px;
+    max-width: 300px;
+    width: 100%;
+
+    font-size: 20px;
+    font-family: var(--font-SfMedium);
+    color: var(--color-white);
+    transition: all 0.4s ease-in-out;
+    &:hover {
+      background-color: transparent;
+      color: var(--color-red);
+    }
+  }
+}

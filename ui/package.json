@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@stripe/react-stripe-js": "^2.6.2",
+    "@stripe/stripe-js": "^3.1.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -17,6 +19,7 @@
     "sass": "^1.71.1",
     "slick": "^1.12.2",
     "slick-carousel": "^1.8.1",
+    "stripe": "^14.23.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

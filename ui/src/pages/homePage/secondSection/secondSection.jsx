@@ -5,6 +5,7 @@ import { EventCard } from "../../../components/eventCard";
 
 export const SecondSection = () => {
   const { events } = useContext(EventsContext);
+  console.log(events);
   return (
     <div className={s.upcomingEvents}>
       <h1 className={s.title}>Upcoming premiers</h1>

@@ -31,7 +31,13 @@ export const functionSetUpSeats = (typeOfHall) => {
     }
   };
   for (let i = 1; i <= seats; i++) {
-    hallSeats.push({ id: i, letter: setUpLetter(i), booked: false });
+    hallSeats.push({
+      id: i,
+      letter: setUpLetter(i),
+      price: i <= 6 ? 140 : i >= seats - 4 ? 120 : 70,
+      booked: false,
+    });
   }
+  console.log(hallSeats.length, "seats");
   return JSON.stringify(hallSeats);
 };

@@ -75,6 +75,7 @@ export const callForChangeSingleEvent = ({
   currentName,
   currentDisc,
   currentImg,
+  currentHall,
 }) =>
   postMethod("callForChangeSingleEvent", {
     id,
@@ -83,9 +84,18 @@ export const callForChangeSingleEvent = ({
     currentName,
     currentDisc,
     currentImg,
+    currentHall,
   });
 export const callForChangeMultipleEvents = ({ dataWithChangedEvents }) =>
   postMethod("callForChangeMultipleEvents", { dataWithChangedEvents });
 export const callToDeleteEvent = ({ id }) => {
   postMethod("callToDeleteEvent", { id });
 };
+export const updateBookedEvents = ({ id, eventSeats }) => {
+  postMethod("updateSeatsForEvent", { id, eventSeats });
+};
+// Work with payment
+
+export const getConfig = () => getMethod("stripe_config");
+export const createPaymentIntent = ({ amount }) =>
+  postMethod("create_payment_intent", { amount });

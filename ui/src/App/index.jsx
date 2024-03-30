@@ -48,10 +48,24 @@ export const App = () => {
       setNotificationMessage(error);
     }
   }, [setNotificationMessage]);
-
+  console.log(userInfo);
+  const getEventsOnFirstLoad = async () => {
+    try {
+      const res = await getEvents();
+      setEvents(res.events);
+    } catch (error) {
+      setNotificationMessage(error);
+    }
+  };
+  console.log(userInfo);
   useEffect(() => {
     getAllData();
   }, [getAllData]);
+  useEffect(() => {
+    if (!userInfo) {
+      getEventsOnFirstLoad();
+    }
+  }, [userInfo]);
   return (
     <userContext.Provider value={userContextValue}>
       <EventsContext.Provider value={eventsContextValue}>

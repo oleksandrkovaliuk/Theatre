@@ -3,9 +3,9 @@ const router = express.Router();
 const db = require("../../database");
 const jwt = require("jsonwebtoken");
 const { USER_ROLE } = require("../enums");
-
+const stripe = require("stripe")(process.env.STRIPE_SECRETKEY);
 const updatingEventsQuery =
-  "UPDATE events SET name = $1 ,  disc = $2 , startingtime = $4 , age = $5 , imgurl = $6 WHERE id = $3";
+  "UPDATE events SET name = $1 ,  disc = $2 , startingtime = $4 , age = $5 , imgurl = $6 , eventseats = $7 WHERE id = $3";
 const parsToken = (token) => token?.replace("Bearer", "")?.replace(" ", "");
 
 const checkAuth = (req, res, next) => {
@@ -39,6 +39,7 @@ const checkRole = (req, res, next) => {
     return res.status(401).json({ errorText: "user unautorized yet" });
   }
 };
+
 // Work with events
 
 router.get("/infoAboutEvents", (req, res) => {
@@ -47,10 +48,11 @@ router.get("/infoAboutEvents", (req, res) => {
       if (err) {
         return res.status(500).json({ errorText: "Failed with getting data" });
       }
-      res.status(200).json({ events: dbRes?.rows || [] });
+      console.log(dbRes?.rows);
+      return res.status(200).json({ events: dbRes?.rows || [] });
     });
   } catch (error) {
-    res.status(500).json({ errorText: `${error} err` });
+    return res.status(500).json({ errorText: `${error} err` });
   }
 });
 
@@ -95,8 +97,15 @@ router.post("/createNewEvent", checkRole, (req, res) => {
 });
 
 router.post("/callForChangeSingleEvent", checkRole, (req, res) => {
-  const { id, currentDate, currentAge, currentName, currentDisc, currentImg } =
-    req.body;
+  const {
+    id,
+    currentDate,
+    currentAge,
+    currentName,
+    currentDisc,
+    currentImg,
+    currentHall,
+  } = req.body;
   console.log(currentImg);
   if (
     id &&
@@ -104,12 +113,21 @@ router.post("/callForChangeSingleEvent", checkRole, (req, res) => {
     currentAge &&
     currentName &&
     currentDisc &&
-    currentImg
+    currentImg &&
+    currentHall
   ) {
     console.log(id, currentDate, currentAge, currentName, currentDisc, "info");
     db.query(
       updatingEventsQuery,
-      [currentName, currentDisc, id, currentDate, currentAge, currentImg],
+      [
+        currentName,
+        currentDisc,
+        id,
+        currentDate,
+        currentAge,
+        currentImg,
+        currentHall,
+      ],
       (err, dbRes) => {
         if (err) {
           return res
@@ -177,6 +195,29 @@ router.post("/callToDeleteEvent", checkRole, (req, res) => {
       .json({ errorText: "failed with getting info about event to delete" });
   }
 });
+
+router.post("/updateSeatsForEvent", (req, res) => {
+  const { eventSeats, id } = req.body;
+  console.log(eventSeats, id, "indo");
+  if (eventSeats && id) {
+    db.query(
+      "UPDATE events SET eventseats = $1 WHERE id = $2",
+      [eventSeats, id],
+      (err, dbRes) => {
+        if (err) {
+          return res
+            .status(401)
+            .json({ errorText: "failed with updating booked events" });
+        } else {
+          return res.status(200).json({ text: "succesfull" });
+        }
+      }
+    );
+  } else {
+    res.status(401).json({ errorText: "failed with getting info" });
+  }
+});
+
 // Work with autorisation
 const checkQuery = "SELECT * FROM users WHERE email = $1";
 router.post("/signInNewUser", (req, res) => {
@@ -255,6 +296,7 @@ router.post("/logInUser", (req, res) => {
     return res.status(401).json({ errorText: "fields are empty" });
   }
 });
+
 // Check user with jwt token
 router.post("/checkUserLoginned", checkAuth, (req, res) => {
   try {
@@ -283,4 +325,32 @@ router.post("/checkUserLoginned", checkAuth, (req, res) => {
   }
 });
 
+// Work with payment
+router.get("/stripe_config", (req, res) => {
+  try {
+    return res
+      .status(200)
+      .json({ stripePublishKey: process.env.STRIPE_PUBLISHKEY });
+  } catch (error) {
+    return res.status(401).json({ errorText: "failed getting stripe config" });
+  }
+});
+
+router.post("/create_payment_intent", async (req, res) => {
+  const { amount } = req.body;
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      currency: "usd",
+      amount: amount,
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+    return res.status(200).json({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    return res.status(401).json({ errorText: error });
+  }
+});
 module.exports = router;

@@ -131,6 +131,7 @@ export const EventCard = ({
       currentName: updatedName.length ? updatedName : eventInfoFromdb.name,
       currentDisc: updatedDisc.length ? updatedDisc : eventInfoFromdb.disc,
       currentImg: updatedImg.length ? updatedImg : eventInfoFromdb.imgurl,
+      currentHall: eventInfoFromdb.eventseats,
     };
     if (IndexOfElem === -1) {
       dispathAction(setTransformCardInEditMode(false));

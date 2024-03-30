@@ -17,25 +17,18 @@ import {
   checkHallField,
 } from "./reducer/action";
 import { EventCard } from "../../components/eventCard";
-import { fbStorage } from "../../firebase";
-import {
-  ref,
-  uploadBytes,
-  listAll,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
 import { formatTime } from "../../services/formatTime";
-import { creatingEvent } from "../../services/apiCallConfig";
+import { creatingEvent, getEvents } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
 import { useNavigate } from "react-router-dom";
-import { validationOnImgType } from "../../services/validateImgType";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
 import { functionSetUpSeats } from "../../services/hallSeatsArraysForDB";
+import { EventsContext } from "../../context/eventsContext";
 export const CreateEventPage = () => {
   const navigate = useNavigate();
 
   const { setNotificationMessage } = useContext(NotificationContext);
+  const { setCommingEvents } = useContext(EventsContext);
   const [
     {
       checkAllField,
@@ -126,8 +119,11 @@ export const CreateEventPage = () => {
         hall: typeOfHall,
         eventseats: hallSeats,
       });
-
       setNotificationMessage(res.succesfull);
+
+      const events = await getEvents();
+      setCommingEvents(events);
+
       navigate("/");
     } catch (error) {
       setNotificationMessage(error);
@@ -169,7 +165,7 @@ export const CreateEventPage = () => {
               name="eventName"
               className={c.eventInfoInput}
               onChange={(event) => setUpEventInfo(event, "setEventName")}
-            ></input>
+            />
             <label htmlFor="eventName" className={c.eventInfoLabel}>
               Event name
             </label>

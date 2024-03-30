@@ -42,14 +42,14 @@ const checkRole = (req, res, next) => {
 
 // Work with events
 
-router.get("/infoAboutEvents", (req, res) => {
+router.get("/events", (req, res) => {
   try {
     db.query("SELECT * FROM events", (err, dbRes) => {
       if (err) {
         return res.status(500).json({ errorText: "Failed with getting data" });
       }
       console.log(dbRes?.rows);
-      return res.status(200).json({ events: dbRes?.rows || [] });
+      return res.status(200).json(dbRes?.rows || []);
     });
   } catch (error) {
     return res.status(500).json({ errorText: `${error} err` });
@@ -181,15 +181,20 @@ router.post("/callForChangeMultipleEvents", checkRole, async (req, res) => {
 
 router.post("/callToDeleteEvent", checkRole, (req, res) => {
   const { id } = req.body;
-  if (id) {
-    db.query("DELETE FROM events WHERE id = $1", [id], (err, dbRes) => {
-      if (err) {
-        res.status(401).json({ errorText: "Failed with deliting event" });
-      } else {
-        return res.status(200);
-      }
-    });
-  } else {
+  try {
+    if (id) {
+      db.query("DELETE FROM events WHERE id = $1", [id], (err, dbRes) => {
+        if (err) {
+          return res
+            .status(401)
+            .json({ errorText: "Failed with deliting event" });
+        } else {
+          return res.status(200).json({ text: "Success" });
+        }
+      });
+    }
+  } catch (error) {
+    console.log(error, " error");
     return res
       .status(401)
       .json({ errorText: "failed with getting info about event to delete" });
@@ -311,11 +316,9 @@ router.post("/checkUserLoginned", checkAuth, (req, res) => {
           .json({ errorText: "Could find user or error from db side" });
       } else {
         res.status(200).json({
-          user: {
-            username: dbRes.rows[0].username,
-            email: dbRes.rows[0].email,
-            role: dbRes.rows[0].role,
-          },
+          username: dbRes.rows[0].username,
+          email: dbRes.rows[0].email,
+          role: dbRes.rows[0].role,
         });
       }
     });

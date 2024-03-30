@@ -38,34 +38,20 @@ export const App = () => {
 
   const getAllData = useCallback(async () => {
     try {
-      const [userRes, eventsRes] = await Promise.all([
+      const [userRes, eventsRes] = await Promise.allSettled([
         checkUserLoginned(),
         getEvents(),
       ]);
-      setUserInfo(userRes.user);
-      setEvents(eventsRes.events);
+      setUserInfo(userRes.value);
+      setEvents(eventsRes.value);
     } catch (error) {
       setNotificationMessage(error);
     }
   }, [setNotificationMessage]);
-  console.log(userInfo);
-  const getEventsOnFirstLoad = async () => {
-    try {
-      const res = await getEvents();
-      setEvents(res.events);
-    } catch (error) {
-      setNotificationMessage(error);
-    }
-  };
-  console.log(userInfo);
+
   useEffect(() => {
     getAllData();
   }, [getAllData]);
-  useEffect(() => {
-    if (!userInfo) {
-      getEventsOnFirstLoad();
-    }
-  }, [userInfo]);
   return (
     <userContext.Provider value={userContextValue}>
       <EventsContext.Provider value={eventsContextValue}>

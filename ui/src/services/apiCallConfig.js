@@ -39,7 +39,7 @@ const postMethod = async (apiCallUrl, info = {}) => {
     });
 };
 // Work with get methods
-export const getEvents = async () => getMethod("infoAboutEvents");
+export const getEvents = async () => getMethod("events");
 // Work with post methods
 
 // Working with autorisation
@@ -91,9 +91,8 @@ export const callForChangeMultipleEvents = ({ dataWithChangedEvents }) =>
 export const callToDeleteEvent = ({ id }) => {
   postMethod("callToDeleteEvent", { id });
 };
-export const updateBookedEvents = ({ id, eventSeats }) => {
+export const updateBookedEvents = ({ id, eventSeats }) =>
   postMethod("updateSeatsForEvent", { id, eventSeats });
-};
 // Work with payment
 
 export const getConfig = () => getMethod("stripe_config");

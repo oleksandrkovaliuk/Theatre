@@ -16,7 +16,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { PaymentForm } from "../../components/paymentForm";
 import { NotificationContext } from "../../context/notificationContext";
-import { userContext } from "../../context/userInfoContext";
 let total = 0;
 const settings = {
   infinite: false,
@@ -27,7 +26,6 @@ const settings = {
 };
 export const BookEvent = () => {
   const { events } = useContext(EventsContext);
-  const { userInfo } = useContext(userContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
   const [processMenu, showProcessMenu] = useState(false);
@@ -74,7 +72,7 @@ export const BookEvent = () => {
         });
         return item;
       });
-      await updateBookedEvents({
+      updateBookedEvents({
         id: currentEventsInfo[0].id,
         eventSeats: JSON.stringify(updatedSeats[0]),
       });
@@ -123,16 +121,15 @@ export const BookEvent = () => {
 
   useEffect(() => {
     if (subtotal) {
-      Promise.all([setUpStripeConfig(), setUpClientSecret()]).then(() => {
-        setPaymentStatus(false);
-      });
+      Promise.all([setUpStripeConfig(), setUpClientSecret()])
+        .then(() => {
+          setPaymentStatus(false);
+        })
+        .catch((error) => {
+          console.log(error, " error");
+        });
     }
   }, [setUpClientSecret, setUpStripeConfig, subtotal]);
-  useEffect(() => {
-    if (paymentStatus) {
-      updateAllBookedSeats();
-    }
-  }, [paymentStatus, updateAllBookedSeats]);
   return (
     <>
       <div className={b.navigationSteps}>
@@ -430,7 +427,10 @@ export const BookEvent = () => {
           })}
           {stripePublishKey && clientSecret && bookEventStep === "payment" && (
             <Elements stripe={stripePublishKey} options={{ clientSecret }}>
-              <PaymentForm goToRecieve={handleGoToRecieveSection} />
+              <PaymentForm
+                goToRecieve={handleGoToRecieveSection}
+                updateAllBookedSeats={updateAllBookedSeats}
+              />
             </Elements>
           )}
           {bookEventStep === "recieve" && paymentStatus && (

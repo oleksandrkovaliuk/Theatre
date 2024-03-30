@@ -1,10 +1,13 @@
 import React, { useContext, useState } from "react";
-import { useStripe, useElements } from "@stripe/react-stripe-js";
-import { PaymentElement } from "@stripe/react-stripe-js";
-import p from "./paymentForm.module.scss";
+import {
+  useStripe,
+  useElements,
+  PaymentElement,
+} from "@stripe/react-stripe-js";
 import "./stripeCustomStyle.scss";
+import p from "./paymentForm.module.scss";
 import { NotificationContext } from "../../context/notificationContext";
-export const PaymentForm = ({ goToRecieve }) => {
+export const PaymentForm = ({ goToRecieve, updateAllBookedSeats }) => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const stripe = useStripe();
   const elements = useElements();
@@ -25,7 +28,7 @@ export const PaymentForm = ({ goToRecieve }) => {
         if (!error && paymentIntent && paymentIntent.status === "succeeded") {
           setNotificationMessage("your payment succesfully completed");
           setIsProcesing(false);
-          //   setPaymentStatus(true);
+          updateAllBookedSeats();
         } else {
           console.log("error");
           setNotificationMessage(`Payment status: ${paymentIntent.status}`);

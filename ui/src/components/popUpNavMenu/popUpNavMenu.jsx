@@ -20,7 +20,6 @@ export const PopUpMenu = ({
     [m.show]: showMenu,
   });
   useEffect(() => {
-    console.log("render");
     closeMenu();
   }, [closeMenu, location.pathname]);
 

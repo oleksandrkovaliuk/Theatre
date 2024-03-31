@@ -1,5 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { useContext } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useContext,
+} from "react";
 import { EventsContext } from "../../context/eventsContext";
 import { useSearchParams } from "react-router-dom";
 import { formatTime } from "../../services/formatTime";
@@ -31,7 +36,7 @@ export const BookEvent = () => {
   const { events, setCommingEvents } = useContext(EventsContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
-  const [processMenu, showProcessMenu] = useState(false);
+  const [processMenu, setProcessMenu] = useState(false);
   const [subtotal, setSubtotal] = useState(null);
   const [pricePerSeat, setPricePerSeat] = useState("");
   const [chosenSeats, setChosenSeats] = useState([]);
@@ -56,7 +61,7 @@ export const BookEvent = () => {
       arr.splice(checkIfItemIncluded, 1);
     }
     setSubtotal(total);
-    showProcessMenu(true);
+    setProcessMenu(true);
     return setChosenSeats(arr);
   };
   const updateAllBookedSeats = useCallback(async () => {
@@ -84,7 +89,12 @@ export const BookEvent = () => {
     } catch (error) {
       setNotificationMessage(error);
     }
-  }, [chosenSeats, currentEventsInfo, setNotificationMessage]);
+  }, [
+    chosenSeats,
+    setCommingEvents,
+    currentEventsInfo,
+    setNotificationMessage,
+  ]);
 
   // Navigation between pages
   const handleGoToPaymentSection = () => {
@@ -95,7 +105,7 @@ export const BookEvent = () => {
   function handleGoToRecieveSection() {
     setBookEventStep("recieve");
     setPaymentStatus(true);
-    showProcessMenu(false);
+    setProcessMenu(false);
     bookEvent.current.slickNext();
   }
 

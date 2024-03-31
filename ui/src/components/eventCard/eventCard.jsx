@@ -28,7 +28,7 @@ import {
 import { SaveChanges } from "../../icons/saveChanges";
 import { Bin } from "../../icons/bid";
 import { Error } from "../../icons/error";
-import { callToDeleteEvent } from "../../services/apiCallConfig";
+import { callToDeleteEvent, getEvents } from "../../services/apiCallConfig";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
 import { NavLink } from "react-router-dom";
 export const EventCard = ({
@@ -59,6 +59,7 @@ export const EventCard = ({
     dispathAction,
   ] = useReducer(reducer, InitState);
   const { setNotificationMessage } = useContext(NotificationContext);
+  const { events, setCommingEvents } = useContext(EventsContext);
   const ref = useRef(null);
 
   const isInputsChanged =
@@ -160,6 +161,8 @@ export const EventCard = ({
   const handleDeletingEvent = async () => {
     try {
       await callToDeleteEvent({ id: eventInfoFromdb.id });
+      const events = await getEvents();
+      setCommingEvents(events);
       dispathAction(setDoubleCheckMenu(false));
       setNotificationMessage(
         `event "${eventInfoFromdb?.name}" succesfully deleted`

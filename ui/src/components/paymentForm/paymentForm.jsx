@@ -50,6 +50,11 @@ export const PaymentForm = ({ goToRecieve, updateAllBookedSeats }) => {
       >
         {isProcesing ? "Procesing ..." : "Submit payment"}
       </button>
+      <p>
+        After complete payment you will be redirected to recieve page where you
+        can save or send your ticket on your email.
+        <b> Please do not lose your ticket</b>
+      </p>
     </form>
   );
 };

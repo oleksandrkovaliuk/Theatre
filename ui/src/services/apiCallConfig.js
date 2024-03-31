@@ -59,7 +59,7 @@ export const creatingEvent = async ({
   hall,
   eventseats,
 }) =>
-  postMethod("createNewEvent", {
+  postMethod("createEvent", {
     eventName,
     eventDisc,
     eventDate,
@@ -77,7 +77,7 @@ export const callForChangeSingleEvent = ({
   currentImg,
   currentHall,
 }) =>
-  postMethod("callForChangeSingleEvent", {
+  postMethod("changeSingleEvent", {
     id,
     currentDate,
     currentAge,
@@ -87,12 +87,12 @@ export const callForChangeSingleEvent = ({
     currentHall,
   });
 export const callForChangeMultipleEvents = ({ dataWithChangedEvents }) =>
-  postMethod("callForChangeMultipleEvents", { dataWithChangedEvents });
+  postMethod("changeMultipleEvents", { dataWithChangedEvents });
 export const callToDeleteEvent = ({ id }) => {
-  postMethod("callToDeleteEvent", { id });
+  postMethod("deleteEvent", { id });
 };
 export const updateBookedEvents = ({ id, eventSeats }) =>
-  postMethod("updateSeatsForEvent", { id, eventSeats });
+  postMethod("updateSeats", { id, eventSeats });
 // Work with payment
 
 export const getConfig = () => getMethod("stripe_config");

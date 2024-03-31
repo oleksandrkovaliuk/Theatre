@@ -5,11 +5,12 @@ import { EventsContext } from "../../context/eventsContext";
 import {
   callForChangeMultipleEvents,
   callForChangeSingleEvent,
+  getEvents,
 } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
 
 export const MageneEvents = () => {
-  const { events } = useContext(EventsContext);
+  const { events, setCommingEvents } = useContext(EventsContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [changedEvents, setChangedEvents] = useState(null);
   const [checkIfSubmited, setSubmited] = useState(false);
@@ -31,11 +32,12 @@ export const MageneEvents = () => {
               currentName: changedEvents[0].currentName,
               currentDisc: changedEvents[0].currentDisc,
               currentImg: changedEvents[0].currentImg,
-              currentHall:changedEvents[0].currentHall
+              currentHall: changedEvents[0].currentHall,
             });
+      const events = await getEvents();
+      setCommingEvents(events);
       setNotificationMessage(res.text);
       setSubmited(true);
-      console.log(changedEvents, "events");
     } catch (error) {
       setNotificationMessage(error);
     }

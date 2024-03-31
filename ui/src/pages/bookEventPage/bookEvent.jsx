@@ -10,12 +10,14 @@ import b from "./bookEvents.module.scss";
 import {
   createPaymentIntent,
   getConfig,
+  getEvents,
   updateBookedEvents,
 } from "../../services/apiCallConfig";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { PaymentForm } from "../../components/paymentForm";
 import { NotificationContext } from "../../context/notificationContext";
+import QRCode from "qrcode.react";
 let total = 0;
 const settings = {
   infinite: false,
@@ -23,9 +25,10 @@ const settings = {
   slidesToShow: 1,
   slidesToScroll: 1,
   arrows: false,
+  swipe: false,
 };
 export const BookEvent = () => {
-  const { events } = useContext(EventsContext);
+  const { events, setCommingEvents } = useContext(EventsContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
   const [processMenu, showProcessMenu] = useState(false);
@@ -76,6 +79,8 @@ export const BookEvent = () => {
         id: currentEventsInfo[0].id,
         eventSeats: JSON.stringify(updatedSeats[0]),
       });
+      const events = await getEvents();
+      setCommingEvents(events);
     } catch (error) {
       setNotificationMessage(error);
     }
@@ -90,6 +95,7 @@ export const BookEvent = () => {
   function handleGoToRecieveSection() {
     setBookEventStep("recieve");
     setPaymentStatus(true);
+    showProcessMenu(false);
     bookEvent.current.slickNext();
   }
 
@@ -434,7 +440,58 @@ export const BookEvent = () => {
             </Elements>
           )}
           {bookEventStep === "recieve" && paymentStatus && (
-            <div className={b.recieve}>"here is your recieve"</div>
+            <div className={b.recievePage}>
+              <div className={b.ticket_instruction}>
+                <div className={b.ticket}>
+                  <div className={b.left_info}>
+                    <div className={b.topSection}>
+                      <img src="./images/logo.png" alt="logo" />
+                      <span>Best wishes by Theater</span>
+                    </div>
+                    {currentEventsInfo?.map((item) => (
+                      <div key={item.id} className={b.infoAboutTicket}>
+                        <div className={b.info}>
+                          <span>Event</span>
+                          <h2>{item.name}</h2>
+                        </div>
+                        <div className={b.info}>
+                          <span>Starting time</span>
+                          <h2>{formatTime(item.startingtime)}</h2>
+                        </div>
+                      </div>
+                    ))}
+                    <div className={b.ticketSeats}>
+                      <span>Seats:</span>
+                      {chosenSeats.map((item) => (
+                        <span key={item}>{item}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={b.rightSection}>
+                    <QRCode value={chosenSeats.map((item) => item)} />
+                  </div>
+                </div>
+                <ul className={b.instruction}>
+                  <li className={b.main_text}>Term & Condition</li>
+                  <li>- Show the ticket at the entrance</li>
+                  <li>- The ticket is valid for 2 movie nights.</li>
+                  <li>
+                    - Disruptive audience members will be asked to leave
+                    immediately.
+                  </li>
+                  <li>- Event date and time are subject to change.</li>
+                  <li>- Remember to turn off your phone during the movie.</li>
+                  <li>- Have a great time!</li>
+                </ul>
+              </div>
+              <div className={b.wayToRecieveTicket}>
+                <span>Chose way how you wanna recieve or save your ticket</span>
+                <div className={b.ways}>
+                  <button>Download</button>
+                  <button>Recieve on email</button>
+                </div>
+              </div>
+            </div>
           )}
         </Slider>
       </div>

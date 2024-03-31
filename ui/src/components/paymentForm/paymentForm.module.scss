@@ -2,6 +2,17 @@
   max-width: 400px;
   margin: auto;
   text-align: center;
+  p {
+    font-size: 17px;
+    font-family: var(--font-SfMedium);
+    font-weight: unset;
+    color: var(--color-title);
+    text-align: left;
+    b {
+      font-family: var(--font-SfMedium);
+      color: var(--color-red);
+    }
+  }
   .submitPayment {
     padding: 8px 10px;
     background-color: var(--color-red);
@@ -13,6 +24,7 @@
     font-size: 20px;
     font-family: var(--font-SfMedium);
     color: var(--color-white);
+    margin-bottom: 20px;
     transition: all 0.4s ease-in-out;
     &:hover {
       background-color: transparent;

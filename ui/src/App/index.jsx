@@ -18,10 +18,12 @@ import { Notification } from "../components/nitification";
 import { MageneEvents } from "../pages/manegeEventsPage";
 import { NotificationProvider } from "../context/NotificationProvider";
 import { BookEvent } from "../pages/bookEventPage";
+import { io } from "socket.io-client";
 export const App = () => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const [events, setEvents] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const socket = io(process.env.REACT_APP_SOCKET_PORT);
 
   // User info
   const userContextValue = useMemo(() => {
@@ -35,7 +37,9 @@ export const App = () => {
     }),
     [events]
   );
-
+  socket.on("connected", (arg) => {
+    console.log(arg);
+  });
   const getAllData = useCallback(async () => {
     try {
       const [userRes, eventsRes] = await Promise.allSettled([

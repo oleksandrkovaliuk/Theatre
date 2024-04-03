@@ -7,7 +7,13 @@ import {
 import "./stripeCustomStyle.scss";
 import p from "./paymentForm.module.scss";
 import { NotificationContext } from "../../context/notificationContext";
-export const PaymentForm = ({ goToRecieve, updateAllBookedSeats }) => {
+import { socket } from "../../services/socketSetUp";
+
+export const PaymentForm = ({
+  goToRecieve,
+  updateAllBookedSeats,
+  sendSocket,
+}) => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const stripe = useStripe();
   const elements = useElements();

@@ -5,6 +5,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
+const { Server } = require("socket.io");
 
 const mainRouters = require("./routes/mainRouters");
 const defaultCorsOptions = require("./configs/corsSettings");
@@ -13,6 +14,14 @@ const dbConfig = require("../database");
 const app = express();
 
 const PORT = process.env.PORT;
+
+const io = new Server(process.env.SOCKET_PORT, { cors: { origin: "*" } });
+io.on("connection", (socket) => {
+  socket.on("updatedEvent", (data) => {
+    console.log(data, "data");
+    io.emit("newSeats", data);
+  });
+});
 
 const setupRoutes = () => {
   app.use(cors(defaultCorsOptions));
@@ -40,7 +49,6 @@ const setupRoutes = () => {
     res.render("error");
   });
 };
-
 const setupMiddlewares = () => {
   app.use(logger("dev"));
   app.use(cookieParser());
@@ -89,7 +97,7 @@ async function init() {
     setupMiddlewares();
     await setupDB();
     setupRoutes();
-    console.log(PORT, ' PORT PORT PORTPORT');
+    console.log(PORT, " PORT");
     app.listen(PORT, () => {
       return console.log(`Express is listening on PORT:${PORT}`);
     });

@@ -18,6 +18,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import { PaymentForm } from "../../components/paymentForm";
 import { NotificationContext } from "../../context/notificationContext";
 import QRCode from "qrcode.react";
+import { socket } from "../../services/socketSetUp";
+import { Reload } from "../../icons/rotate";
 let total = 0;
 const settings = {
   infinite: false,
@@ -39,10 +41,12 @@ export const BookEvent = () => {
   const [stripePublishKey, setStripePublishKey] = useState(null);
   const [clientSecret, setClientSecret] = useState("");
   const [paymentStatus, setPaymentStatus] = useState(false);
+  const [getCurrentEventInfo, setGetCurrentEventInfo] = useState(false);
   const bookEvent = useRef(null);
   const currentEventsInfo = events?.filter(
     (item) => item.id === Number(searchParams.get("id"))
   );
+
   // work with chosen seats
   const handleShowingProccesMenu = (event, price) => {
     const currentElem = event.target.getAttribute("id");
@@ -84,21 +88,50 @@ export const BookEvent = () => {
     } catch (error) {
       setNotificationMessage(error);
     }
-  }, [chosenSeats, currentEventsInfo, setNotificationMessage]);
-
+  }, [
+    chosenSeats,
+    currentEventsInfo,
+    setCommingEvents,
+    setNotificationMessage,
+  ]);
   // Navigation between pages
   const handleGoToPaymentSection = () => {
     setBookEventStep("payment");
     bookEvent.current.slickNext();
   };
 
-  function handleGoToRecieveSection() {
+  const handleGoToRecieveSection = () => {
     setBookEventStep("recieve");
     setPaymentStatus(true);
     showProcessMenu(false);
+    socket.emit("updatedEvent", chosenSeats);
     bookEvent.current.slickNext();
-  }
-
+  };
+  useEffect(() => {
+    socket.on("newSeats", async () => {
+      try {
+        if (bookEventStep !== "recieve") {
+          const events = await getEvents();
+          setCommingEvents(events);
+          bookEvent.current.slickPrev();
+          // for (const element of chosenSeats) {
+          //   for (const prev of data) {
+          //     console.log(element, prev, "elements");
+          //     if (toString(element) === toString(prev)) {
+          //       const events = await getEvents();
+          //       setCommingEvents(events);
+          //       bookEvent.current.slickPrev();
+          //     } else {
+          //       return;
+          //     }
+          //   }
+          // }
+        }
+      } catch (error) {
+        setNotificationMessage(error);
+      }
+    });
+  }, [bookEventStep, chosenSeats, setCommingEvents, setNotificationMessage]);
   const handleGoBack = () => {
     if (bookEventStep === "payment") {
       setBookEventStep("book");
@@ -124,7 +157,6 @@ export const BookEvent = () => {
       console.error(error);
     }
   }, [subtotal]);
-
   useEffect(() => {
     if (subtotal) {
       Promise.all([setUpStripeConfig(), setUpClientSecret()])
@@ -136,6 +168,7 @@ export const BookEvent = () => {
         });
     }
   }, [setUpClientSecret, setUpStripeConfig, subtotal]);
+
   return (
     <>
       <div className={b.navigationSteps}>
@@ -210,6 +243,21 @@ export const BookEvent = () => {
           </button>
         </div>
       </div>
+      {getCurrentEventInfo && (
+        <div className={b.newUpdated}>
+          <div className={b.bg}></div>
+          <div className={b.middleNotification}>
+            <span>
+              Updating info . <b>Sorry for waiting</b>
+            </span>
+            <div
+              style={{ backgroundImage: "url(/images/802.gif)" }}
+              className={b.payloder}
+            ></div>
+          </div>
+        </div>
+      )}
+
       <div className={b.bookEvent_container}>
         <h1>
           {bookEventStep === "book"
@@ -468,7 +516,7 @@ export const BookEvent = () => {
                     </div>
                   </div>
                   <div className={b.rightSection}>
-                    <QRCode value={chosenSeats.map((item) => item)} />
+                    <QRCode value={chosenSeats.map((item) => toString(item))} />
                   </div>
                 </div>
                 <ul className={b.instruction}>

@@ -1,4 +1,4 @@
-export const URL = `http://localhost:${process.env.REACT_APP_SERVER_PORT}/api`;
+export const URL = process.env.REACT_APP_SERVER_PORT;
 async function catchErrors(res) {
   if (!res.ok) {
     const resMess = await res?.json();
@@ -44,12 +44,12 @@ export const getEvents = async () => getMethod("events");
 
 // Working with autorisation
 export const signInUser = async ({ username, email, password, role }) =>
-  postMethod("signInNewUser", { username, email, password, role });
+  postMethod("signIn", { username, email, password, role });
 export const logIn = async ({ email, password }) =>
-  postMethod("logInUser", { email, password });
+  postMethod("logIn", { email, password });
 
 // Working with modifying events (Admin side)
-export const checkUserLoginned = async () => postMethod("checkUserLoginned");
+export const checkUserLoginned = async () => postMethod("checkLoginned");
 export const creatingEvent = async ({
   eventName,
   eventDisc,

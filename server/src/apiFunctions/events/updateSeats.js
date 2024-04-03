@@ -2,7 +2,6 @@ const db = require("../../../database");
 
 const updateSeats = (req, res) => {
   const { eventSeats, id } = req.body;
-  console.log(eventSeats, id, "indo");
   if (eventSeats && id) {
     db.query(
       "UPDATE events SET eventseats = $1 WHERE id = $2",

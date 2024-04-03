@@ -49,7 +49,7 @@ export const logIn = async ({ email, password }) =>
   postMethod("logIn", { email, password });
 
 // Working with modifying events (Admin side)
-export const checkUserLoginned = async () => postMethod("checkLoginned");
+export const checkLoginned = async () => postMethod("checkLoginned");
 export const creatingEvent = async ({
   eventName,
   eventDisc,

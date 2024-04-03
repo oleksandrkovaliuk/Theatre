@@ -88,6 +88,7 @@ export const BookEvent = () => {
         id: currentEventsInfo[0].id,
         eventSeats: JSON.stringify(updatedSeats[0]),
       });
+      socket.emit("updatedEvent", updatedSeats[0]);
       const events = await getEvents();
       setCommingEvents(events);
     } catch (error) {
@@ -109,28 +110,17 @@ export const BookEvent = () => {
     setBookEventStep("recieve");
     setPaymentStatus(true);
     setProcessMenu(false);
-    socket.emit("updatedEvent", chosenSeats);
     bookEvent.current.slickNext();
   };
   useEffect(() => {
-    socket.on("newSeats", async () => {
+    socket.on("newSeats", async (data) => {
       try {
+        console.log(chosenSeats, "seats ");
+        console.log(data, "upcoming seats");
         if (bookEventStep !== "recieve") {
           const events = await getEvents();
           setCommingEvents(events);
           bookEvent.current.slickPrev();
-          // for (const element of chosenSeats) {
-          //   for (const prev of data) {
-          //     console.log(element, prev, "elements");
-          //     if (toString(element) === toString(prev)) {
-          //       const events = await getEvents();
-          //       setCommingEvents(events);
-          //       bookEvent.current.slickPrev();
-          //     } else {
-          //       return;
-          //     }
-          //   }
-          // }
         }
       } catch (error) {
         setNotificationMessage(error);

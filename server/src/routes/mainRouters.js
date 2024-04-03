@@ -19,9 +19,7 @@ const checkAuth = require("../middleWare/checkAuth");
 router.route("/events").get(events);
 router.route("/createEvent").post(checkRole, createEvent);
 router.route("/changeSingleEvent").post(checkRole, changeSingleEvent);
-router
-  .route("/changeMultipleEvents")
-  .post(checkRole, changeMultipleEvent);
+router.route("/changeMultipleEvents").post(checkRole, changeMultipleEvent);
 router.route("/deleteEvent").post(checkRole, deleteEvent);
 router.route("/updateSeats").post(updateSeats);
 

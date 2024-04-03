@@ -9,7 +9,7 @@ import { Header } from "../components/header";
 import { Route, Routes } from "react-router-dom";
 import { UnfoundPage } from "../pages/404unfoundPage";
 import { HomePage } from "../pages/homePage";
-import { checkUserLoginned, getEvents } from "../services/apiCallConfig";
+import { checkLoginned, getEvents } from "../services/apiCallConfig";
 import { EventsContext } from "../context/eventsContext";
 import { userContext } from "../context/userInfoContext";
 import { CreateEventPage } from "../pages/creatingEventPage";
@@ -43,7 +43,7 @@ export const App = () => {
   const getAllData = useCallback(async () => {
     try {
       const [userRes, eventsRes] = await Promise.allSettled([
-        checkUserLoginned(),
+        checkLoginned(),
         getEvents(),
       ]);
       setUserInfo(userRes.value);

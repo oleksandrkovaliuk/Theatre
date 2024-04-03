@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import React from "react";
+import { NavLink } from "react-router-dom";
 import h from "./header.module.scss";
 import { LogInSignIn } from "../autorisation/loginOrSignIn";
 export const Header = () => {

@@ -1,10 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import a from "./autorisation.module.scss";
 import { emailValidation } from "../../../services/emailValidation";
 import { passwordValidation } from "../../../services/passwordValidation";

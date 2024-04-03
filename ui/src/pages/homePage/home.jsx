@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { FirstSection } from "./firstSection";
 import { SecondSection } from "./secondSection";
 

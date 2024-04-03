@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useContext,
-  useReducer,
-} from "react";
+import React, { useEffect, useRef, useContext, useReducer } from "react";
 import s from "./eventCard.module.scss";
 import { formatTime } from "../../services/formatTime";
 import { EditStick } from "../../icons/edit";
@@ -59,7 +53,7 @@ export const EventCard = ({
     dispathAction,
   ] = useReducer(reducer, InitState);
   const { setNotificationMessage } = useContext(NotificationContext);
-  const { events, setCommingEvents } = useContext(EventsContext);
+  const { setCommingEvents } = useContext(EventsContext);
   const ref = useRef(null);
 
   const isInputsChanged =
@@ -160,7 +154,7 @@ export const EventCard = ({
 
   const handleDeletingEvent = async () => {
     try {
-      await callToDeleteEvent({ id: eventInfoFromdb.id });
+      callToDeleteEvent({ id: eventInfoFromdb.id });
       const events = await getEvents();
       setCommingEvents(events);
       dispathAction(setDoubleCheckMenu(false));

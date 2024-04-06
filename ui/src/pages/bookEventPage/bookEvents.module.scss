@@ -168,6 +168,7 @@
   max-width: 750px;
   flex-shrink: 0;
   padding-block: 40px;
+  position: relative;
   .screenFormContainer {
     text-align: center;
     max-width: 500px;
@@ -278,14 +279,14 @@
 }
 .newUpdated {
   .bg {
-    position: fixed;
+    position: absolute;
     inset: 0;
     z-index: 5;
     background-color: white;
     opacity: 0.4;
   }
   .middleNotification {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -296,7 +297,11 @@
       font-weight: unset;
       color: var(--color-title);
       font-size: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+      text-align: center;
+      background-color: white;
+      padding: 4px;
+      border-radius: 5px;
     }
     .payloder {
       background-repeat: no-repeat;
@@ -304,11 +309,25 @@
       width: 50px;
       height: 50px;
       margin: auto;
-      background-color: transparent;
     }
   }
 }
 .recievePage {
+  text-align: center;
+  a {
+    display: inline-block;
+    font-size: 20px;
+    font-family: var(--font-SfMedium);
+    color: var(--color-title);
+    transform: translateY(0px);
+    text-decoration: unset;
+
+    transition: all 0.3s ease-in-out;
+    &:hover {
+      transform: translateY(-4px);
+      color: var(--color-red);
+    }
+  }
   .ticket_instruction {
     display: flex;
     align-items: flex-start;
@@ -404,6 +423,7 @@
   }
   .wayToRecieveTicket {
     text-align: center;
+    margin-bottom: 40px;
     span {
       display: inline-block;
       font-size: 20px;

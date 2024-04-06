@@ -98,3 +98,5 @@ export const updateBookedEvents = ({ id, eventSeats }) =>
 export const getConfig = () => getMethod("stripe_config");
 export const createPaymentIntent = ({ amount }) =>
   postMethod("create_payment_intent", { amount });
+export const sendTicket = ({ username, email, ticket }) =>
+  postMethod("sendUserTicket" , { username, email, ticket });

@@ -5,6 +5,7 @@ const changeMultipleEvent = async (req, res) => {
   try {
     if (dataWithChangedEvents.length) {
       await dataWithChangedEvents.forEach((item) => {
+        console.log(item.currentName);
         db.query(
           updatingEventsQuery,
           [
@@ -13,6 +14,9 @@ const changeMultipleEvent = async (req, res) => {
             item.id,
             item.currentDate,
             item.currentAge,
+            item.currentImg,
+            // item.currentHallInfo,
+            item.currentHall,
           ],
           (err) => {
             if (err) {

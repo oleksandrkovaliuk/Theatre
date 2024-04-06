@@ -6,7 +6,7 @@ import React, {
   useContext,
 } from "react";
 import { EventsContext } from "../../context/eventsContext";
-import { useSearchParams } from "react-router-dom";
+import { NavLink, useSearchParams } from "react-router-dom";
 import { formatTime } from "../../services/formatTime";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -16,6 +16,7 @@ import {
   createPaymentIntent,
   getConfig,
   getEvents,
+  sendTicket,
   updateBookedEvents,
 } from "../../services/apiCallConfig";
 import { loadStripe } from "@stripe/stripe-js";
@@ -24,7 +25,8 @@ import { PaymentForm } from "../../components/paymentForm";
 import { NotificationContext } from "../../context/notificationContext";
 import QRCode from "qrcode.react";
 import { socket } from "../../services/socketSetUp";
-import { Reload } from "../../icons/rotate";
+import html2canvas from "html2canvas";
+import { userContext } from "../../context/userInfoContext";
 let total = 0;
 const settings = {
   infinite: false,
@@ -36,6 +38,7 @@ const settings = {
 };
 export const BookEvent = () => {
   const { events, setCommingEvents } = useContext(EventsContext);
+  const { user } = useContext(userContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
   const [processMenu, setProcessMenu] = useState(false);
@@ -46,8 +49,13 @@ export const BookEvent = () => {
   const [stripePublishKey, setStripePublishKey] = useState(null);
   const [clientSecret, setClientSecret] = useState("");
   const [paymentStatus, setPaymentStatus] = useState(false);
-  const [getCurrentEventInfo, setGetCurrentEventInfo] = useState(false);
+  const [getCurrentEventInfo, setGetCurrentEventInfo] = useState({
+    value: false,
+    discription: "",
+  });
+  const [ticketLink, setTicketLink] = useState("");
   const bookEvent = useRef(null);
+  const ticket = useRef(null);
   const currentEventsInfo = events?.filter(
     (item) => item.id === Number(searchParams.get("id"))
   );
@@ -88,7 +96,6 @@ export const BookEvent = () => {
         id: currentEventsInfo[0].id,
         eventSeats: JSON.stringify(updatedSeats[0]),
       });
-      socket.emit("updatedEvent", updatedSeats[0]);
       const events = await getEvents();
       setCommingEvents(events);
     } catch (error) {
@@ -112,21 +119,6 @@ export const BookEvent = () => {
     setProcessMenu(false);
     bookEvent.current.slickNext();
   };
-  useEffect(() => {
-    socket.on("newSeats", async (data) => {
-      try {
-        console.log(chosenSeats, "seats ");
-        console.log(data, "upcoming seats");
-        if (bookEventStep !== "recieve") {
-          const events = await getEvents();
-          setCommingEvents(events);
-          bookEvent.current.slickPrev();
-        }
-      } catch (error) {
-        setNotificationMessage(error);
-      }
-    });
-  }, [bookEventStep, chosenSeats, setCommingEvents, setNotificationMessage]);
   const handleGoBack = () => {
     if (bookEventStep === "payment") {
       setBookEventStep("book");
@@ -152,6 +144,81 @@ export const BookEvent = () => {
       console.error(error);
     }
   }, [subtotal]);
+  // saving ticket
+  const setTicketImg = useCallback(async () => {
+    const currentTicket = ticket.current;
+    await html2canvas(currentTicket).then((canvas) => {
+      setTicketLink(canvas.toDataURL("image/png"));
+    });
+  }, []);
+  const downloadTicket = () => {
+    const fakeLink = window.document.createElement("a");
+    fakeLink.style = "display:none;";
+    fakeLink.download = `YourTicket${chosenSeats.map((item) => item)}`;
+    fakeLink.href = ticketLink;
+    console.log(fakeLink);
+    document.body.appendChild(fakeLink);
+    fakeLink.click();
+    document.body.removeChild(fakeLink);
+    fakeLink.remove();
+  };
+  const recieveTicketOnEmail = async () => {
+    try {
+      const sent = await sendTicket({
+        username: user.username,
+        email: user.email,
+        ticket: `<img src=${ticketLink} />`,
+      });
+      setNotificationMessage(sent.text);
+    } catch (error) {
+      setNotificationMessage(error);
+    }
+  };
+  // socket logic
+  useEffect(() => {
+    if (paymentStatus && bookEventStep === "recieve") {
+      socket.emit("updatedEvent", chosenSeats);
+      setTicketImg();
+    }
+  }, [paymentStatus, bookEventStep, chosenSeats, setTicketImg]);
+
+  useEffect(() => {
+    try {
+      socket.on("newSeats", (data) => {
+        const isEqual = JSON.stringify(data) === JSON.stringify(chosenSeats);
+        setGetCurrentEventInfo({
+          value: true,
+          discription: `${
+            isEqual ? "Sorry . But somebody booked your" : "Updated info about"
+          } ${chosenSeats.length > 1 && chosenSeats ? "seats" : "seat"} ${
+            chosenSeats ? chosenSeats?.map((item) => item) : ""
+          } . Here is updated seats`,
+        });
+        setProcessMenu(false);
+        if (bookEventStep === "payment" && isEqual && !paymentStatus) {
+          bookEvent.current.slickPrev();
+        }
+        setTimeout(async () => {
+          const events = await getEvents();
+          setCommingEvents(events);
+          setGetCurrentEventInfo({
+            value: false,
+            discription: "",
+          });
+        }, 2000);
+      });
+    } catch (error) {
+      setNotificationMessage(error);
+    }
+  }, [
+    bookEventStep,
+    chosenSeats,
+    paymentStatus,
+    setCommingEvents,
+    setNotificationMessage,
+  ]);
+  // set up stripe
+
   useEffect(() => {
     if (subtotal) {
       Promise.all([setUpStripeConfig(), setUpClientSecret()])
@@ -238,20 +305,6 @@ export const BookEvent = () => {
           </button>
         </div>
       </div>
-      {getCurrentEventInfo && (
-        <div className={b.newUpdated}>
-          <div className={b.bg}></div>
-          <div className={b.middleNotification}>
-            <span>
-              Updating info . <b>Sorry for waiting</b>
-            </span>
-            <div
-              style={{ backgroundImage: "url(/images/802.gif)" }}
-              className={b.payloder}
-            ></div>
-          </div>
-        </div>
-      )}
 
       <div className={b.bookEvent_container}>
         <h1>
@@ -291,6 +344,18 @@ export const BookEvent = () => {
                   </div>
                 </div>
                 <div className={b.seats_block}>
+                  {getCurrentEventInfo.value && (
+                    <div className={b.newUpdated}>
+                      <div className={b.bg}></div>
+                      <div className={b.middleNotification}>
+                        <span>{getCurrentEventInfo.discription}</span>
+                        <div
+                          style={{ backgroundImage: "url(/images/802.gif)" }}
+                          className={b.payloder}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
                   <div className={b.screenFormContainer}>
                     <span>Stage</span>
                   </div>
@@ -485,7 +550,7 @@ export const BookEvent = () => {
           {bookEventStep === "recieve" && paymentStatus && (
             <div className={b.recievePage}>
               <div className={b.ticket_instruction}>
-                <div className={b.ticket}>
+                <div ref={ticket} className={b.ticket}>
                   <div className={b.left_info}>
                     <div className={b.topSection}>
                       <img src="./images/logo.png" alt="logo" />
@@ -514,6 +579,7 @@ export const BookEvent = () => {
                     <QRCode value={chosenSeats.map((item) => toString(item))} />
                   </div>
                 </div>
+
                 <ul className={b.instruction}>
                   <li className={b.main_text}>Term & Condition</li>
                   <li>- Show the ticket at the entrance</li>
@@ -530,10 +596,13 @@ export const BookEvent = () => {
               <div className={b.wayToRecieveTicket}>
                 <span>Chose way how you wanna recieve or save your ticket</span>
                 <div className={b.ways}>
-                  <button>Download</button>
-                  <button>Recieve on email</button>
+                  <button onClick={downloadTicket}>Download</button>
+                  <button onClick={recieveTicketOnEmail}>
+                    Recieve on email
+                  </button>
                 </div>
               </div>
+              <NavLink to={"/"}>Back to home page</NavLink>
             </div>
           )}
         </Slider>

@@ -14,6 +14,7 @@ const stripeConfig = require("../apiFunctions/stripe/stripe_config");
 const createPaymentIntent = require("../apiFunctions/stripe/create_payment_intent");
 const checkRole = require("../middleWare/checkRole");
 const checkAuth = require("../middleWare/checkAuth");
+const sendTicket = require("../apiFunctions/ticket/sendTicket");
 
 // Work with events
 router.route("/events").get(events);
@@ -31,4 +32,7 @@ router.route("/checkLoginned").post(checkAuth, checkLoginned);
 // Work with payment
 router.route("/stripe_config").get(stripeConfig);
 router.route("/create_payment_intent").post(createPaymentIntent);
+
+// ticket
+router.route("/sendUserTicket").post(sendTicket);
 module.exports = router;

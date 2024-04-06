@@ -126,6 +126,7 @@ export const EventCard = ({
       currentName: updatedName.length ? updatedName : eventInfoFromdb.name,
       currentDisc: updatedDisc.length ? updatedDisc : eventInfoFromdb.disc,
       currentImg: updatedImg.length ? updatedImg : eventInfoFromdb.imgurl,
+      currentHallInfo: eventInfoFromdb.hall,
       currentHall: eventInfoFromdb.eventseats,
     };
     if (IndexOfElem === -1) {
@@ -136,6 +137,7 @@ export const EventCard = ({
       return (changedEvents[IndexOfElem] = insertingObj);
     }
     if (changedEvents.length > 0) {
+      console.log(changedEvents);
       showSubmitBtn(changedEvents);
     }
   };

@@ -191,10 +191,12 @@ export const BookEvent = () => {
           discription: `${
             isEqual ? "Sorry . But somebody booked your" : "Updated info about"
           } ${chosenSeats.length > 1 && chosenSeats ? "seats" : "seat"} ${
-            chosenSeats ? chosenSeats?.map((item) => item) : ""
+            isEqual ? chosenSeats?.map((item) => item) : ""
           } . Here is updated seats`,
         });
-        setProcessMenu(false);
+        if (isEqual) {
+          setProcessMenu(false);
+        }
         if (bookEventStep === "payment" && isEqual && !paymentStatus) {
           bookEvent.current.slickPrev();
         }

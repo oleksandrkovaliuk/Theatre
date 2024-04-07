@@ -1,2 +1,4 @@
 import { io } from "socket.io-client";
-export const socket = io(process.env.REACT_APP_SOCKET_PORT);
+export const socket = io(process.env.REACT_APP_SOCKET_PORT, {
+  cors: { origin: "*", methods: ["GET", "POST"] },
+});

@@ -13,11 +13,11 @@ const dbConfig = require("../database");
 
 const app = express();
 
-const http = require("http").Server(app, {
-  cors: { origin: "*" },
-});
-const io = require("socket.io")(http);
-
+// const http = require("http").Server(app, {
+//   cors: { origin: "*" },
+// });
+const http_server = require("http").createServer(app);
+const io = require("socket.io")(http_server, { cors: { origin: "*" } });
 
 const PORT = process.env.PORT;
 
@@ -104,10 +104,10 @@ async function init() {
     await setupDB();
     setupRoutes();
     console.log(PORT, " PORT");
-    app.listen(PORT, () => {
-      http.listen(process.env.SOCKET_PORT, () => {
-        console.log(`socket listening on ${process.env.SOCKET_PORT}`);
-      });
+    http_server.listen(PORT, () => {
+      // http.listen(PORT, () => {
+      console.log(`socket listening on ${PORT}`);
+      // });
       return console.log(`Express is listening on PORT:${PORT}`);
     });
   } catch (error) {

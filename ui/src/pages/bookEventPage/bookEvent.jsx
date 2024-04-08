@@ -196,17 +196,18 @@ export const BookEvent = () => {
         });
         if (isEqual) {
           setProcessMenu(false);
+          setChosenSeats([]);
         }
         if (bookEventStep === "payment" && isEqual && !paymentStatus) {
           bookEvent.current.slickPrev();
         }
         setTimeout(async () => {
           const events = await getEvents();
-          setCommingEvents(events);
           setGetCurrentEventInfo({
             value: false,
             discription: "",
           });
+          setCommingEvents(events);
         }, 2000);
       });
     } catch (error) {

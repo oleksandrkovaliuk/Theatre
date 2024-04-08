@@ -5,7 +5,6 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
-// const { Server } = require("socket.io");
 
 const mainRouters = require("./routes/mainRouters");
 const defaultCorsOptions = require("./configs/corsSettings");
@@ -13,21 +12,20 @@ const dbConfig = require("../database");
 
 const app = express();
 
-// const http = require("http").Server(app, {
-//   cors: { origin: "*" },
-// });
+if (process.env.BUILD) {
+  console.log("hello");
+}
 const http_server = require("http").createServer(app);
-const io = require("socket.io")(http_server, { cors: { origin: "*" } });
-
-const PORT = process.env.PORT;
-
-// const io = new Server(process.env.SOCKET_PORT, { cors: { origin: "*" } });
+const io = require("socket.io")(http_server, {
+  cors: { origin: "*" },
+});
 io.on("connection", (socket) => {
   socket.on("updatedEvent", (data) => {
     console.log(data, "data");
     io.emit("newSeats", data);
   });
 });
+const PORT = process.env.PORT;
 
 const setupRoutes = () => {
   app.use(cors(defaultCorsOptions));
@@ -105,9 +103,7 @@ async function init() {
     setupRoutes();
     console.log(PORT, " PORT");
     http_server.listen(PORT, () => {
-      // http.listen(PORT, () => {
       console.log(`socket listening on ${PORT}`);
-      // });
       return console.log(`Express is listening on PORT:${PORT}`);
     });
   } catch (error) {

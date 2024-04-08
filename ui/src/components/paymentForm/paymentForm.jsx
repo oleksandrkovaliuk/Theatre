@@ -7,13 +7,8 @@ import {
 import "./stripeCustomStyle.scss";
 import p from "./paymentForm.module.scss";
 import { NotificationContext } from "../../context/notificationContext";
-import { socket } from "../../services/socketSetUp";
 
-export const PaymentForm = ({
-  goToRecieve,
-  updateAllBookedSeats,
-  sendSocket,
-}) => {
+export const PaymentForm = ({ goToRecieve, updateAllBookedSeats }) => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const stripe = useStripe();
   const elements = useElements();
@@ -35,12 +30,12 @@ export const PaymentForm = ({
           setNotificationMessage("your payment succesfully completed");
           setIsProcesing(false);
           updateAllBookedSeats();
+          goToRecieve();
         } else {
           console.log("error");
           setNotificationMessage(`Payment status: ${paymentIntent.status}`);
           setIsProcesing(false);
         }
-        goToRecieve();
       }
     } catch (error) {
       setNotificationMessage(error);

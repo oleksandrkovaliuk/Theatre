@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   useContext,
+  Fragment,
 } from "react";
 import { EventsContext } from "../../context/eventsContext";
 import { NavLink, useSearchParams } from "react-router-dom";
@@ -28,14 +29,6 @@ import { socket } from "../../services/socketSetUp";
 import html2canvas from "html2canvas";
 import { userContext } from "../../context/userInfoContext";
 let total = 0;
-const settings = {
-  infinite: false,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  arrows: false,
-  swipe: false,
-};
 export const BookEvent = () => {
   const { events, setCommingEvents } = useContext(EventsContext);
   const { user } = useContext(userContext);
@@ -54,12 +47,22 @@ export const BookEvent = () => {
     discription: "",
   });
   const [ticketLink, setTicketLink] = useState("");
+  const [sliderIndex, setSliderIndex] = useState(0);
   const bookEvent = useRef(null);
   const ticket = useRef(null);
   const currentEventsInfo = events?.filter(
     (item) => item.id === Number(searchParams.get("id"))
   );
 
+  const settings = {
+    infinite: false,
+    speed: 700,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    swipe: false,
+    afterChange: (index) => setSliderIndex(index),
+  };
   // work with chosen seats
   const handleShowingProccesMenu = (event, price) => {
     const currentElem = event.target.getAttribute("id");
@@ -112,11 +115,9 @@ export const BookEvent = () => {
     setBookEventStep("payment");
     bookEvent.current.slickNext();
   };
-
   const handleGoToRecieveSection = () => {
-    setBookEventStep("recieve");
+    // setBookEventStep("recieve");
     setPaymentStatus(true);
-    setProcessMenu(false);
     bookEvent.current.slickNext();
   };
   const handleGoBack = () => {
@@ -176,7 +177,7 @@ export const BookEvent = () => {
   };
   // socket logic
   useEffect(() => {
-    if (paymentStatus && bookEventStep === "recieve") {
+    if (paymentStatus) {
       socket.emit("updatedEvent", chosenSeats);
       setTicketImg();
     }
@@ -196,9 +197,8 @@ export const BookEvent = () => {
         });
         if (isEqual) {
           setProcessMenu(false);
-          setChosenSeats([]);
         }
-        if (bookEventStep === "payment" && isEqual && !paymentStatus) {
+        if (!paymentStatus && bookEventStep !== "payment") {
           bookEvent.current.slickPrev();
         }
         setTimeout(async () => {
@@ -220,8 +220,8 @@ export const BookEvent = () => {
     setCommingEvents,
     setNotificationMessage,
   ]);
+  console.log(bookEvent);
   // set up stripe
-
   useEffect(() => {
     if (subtotal) {
       Promise.all([setUpStripeConfig(), setUpClientSecret()])
@@ -239,7 +239,7 @@ export const BookEvent = () => {
       <div className={b.navigationSteps}>
         <span
           style={
-            bookEventStep === "book"
+            sliderIndex === 0 && !paymentStatus
               ? {
                   color: "var(--color-red)",
                   fontFamily: "var(--font-SfMedium)",
@@ -251,7 +251,7 @@ export const BookEvent = () => {
         </span>
         <span
           style={
-            bookEventStep === "payment"
+            sliderIndex === 1 && !paymentStatus
               ? {
                   color: "var(--color-red)",
                   fontFamily: "var(--font-SfMedium)",
@@ -263,7 +263,7 @@ export const BookEvent = () => {
         </span>
         <span
           style={
-            bookEventStep === "recieve"
+            paymentStatus
               ? {
                   color: "var(--color-red)",
                   fontFamily: "var(--font-SfMedium)",
@@ -273,7 +273,7 @@ export const BookEvent = () => {
         >
           Receive your ticket
         </span>
-        {bookEventStep !== "recieve" && bookEventStep !== "book" && (
+        {!paymentStatus && bookEventStep !== "book" && (
           <button onClick={handleGoBack} className={b.goBack}>
             Back
           </button>
@@ -310,109 +310,56 @@ export const BookEvent = () => {
       </div>
 
       <div className={b.bookEvent_container}>
-        <h1>
-          {bookEventStep === "book"
-            ? "Book your event"
-            : bookEventStep === "payment"
-            ? "Payment"
-            : "Recieve your Ticket"}
-        </h1>
         <Slider ref={bookEvent} {...settings}>
           {currentEventsInfo?.map((item) => {
             const parsedSeats = JSON.parse(item.eventseats);
             return (
-              <div key={item.id} className={b.bookEventWrap}>
-                <div className={b.infoAboutEventContainer}>
-                  <div className={b.infoAboutEvent}>
-                    <img src={item.imgurl} alt="event img" />
-                    <ul className={b.eventDiscription}>
-                      <li className={b.name}>{item.name}</li>
-                      <li className={b.age}>{item.age}</li>
-                      <li className={b.date_location}>
-                        <span>Date</span>
-                        <h2>{formatTime(item.startingtime)}</h2>
-                      </li>
-                      <li className={b.date_location}>
-                        <span>Location</span>
-                        <h2>
-                          13115 135 St NW , T5L 1Y6 "Kazan Theater of the Young
-                          Spectator"
-                        </h2>
-                      </li>
-                    </ul>
+              <Fragment key={item.id}>
+                <h1>Book event</h1>
+                <div className={b.bookEventWrap}>
+                  <div className={b.infoAboutEventContainer}>
+                    <div className={b.infoAboutEvent}>
+                      <img src={item.imgurl} alt="event img" />
+                      <ul className={b.eventDiscription}>
+                        <li className={b.name}>{item.name}</li>
+                        <li className={b.age}>{item.age}</li>
+                        <li className={b.date_location}>
+                          <span>Date</span>
+                          <h2>{formatTime(item.startingtime)}</h2>
+                        </li>
+                        <li className={b.date_location}>
+                          <span>Location</span>
+                          <h2>
+                            13115 135 St NW , T5L 1Y6 "Kazan Theater of the
+                            Young Spectator"
+                          </h2>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className={b.discription}>
+                      <span>Discriptions about event</span>
+                      <p>{item.disc}</p>
+                    </div>
                   </div>
-                  <div className={b.discription}>
-                    <span>Discriptions about event</span>
-                    <p>{item.disc}</p>
-                  </div>
-                </div>
-                <div className={b.seats_block}>
-                  {getCurrentEventInfo.value && (
-                    <div className={b.newUpdated}>
-                      <div className={b.bg}></div>
-                      <div className={b.middleNotification}>
-                        <span>{getCurrentEventInfo.discription}</span>
-                        <div
-                          style={{ backgroundImage: "url(/images/802.gif)" }}
-                          className={b.payloder}
-                        ></div>
+                  <div className={b.seats_block}>
+                    {getCurrentEventInfo.value && (
+                      <div className={b.newUpdated}>
+                        <div className={b.bg}></div>
+                        <div className={b.middleNotification}>
+                          <span>{getCurrentEventInfo.discription}</span>
+                          <div
+                            style={{ backgroundImage: "url(/images/802.gif)" }}
+                            className={b.payloder}
+                          ></div>
+                        </div>
                       </div>
+                    )}
+                    <div className={b.screenFormContainer}>
+                      <span>Stage</span>
                     </div>
-                  )}
-                  <div className={b.screenFormContainer}>
-                    <span>Stage</span>
-                  </div>
-                  <div className={b.seats}>
-                    <div className={b.seatRow}>
-                      {parsedSeats.slice(0, 6).map((item) => {
-                        const itemId = item.id + item.letter;
-                        const checkIfItemChosen = chosenSeats.find(
-                          (item) => item === itemId
-                        );
-                        return (
-                          <button
-                            key={item.id}
-                            id={itemId}
-                            style={
-                              checkIfItemChosen || item.booked
-                                ? {
-                                    backgroundColor: item.booked
-                                      ? "var(--color-red)"
-                                      : checkIfItemChosen &&
-                                        "var(--color-subtitle)",
-                                    pointerEvents: item.booked
-                                      ? "none"
-                                      : "unset",
-                                  }
-                                : {
-                                    backgroundColor: "var(--color-lightgray)",
-                                    pointerEvents: !item.booked
-                                      ? "unset"
-                                      : "none",
-                                  }
-                            }
-                            className={b.seat}
-                            onClick={(event) =>
-                              handleShowingProccesMenu(event, item.price)
-                            }
-                            onMouseOver={
-                              item.price !== pricePerSeat
-                                ? () => setPricePerSeat(item.price)
-                                : null
-                            }
-                          >
-                            <span>
-                              {item.id}
-                              {item.letter}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <div className={b.seatRow}>
-                      {parsedSeats
-                        .slice(6, parsedSeats.length - 4)
-                        .map((item) => {
+                    <div className={b.seats}>
+                      <div className={b.seatRow}>
+                        {parsedSeats.slice(0, 6).map((item) => {
                           const itemId = item.id + item.letter;
                           const checkIfItemChosen = chosenSeats.find(
                             (item) => item === itemId
@@ -456,157 +403,217 @@ export const BookEvent = () => {
                             </button>
                           );
                         })}
+                      </div>
+                      <div className={b.seatRow}>
+                        {parsedSeats
+                          .slice(6, parsedSeats.length - 4)
+                          .map((item) => {
+                            const itemId = item.id + item.letter;
+                            const checkIfItemChosen = chosenSeats.find(
+                              (item) => item === itemId
+                            );
+                            return (
+                              <button
+                                key={item.id}
+                                id={itemId}
+                                style={
+                                  checkIfItemChosen || item.booked
+                                    ? {
+                                        backgroundColor: item.booked
+                                          ? "var(--color-red)"
+                                          : checkIfItemChosen &&
+                                            "var(--color-subtitle)",
+                                        pointerEvents: item.booked
+                                          ? "none"
+                                          : "unset",
+                                      }
+                                    : {
+                                        backgroundColor:
+                                          "var(--color-lightgray)",
+                                        pointerEvents: !item.booked
+                                          ? "unset"
+                                          : "none",
+                                      }
+                                }
+                                className={b.seat}
+                                onClick={(event) =>
+                                  handleShowingProccesMenu(event, item.price)
+                                }
+                                onMouseOver={
+                                  item.price !== pricePerSeat
+                                    ? () => setPricePerSeat(item.price)
+                                    : null
+                                }
+                              >
+                                <span>
+                                  {item.id}
+                                  {item.letter}
+                                </span>
+                              </button>
+                            );
+                          })}
+                      </div>
+                      <div className={b.seatRow}>
+                        {parsedSeats
+                          .slice(parsedSeats.length - 4, parsedSeats.length)
+                          .map((item) => {
+                            const itemId = item.id + item.letter;
+                            const checkIfItemChosen = chosenSeats.find(
+                              (item) => item === itemId
+                            );
+                            return (
+                              <button
+                                key={item.id}
+                                id={itemId}
+                                style={
+                                  checkIfItemChosen || item.booked
+                                    ? {
+                                        backgroundColor: item.booked
+                                          ? "var(--color-red)"
+                                          : checkIfItemChosen &&
+                                            "var(--color-subtitle)",
+                                        pointerEvents: item.booked
+                                          ? "none"
+                                          : "unset",
+                                      }
+                                    : {
+                                        backgroundColor: item.booked
+                                          ? "var(--color-red)"
+                                          : checkIfItemChosen &&
+                                            "var(--color-subtitle)",
+                                        pointerEvents: !item.booked
+                                          ? "unset"
+                                          : "none",
+                                      }
+                                }
+                                className={b.seat}
+                                onClick={(event) =>
+                                  handleShowingProccesMenu(event, item.price)
+                                }
+                                onMouseOver={
+                                  item.price !== pricePerSeat
+                                    ? () => setPricePerSeat(item.price)
+                                    : null
+                                }
+                              >
+                                <span>
+                                  {item.id}
+                                  {item.letter}
+                                </span>
+                              </button>
+                            );
+                          })}
+                      </div>
                     </div>
-                    <div className={b.seatRow}>
-                      {parsedSeats
-                        .slice(parsedSeats.length - 4, parsedSeats.length)
-                        .map((item) => {
-                          const itemId = item.id + item.letter;
-                          const checkIfItemChosen = chosenSeats.find(
-                            (item) => item === itemId
-                          );
-                          return (
-                            <button
-                              key={item.id}
-                              id={itemId}
-                              style={
-                                checkIfItemChosen || item.booked
-                                  ? {
-                                      backgroundColor: item.booked
-                                        ? "var(--color-red)"
-                                        : checkIfItemChosen &&
-                                          "var(--color-subtitle)",
-                                      pointerEvents: item.booked
-                                        ? "none"
-                                        : "unset",
-                                    }
-                                  : {
-                                      backgroundColor: item.booked
-                                        ? "var(--color-red)"
-                                        : checkIfItemChosen &&
-                                          "var(--color-subtitle)",
-                                      pointerEvents: !item.booked
-                                        ? "unset"
-                                        : "none",
-                                    }
-                              }
-                              className={b.seat}
-                              onClick={(event) =>
-                                handleShowingProccesMenu(event, item.price)
-                              }
-                              onMouseOver={
-                                item.price !== pricePerSeat
-                                  ? () => setPricePerSeat(item.price)
-                                  : null
-                              }
-                            >
-                              <span>
-                                {item.id}
-                                {item.letter}
-                              </span>
-                            </button>
-                          );
-                        })}
-                    </div>
-                  </div>
-                  <div className={b.seatsInfo}>
-                    <div className={b.seatInfoBlock}>
-                      <span
-                        style={{ backgroundColor: "var(--color-lightgray)" }}
-                        className={b.seatColor}
-                      ></span>
-                      <span className={b.info}>Availabel</span>
-                    </div>
-                    <div className={b.seatInfoBlock}>
-                      <span
-                        style={{ backgroundColor: "var(--color-red)" }}
-                        className={b.seatColor}
-                      ></span>
-                      <span
-                        style={{ color: "var(--color-red)" }}
-                        className={b.info}
-                      >
-                        Booked
-                      </span>
-                    </div>
-                    <div className={b.seatInfoBlock}>
-                      <span>
-                        Price per seat -
-                        <b style={{ color: "var(--color-red)" }}>
-                          {pricePerSeat}$
-                        </b>
-                      </span>
+                    <div className={b.seatsInfo}>
+                      <div className={b.seatInfoBlock}>
+                        <span
+                          style={{ backgroundColor: "var(--color-lightgray)" }}
+                          className={b.seatColor}
+                        ></span>
+                        <span className={b.info}>Availabel</span>
+                      </div>
+                      <div className={b.seatInfoBlock}>
+                        <span
+                          style={{ backgroundColor: "var(--color-red)" }}
+                          className={b.seatColor}
+                        ></span>
+                        <span
+                          style={{ color: "var(--color-red)" }}
+                          className={b.info}
+                        >
+                          Booked
+                        </span>
+                      </div>
+                      <div className={b.seatInfoBlock}>
+                        <span>
+                          Price per seat -
+                          <b style={{ color: "var(--color-red)" }}>
+                            {pricePerSeat}$
+                          </b>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Fragment>
             );
           })}
           {stripePublishKey && clientSecret && bookEventStep === "payment" && (
-            <Elements stripe={stripePublishKey} options={{ clientSecret }}>
-              <PaymentForm
-                goToRecieve={handleGoToRecieveSection}
-                updateAllBookedSeats={updateAllBookedSeats}
-              />
-            </Elements>
+            <>
+              <h1>Payment</h1>
+              <Elements stripe={stripePublishKey} options={{ clientSecret }}>
+                <PaymentForm
+                  goToRecieve={handleGoToRecieveSection}
+                  updateAllBookedSeats={updateAllBookedSeats}
+                />
+              </Elements>
+            </>
           )}
-          {bookEventStep === "recieve" && paymentStatus && (
-            <div className={b.recievePage}>
-              <div className={b.ticket_instruction}>
-                <div ref={ticket} className={b.ticket}>
-                  <div className={b.left_info}>
-                    <div className={b.topSection}>
-                      <img src="./images/logo.png" alt="logo" />
-                      <span>Best wishes by Theater</span>
-                    </div>
-                    {currentEventsInfo?.map((item) => (
-                      <div key={item.id} className={b.infoAboutTicket}>
-                        <div className={b.info}>
-                          <span>Event</span>
-                          <h2>{item.name}</h2>
-                        </div>
-                        <div className={b.info}>
-                          <span>Starting time</span>
-                          <h2>{formatTime(item.startingtime)}</h2>
-                        </div>
+          {paymentStatus && (
+            <>
+              <h1>Recieve</h1>
+              <div className={b.recievePage}>
+                <div className={b.ticket_instruction}>
+                  <div ref={ticket} className={b.ticket}>
+                    <div className={b.left_info}>
+                      <div className={b.topSection}>
+                        <img src="./images/logo.png" alt="logo" />
+                        <span>Best wishes by Theater</span>
                       </div>
-                    ))}
-                    <div className={b.ticketSeats}>
-                      <span>Seats:</span>
-                      {chosenSeats.map((item) => (
-                        <span key={item}>{item}</span>
+                      {currentEventsInfo?.map((item) => (
+                        <div key={item.id} className={b.infoAboutTicket}>
+                          <div className={b.info}>
+                            <span>Event</span>
+                            <h2>{item.name}</h2>
+                          </div>
+                          <div className={b.info}>
+                            <span>Starting time</span>
+                            <h2>{formatTime(item.startingtime)}</h2>
+                          </div>
+                        </div>
                       ))}
+                      <div className={b.ticketSeats}>
+                        <span>Seats:</span>
+                        {chosenSeats.map((item) => (
+                          <span key={item}>{item}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className={b.rightSection}>
+                      <QRCode
+                        value={chosenSeats.map((item) => toString(item))}
+                      />
                     </div>
                   </div>
-                  <div className={b.rightSection}>
-                    <QRCode value={chosenSeats.map((item) => toString(item))} />
+
+                  <ul className={b.instruction}>
+                    <li className={b.main_text}>Term & Condition</li>
+                    <li>- Show the ticket at the entrance</li>
+                    <li>- The ticket is valid for 2 movie nights.</li>
+                    <li>
+                      - Disruptive audience members will be asked to leave
+                      immediately.
+                    </li>
+                    <li>- Event date and time are subject to change.</li>
+                    <li>- Remember to turn off your phone during the movie.</li>
+                    <li>- Have a great time!</li>
+                  </ul>
+                </div>
+                <div className={b.wayToRecieveTicket}>
+                  <span>
+                    Chose way how you wanna recieve or save your ticket
+                  </span>
+                  <div className={b.ways}>
+                    <button onClick={downloadTicket}>Download</button>
+                    <button onClick={recieveTicketOnEmail}>
+                      Recieve on email
+                    </button>
                   </div>
                 </div>
-
-                <ul className={b.instruction}>
-                  <li className={b.main_text}>Term & Condition</li>
-                  <li>- Show the ticket at the entrance</li>
-                  <li>- The ticket is valid for 2 movie nights.</li>
-                  <li>
-                    - Disruptive audience members will be asked to leave
-                    immediately.
-                  </li>
-                  <li>- Event date and time are subject to change.</li>
-                  <li>- Remember to turn off your phone during the movie.</li>
-                  <li>- Have a great time!</li>
-                </ul>
+                <NavLink to={"/"}>Back to home page</NavLink>
               </div>
-              <div className={b.wayToRecieveTicket}>
-                <span>Chose way how you wanna recieve or save your ticket</span>
-                <div className={b.ways}>
-                  <button onClick={downloadTicket}>Download</button>
-                  <button onClick={recieveTicketOnEmail}>
-                    Recieve on email
-                  </button>
-                </div>
-              </div>
-              <NavLink to={"/"}>Back to home page</NavLink>
-            </div>
+            </>
           )}
         </Slider>
       </div>

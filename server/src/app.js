@@ -13,18 +13,18 @@ const dbConfig = require("../database");
 const app = express();
 
 if (process.env.BUILD) {
-  console.log("hello");
-}
-const http_server = require("http").createServer(app);
-const io = require("socket.io")(http_server, {
-  cors: { origin: "*" },
-});
-io.on("connection", (socket) => {
-  socket.on("updatedEvent", (data) => {
-    console.log(data, "data");
-    io.emit("newSeats", data);
+  const http_server = require("http").createServer(app);
+  const io = require("socket.io")(http_server, {
+    cors: { origin: "*" },
   });
-});
+  io.on("connection", (socket) => {
+    console.log("hello");
+    socket.on("updatedEvent", (data) => {
+      console.log(data, "data");
+      io.emit("newSeats", data);
+    });
+  });
+}
 const PORT = process.env.PORT;
 
 const setupRoutes = () => {

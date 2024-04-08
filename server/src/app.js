@@ -11,9 +11,8 @@ const defaultCorsOptions = require("./configs/corsSettings");
 const dbConfig = require("../database");
 
 const app = express();
-
+const http_server = require("http").createServer(app);
 if (process.env.BUILD) {
-  const http_server = require("http").createServer(app);
   const io = require("socket.io")(http_server, {
     cors: { origin: "*" },
   });

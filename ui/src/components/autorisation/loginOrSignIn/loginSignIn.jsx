@@ -68,6 +68,7 @@ export const LogInSignIn = () => {
     } catch (error) {
       openLogInAutorisationMenu();
       handleOpeningNavMenu();
+      console.log(autorisationMenu, "check");
     }
   }, []);
   useEffect(() => {
@@ -91,13 +92,13 @@ export const LogInSignIn = () => {
           <div className={l.logInSignInContainer}>
             <button
               style={
-                openSignIn
+                !openSignIn
                   ? {
                       backgroundColor: "var(--color-red)",
                       color: "var(--color-white)",
-                      scale: "(0.98)",
+                      scale: "0.98",
                     }
-                  : ""
+                  : null
               }
               onClick={openLogInAutorisationMenu}
             >

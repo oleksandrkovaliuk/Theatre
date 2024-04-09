@@ -19,7 +19,12 @@ const checkLoginned = async (req, res) => {
       }
     });
   } catch (error) {
-    return res.status(401).json({ errorText: "user unautorized yet" });
+    return res
+      .status(401)
+      .json({
+        errorText:
+          "you are not loggined yet. Please login to open all page functionality",
+      });
   }
 };
 module.exports = checkLoginned;

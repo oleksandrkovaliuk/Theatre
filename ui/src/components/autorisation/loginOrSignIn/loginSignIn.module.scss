@@ -7,7 +7,7 @@
     &:hover {
       svg {
         path {
-          transition: all 0.3s ease-in-out;
+          transition: all 0.2s ease-in-out;
           fill: var(--color-red);
         }
       }
@@ -25,18 +25,16 @@
     align-items: center;
     justify-content: center;
     padding: 3px;
-    background-color: var(--color-red);
+    background-color: transparent;
     border: unset;
-    border-radius: 6px;
-    transition: background 0.2s ease-in-out;
+    transition: all 0.3s ease-in-out;
     svg {
-      transition: fill 0.4s ease-in-out;
       path {
-        fill: var(--color-white);
+        transition: fill 0.2s ease-in-out;
+        fill: #000;
       }
     }
     &:hover {
-      background-color: var(--color-white);
       svg {
         path {
           fill: var(--color-red);

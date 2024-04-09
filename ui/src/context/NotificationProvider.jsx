@@ -20,7 +20,7 @@ export const NotificationProvider = ({ children }) => {
     if (mess) {
       setTimeout(() => {
         setMessage(null);
-      }, 5000);
+      }, 3000);
     }
   }, []);
 

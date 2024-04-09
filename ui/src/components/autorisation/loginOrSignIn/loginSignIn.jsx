@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { USER_ROLE } from "../../../shared/enums";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AutorisationMenu } from "../autorisation";
@@ -14,6 +14,7 @@ import l from "./loginSignIn.module.scss";
 import { LogOutIcon } from "../../../icons/logOutIcon";
 import { SettingsIcon } from "../../../icons/settingsIcon";
 import { NotificationContext } from "../../../context/notificationContext";
+import { checkLoginned } from "../../../services/apiCallConfig";
 
 export const LogInSignIn = () => {
   const { user, setUserInfo } = useContext(userContext);
@@ -61,6 +62,17 @@ export const LogInSignIn = () => {
     localStorage.removeItem("user_jwt_token");
     navigate("/");
   };
+  const checkIfUserLoginned = useCallback(async () => {
+    try {
+      await checkLoginned();
+    } catch (error) {
+      openLogInAutorisationMenu();
+      handleOpeningNavMenu();
+    }
+  }, []);
+  useEffect(() => {
+    checkIfUserLoginned();
+  }, [checkIfUserLoginned]);
   return (
     <>
       <AutorisationMenu

@@ -14,6 +14,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import b from "./bookEvents.module.scss";
 import {
+  checkLoginned,
   createPaymentIntent,
   getConfig,
   getEvents,
@@ -111,9 +112,15 @@ export const BookEvent = () => {
     setNotificationMessage,
   ]);
   // Navigation between pages
-  const handleGoToPaymentSection = () => {
-    setBookEventStep("payment");
-    bookEvent.current.slickNext();
+  const handleGoToPaymentSection = async () => {
+    try {
+      await checkLoginned();
+      setBookEventStep("payment");
+      bookEvent.current.slickNext();
+    } catch (error) {
+      console.log(error);
+      setNotificationMessage(error);
+    }
   };
   const handleGoToRecieveSection = () => {
     // setBookEventStep("recieve");

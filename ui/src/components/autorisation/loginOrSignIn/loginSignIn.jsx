@@ -91,15 +91,15 @@ export const LogInSignIn = () => {
         {!user ? (
           <div className={l.logInSignInContainer}>
             <button
-              // style={
-              //   !openSignIn
-              //     ? {
-              //         backgroundColor: "var(--color-red)",
-              //         color: "var(--color-white)",
-              //         scale: "0.98",
-              //       }
-              //     : null
-              // }
+              style={
+                !openSignIn && autorisationMenu
+                  ? {
+                      backgroundColor: "var(--color-red)",
+                      color: "var(--color-white)",
+                      scale: "0.98",
+                    }
+                  : null
+              }
               onClick={openLogInAutorisationMenu}
             >
               Login In

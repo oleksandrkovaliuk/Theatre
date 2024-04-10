@@ -101,7 +101,7 @@ export const BookEvent = () => {
         eventSeats: JSON.stringify(updatedSeats[0]),
       });
       const events = await getEvents();
-      setCommingEvents(events);
+      return setCommingEvents(events);
     } catch (error) {
       setNotificationMessage(error);
     }
@@ -114,7 +114,7 @@ export const BookEvent = () => {
   // Navigation between pages
   const handleGoToPaymentSection = async () => {
     try {
-      await checkLoginned();
+      await checkLoginned({ bookedEvents: true });
       setBookEventStep("payment");
       bookEvent.current.slickNext();
     } catch (error) {
@@ -123,7 +123,6 @@ export const BookEvent = () => {
     }
   };
   const handleGoToRecieveSection = () => {
-    // setBookEventStep("recieve");
     setPaymentStatus(true);
     bookEvent.current.slickNext();
   };
@@ -153,12 +152,24 @@ export const BookEvent = () => {
     }
   }, [subtotal]);
   // saving ticket
+  const saveUserBookedEvent = useCallback(
+    ({ ticket, eventsInfo }) => {
+      try {
+        console.log(user, ticket, eventsInfo, "user");
+      } catch (error) {
+        setNotificationMessage(error);
+      }
+    },
+    [setNotificationMessage, user]
+  );
+
   const setTicketImg = useCallback(async () => {
     const currentTicket = ticket.current;
     await html2canvas(currentTicket).then((canvas) => {
       setTicketLink(canvas.toDataURL("image/png"));
     });
   }, []);
+
   const downloadTicket = () => {
     const fakeLink = window.document.createElement("a");
     fakeLink.style = "display:none;";
@@ -170,6 +181,7 @@ export const BookEvent = () => {
     document.body.removeChild(fakeLink);
     fakeLink.remove();
   };
+
   const recieveTicketOnEmail = async () => {
     try {
       const sent = await sendTicket({
@@ -182,13 +194,26 @@ export const BookEvent = () => {
       setNotificationMessage(error);
     }
   };
+  // saving user booked event
   // socket logic
   useEffect(() => {
     if (paymentStatus) {
       socket.emit("updatedEvent", chosenSeats);
       setTicketImg();
+      saveUserBookedEvent({
+        ticket: ticketLink,
+        eventsInfo: currentEventsInfo,
+      });
     }
-  }, [paymentStatus, bookEventStep, chosenSeats, setTicketImg]);
+  }, [
+    paymentStatus,
+    bookEventStep,
+    chosenSeats,
+    setTicketImg,
+    saveUserBookedEvent,
+    ticketLink,
+    currentEventsInfo,
+  ]);
 
   useEffect(() => {
     try {
@@ -203,13 +228,13 @@ export const BookEvent = () => {
           } . Here is updated seats`,
         });
         if (isEqual) {
-          setProcessMenu(false);
+          return setProcessMenu(false);
         }
-        if (!paymentStatus && bookEventStep !== "payment") {
-          bookEvent.current.slickPrev();
+        if (!paymentStatus && bookEventStep === "payment") {
+          return bookEvent.current.slickPrev();
         }
-        setTimeout(async () => {
-          const events = await getEvents();
+        setTimeout(() => {
+          const events = getEvents();
           setGetCurrentEventInfo({
             value: false,
             discription: "",

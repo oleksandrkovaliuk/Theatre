@@ -26,12 +26,11 @@ if (process.env.BUILD) {
     });
   });
 } else {
-  const io = new Server(3003, { cors: { origin: "*" } });
-  console.log(io, "io");
+  const io = new Server(process.env.SOCKET_PORT, { cors: { origin: "*" } });
   io.on("connection", (socket) => {
     console.log("socket if not build");
     socket.on("updatedEvent", (data) => {
-      return io.emit("newSeats", data);
+      io.emit("newSeats", data);
     });
   });
 }

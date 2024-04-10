@@ -18,6 +18,7 @@ import { Notification } from "../components/nitification";
 import { MageneEvents } from "../pages/manegeEventsPage";
 import { NotificationProvider } from "../context/NotificationProvider";
 import { BookEvent } from "../pages/bookEventPage";
+import { UserBookedEvents } from "../pages/userBookedEvents";
 
 export const App = () => {
   const { setNotificationMessage } = useContext(NotificationContext);
@@ -40,7 +41,7 @@ export const App = () => {
   const getAllData = useCallback(async () => {
     try {
       const [userRes, eventsRes] = await Promise.allSettled([
-        checkLoginned(),
+        checkLoginned({ bookedEvents: false }),
         getEvents(),
       ]);
       setUserInfo(userRes.value);
@@ -65,6 +66,7 @@ export const App = () => {
             <Route path="/createEvent" element={<CreateEventPage />} />
             <Route path="/manageEvents" element={<MageneEvents />} />
             <Route path="/bookEvent" element={<BookEvent />} />
+            <Route path="/userBookedEvents" element={<UserBookedEvents />} />
           </Routes>
         </NotificationProvider>
       </EventsContext.Provider>

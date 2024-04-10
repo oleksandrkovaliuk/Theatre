@@ -47,9 +47,13 @@ export const signInUser = async ({ username, email, password, role }) =>
   postMethod("signIn", { username, email, password, role });
 export const logIn = async ({ email, password }) =>
   postMethod("logIn", { email, password });
+// ui side
+export const userBookedEvents = async ({ bookedEvents }) =>
+  postMethod("userBookedEvents", { bookedEvents });
 
 // Working with modifying events (Admin side)
-export const checkLoginned = async () => postMethod("checkLoginned");
+export const checkLoginned = async ({ bookedEvents }) =>
+  postMethod("checkLoginned", { bookedEvents });
 export const creatingEvent = async ({
   eventName,
   eventDisc,
@@ -99,4 +103,4 @@ export const getConfig = () => getMethod("stripe_config");
 export const createPaymentIntent = ({ amount }) =>
   postMethod("create_payment_intent", { amount });
 export const sendTicket = ({ username, email, ticket }) =>
-  postMethod("sendUserTicket" , { username, email, ticket });
+  postMethod("sendUserTicket", { username, email, ticket });

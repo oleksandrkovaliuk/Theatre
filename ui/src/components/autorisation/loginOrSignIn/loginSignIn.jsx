@@ -64,7 +64,7 @@ export const LogInSignIn = () => {
   };
   const checkIfUserLoginned = useCallback(async () => {
     try {
-      await checkLoginned();
+      await checkLoginned({ bookedEvents: true });
     } catch (error) {
       openLogInAutorisationMenu();
       handleOpeningNavMenu();

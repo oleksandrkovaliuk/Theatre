@@ -45,6 +45,7 @@ export const App = () => {
         getEvents(),
       ]);
       setUserInfo(userRes.value);
+      console.log(eventsRes.value);
       setEvents(eventsRes.value);
     } catch (error) {
       setNotificationMessage(error);

@@ -12,28 +12,11 @@ const dbConfig = require("../database");
 const { Server } = require("socket.io");
 
 const app = express();
-const http_server = require("http").createServer(app);
 const PORT = process.env.PORT;
-if (process.env.BUILD) {
-  const io = require("socket.io")(http_server, {
-    cors: { origin: "*" },
-  });
-  io.on("connection", (socket) => {
-    console.log("hello");
-    socket.on("updatedEvent", (data) => {
-      console.log(data, "data");
-      io.emit("newSeats", data);
-    });
-  });
-} else {
-  const io = new Server(process.env.SOCKET_PORT, { cors: { origin: "*" } });
-  io.on("connection", (socket) => {
-    console.log("socket if not build");
-    socket.on("updatedEvent", (data) => {
-      io.emit("newSeats", data);
-    });
-  });
-}
+const http_server = require("http").createServer(app);
+const io = new Server(http_server, {
+  cors: { origin: "*", methods: "GET,HEAD,PUT,PATCH,POST,DELETE" },
+});
 
 const setupRoutes = () => {
   app.use(cors(defaultCorsOptions));
@@ -110,17 +93,23 @@ async function init() {
     await setupDB();
     setupRoutes();
     console.log(PORT, " PORT");
-    if (process.env.BUILD) {
-      http_server.listen(PORT, () => {
-        console.log(`socket listening on ${PORT}`);
-        return console.log(`Express is listening on PORT:${PORT}`);
+    io.on("connection", (socket) => {
+      console.log("hello", socket.id);
+      socket.on("updatedEvent", (data) => {
+        return io.emit("newSeats", data);
       });
-    } else {
-      app.listen(PORT, () => {
-        console.log(`socket listening on ${process.env.SOCKET_PORT}`);
-        return console.log(`Express is listening on PORT:${PORT}`);
-      });
-    }
+    });
+    // if (process.env.BUILD) {
+    http_server.listen(PORT, () => {
+      console.log(`socket listening on ${PORT}`);
+      return console.log(`Express is listening on PORT:${PORT}`);
+    });
+    // } else {
+    //   app.listen(PORT, () => {
+    //     // console.log(`socket listening on ${process.env.SOCKET_PORT}`);
+    //     return console.log(`Express is listening on PORT:${PORT}`);
+    //   });
+    // }
   } catch (error) {
     throw new Error(`Could not init application: ${error}`);
   }

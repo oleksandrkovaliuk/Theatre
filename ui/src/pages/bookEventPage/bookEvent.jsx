@@ -51,6 +51,7 @@ export const BookEvent = () => {
   const [sliderIndex, setSliderIndex] = useState(0);
   const bookEvent = useRef(null);
   const ticket = useRef(null);
+  console.log(events, "events");
   const currentEventsInfo = events?.filter(
     (item) => item.id === Number(searchParams.get("id"))
   );
@@ -80,7 +81,7 @@ export const BookEvent = () => {
     setProcessMenu(true);
     return setChosenSeats(arr);
   };
-  const updateAllBookedSeats = useCallback(async () => {
+  const updateAllBookedSeats = async () => {
     try {
       const currentEvent = currentEventsInfo?.map((item) =>
         JSON.parse(item.eventseats)
@@ -96,25 +97,18 @@ export const BookEvent = () => {
         });
         return item;
       });
-      updateBookedEvents({
+      return updateBookedEvents({
         id: currentEventsInfo[0].id,
         eventSeats: JSON.stringify(updatedSeats[0]),
       });
-      const events = await getEvents();
-      return setCommingEvents(events);
     } catch (error) {
       setNotificationMessage(error);
     }
-  }, [
-    chosenSeats,
-    currentEventsInfo,
-    setCommingEvents,
-    setNotificationMessage,
-  ]);
+  };
   // Navigation between pages
   const handleGoToPaymentSection = async () => {
     try {
-      await checkLoginned({ bookedEvents: true });
+      await checkLoginned({ bookedEvents: false });
       setBookEventStep("payment");
       bookEvent.current.slickNext();
     } catch (error) {
@@ -122,9 +116,15 @@ export const BookEvent = () => {
       setNotificationMessage(error);
     }
   };
-  const handleGoToRecieveSection = () => {
-    setPaymentStatus(true);
-    bookEvent.current.slickNext();
+  const handleGoToRecieveSection = async () => {
+    try {
+      console.log("enter");
+      updateAllBookedSeats();
+      setPaymentStatus(true);
+      bookEvent.current.slickNext();
+    } catch (error) {
+      setNotificationMessage(error);
+    }
   };
   const handleGoBack = () => {
     if (bookEventStep === "payment") {
@@ -152,34 +152,25 @@ export const BookEvent = () => {
     }
   }, [subtotal]);
   // saving ticket
-  const saveUserBookedEvent = useCallback(
-    ({ ticket, eventsInfo }) => {
-      try {
-        console.log(user, ticket, eventsInfo, "user");
-      } catch (error) {
-        setNotificationMessage(error);
-      }
-    },
-    [setNotificationMessage, user]
-  );
-
-  const setTicketImg = useCallback(async () => {
-    const currentTicket = ticket.current;
-    await html2canvas(currentTicket).then((canvas) => {
-      setTicketLink(canvas.toDataURL("image/png"));
-    });
-  }, []);
-
   const downloadTicket = () => {
-    const fakeLink = window.document.createElement("a");
-    fakeLink.style = "display:none;";
-    fakeLink.download = `YourTicket${chosenSeats.map((item) => item)}`;
-    fakeLink.href = ticketLink;
-    console.log(fakeLink);
-    document.body.appendChild(fakeLink);
-    fakeLink.click();
-    document.body.removeChild(fakeLink);
-    fakeLink.remove();
+    try {
+      const currentTicket = ticket.current;
+      if (currentTicket) {
+        html2canvas(currentTicket).then((canvas) => {
+          const fakeLink = window.document.createElement("a");
+          fakeLink.style = "display:none;";
+          fakeLink.download = `YourTicket${chosenSeats.map((item) => item)}`;
+          fakeLink.href = canvas.toDataURL("image/png");
+          console.log(fakeLink);
+          document.body.appendChild(fakeLink);
+          fakeLink.click();
+          document.body.removeChild(fakeLink);
+          fakeLink.remove();
+        });
+      }
+    } catch (error) {
+      setNotificationMessage(error);
+    }
   };
 
   const recieveTicketOnEmail = async () => {
@@ -195,52 +186,55 @@ export const BookEvent = () => {
     }
   };
   // saving user booked event
+  const saveUserBookedEvent = useCallback(
+    async ({ ticket, eventsInfo }) => {
+      try {
+        console.log(user, ticket, eventsInfo, "user");
+      } catch (error) {
+        // setNotificationMessage(error);
+      }
+    },
+    [user]
+  );
   // socket logic
-  useEffect(() => {
-    if (paymentStatus) {
-      socket.emit("updatedEvent", chosenSeats);
-      setTicketImg();
-      saveUserBookedEvent({
-        ticket: ticketLink,
-        eventsInfo: currentEventsInfo,
-      });
-    }
-  }, [
-    paymentStatus,
-    bookEventStep,
-    chosenSeats,
-    setTicketImg,
-    saveUserBookedEvent,
-    ticketLink,
-    currentEventsInfo,
-  ]);
-
-  useEffect(() => {
+  const socketUpdateEvent = useCallback(async () => {
+    socket.emit("updatedEvent", chosenSeats);
+    // setTicketImg();
+    // saveUserBookedEvent({
+    //   ticket: ticketLink,
+    //   eventsInfo: currentEventsInfo,
+    // });
+  }, [chosenSeats]);
+  const socketGetNewSeats = useCallback(async () => {
     try {
       socket.on("newSeats", (data) => {
         const isEqual = JSON.stringify(data) === JSON.stringify(chosenSeats);
-        setGetCurrentEventInfo({
-          value: true,
-          discription: `${
-            isEqual ? "Sorry . But somebody booked your" : "Updated info about"
-          } ${chosenSeats.length > 1 && chosenSeats ? "seats" : "seat"} ${
-            isEqual ? chosenSeats?.map((item) => item) : ""
-          } . Here is updated seats`,
-        });
         if (isEqual) {
-          return setProcessMenu(false);
+          setProcessMenu(false);
         }
-        if (!paymentStatus && bookEventStep === "payment") {
-          return bookEvent.current.slickPrev();
+        if (isEqual && bookEventStep === "payment" && !paymentStatus) {
+          bookEvent.current.slickPrev();
         }
-        setTimeout(() => {
-          const events = getEvents();
+        if (bookEventStep === "book") {
           setGetCurrentEventInfo({
-            value: false,
-            discription: "",
+            value: true,
+            discription: `${
+              isEqual
+                ? "Sorry . But somebody booked your"
+                : "Updated info about"
+            } ${chosenSeats.length > 1 && chosenSeats ? "seats" : "seat"} ${
+              isEqual ? chosenSeats?.map((item) => item) : ""
+            } . Here is updated seats`,
           });
-          setCommingEvents(events);
-        }, 2000);
+          setTimeout(async () => {
+            const updatedEvents = await getEvents();
+            setCommingEvents(updatedEvents);
+            setGetCurrentEventInfo({
+              value: false,
+              discription: "",
+            });
+          }, 2000);
+        }
       });
     } catch (error) {
       setNotificationMessage(error);
@@ -252,7 +246,16 @@ export const BookEvent = () => {
     setCommingEvents,
     setNotificationMessage,
   ]);
-  console.log(bookEvent);
+  useEffect(() => {
+    if (paymentStatus && bookEventStep === "payment") {
+      console.log("socket");
+      socketUpdateEvent();
+    }
+  }, [bookEventStep, paymentStatus, socketUpdateEvent]);
+
+  useEffect(() => {
+    socketGetNewSeats();
+  }, [socketGetNewSeats]);
   // set up stripe
   useEffect(() => {
     if (subtotal) {
@@ -575,10 +578,7 @@ export const BookEvent = () => {
             <>
               <h1>Payment</h1>
               <Elements stripe={stripePublishKey} options={{ clientSecret }}>
-                <PaymentForm
-                  goToRecieve={handleGoToRecieveSection}
-                  updateAllBookedSeats={updateAllBookedSeats}
-                />
+                <PaymentForm goToRecieve={handleGoToRecieveSection} />
               </Elements>
             </>
           )}

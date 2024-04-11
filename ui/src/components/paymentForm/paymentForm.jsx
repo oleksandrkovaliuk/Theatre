@@ -29,7 +29,6 @@ export const PaymentForm = ({ goToRecieve, updateAllBookedSeats }) => {
         if (!error && paymentIntent && paymentIntent.status === "succeeded") {
           setNotificationMessage("your payment succesfully completed");
           setIsProcesing(false);
-          updateAllBookedSeats();
           goToRecieve();
         } else {
           console.log("error");

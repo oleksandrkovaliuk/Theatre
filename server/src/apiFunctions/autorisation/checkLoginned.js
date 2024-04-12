@@ -12,20 +12,11 @@ const checkLoginned = async (req, res) => {
           .status(401)
           .json({ errorText: "Could find user or error from db side" });
       } else {
-        return res.status(200).json(
-          bookedEvents
-            ? {
-                username: dbRes.rows[0].username,
-                email: dbRes.rows[0].email,
-                role: dbRes.rows[0].role,
-                bookedEvents: dbRes.rows[0].bookedEvents,
-              }
-            : {
-                username: dbRes.rows[0].username,
-                email: dbRes.rows[0].email,
-                role: dbRes.rows[0].role,
-              }
-        );
+        return res.status(200).json({
+          username: dbRes.rows[0].username,
+          email: dbRes.rows[0].email,
+          role: dbRes.rows[0].role,
+        });
       }
     });
   } catch (error) {

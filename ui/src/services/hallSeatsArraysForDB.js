@@ -36,6 +36,8 @@ export const functionSetUpSeats = (typeOfHall) => {
       letter: setUpLetter(i),
       price: i <= 6 ? 140 : i >= seats - 4 ? 120 : 70,
       booked: false,
+      bokker: "",
+      ticket: "",
     });
   }
   console.log(hallSeats.length, "seats");

@@ -92,24 +92,16 @@ async function init() {
     setupMiddlewares();
     await setupDB();
     setupRoutes();
-    console.log(PORT, " PORT");
     io.on("connection", (socket) => {
       console.log("hello", socket.id);
       socket.on("updatedEvent", (data) => {
         return io.emit("newSeats", data);
       });
     });
-    // if (process.env.BUILD) {
     http_server.listen(PORT, () => {
       console.log(`socket listening on ${PORT}`);
       return console.log(`Express is listening on PORT:${PORT}`);
     });
-    // } else {
-    //   app.listen(PORT, () => {
-    //     // console.log(`socket listening on ${process.env.SOCKET_PORT}`);
-    //     return console.log(`Express is listening on PORT:${PORT}`);
-    //   });
-    // }
   } catch (error) {
     throw new Error(`Could not init application: ${error}`);
   }

@@ -41,7 +41,7 @@ export const App = () => {
   const getAllData = useCallback(async () => {
     try {
       const [userRes, eventsRes] = await Promise.allSettled([
-        checkLoginned({ bookedEvents: false }),
+        checkLoginned(),
         getEvents(),
       ]);
       setUserInfo(userRes.value);

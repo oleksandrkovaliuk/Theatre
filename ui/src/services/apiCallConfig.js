@@ -47,13 +47,9 @@ export const signInUser = async ({ username, email, password, role }) =>
   postMethod("signIn", { username, email, password, role });
 export const logIn = async ({ email, password }) =>
   postMethod("logIn", { email, password });
-// ui side
-export const userBookedEvents = async ({ bookedEvents }) =>
-  postMethod("userBookedEvents", { bookedEvents });
-
 // Working with modifying events (Admin side)
-export const checkLoginned = async ({ bookedEvents }) =>
-  postMethod("checkLoginned", { bookedEvents });
+export const checkLoginned = async () =>
+  postMethod("checkLoginned");
 export const creatingEvent = async ({
   eventName,
   eventDisc,

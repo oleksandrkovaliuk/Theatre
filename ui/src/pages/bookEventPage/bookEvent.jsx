@@ -51,7 +51,6 @@ export const BookEvent = () => {
   const [sliderIndex, setSliderIndex] = useState(0);
   const bookEvent = useRef(null);
   const ticket = useRef(null);
-  console.log(events, "events");
   const currentEventsInfo = events?.filter(
     (item) => item.id === Number(searchParams.get("id"))
   );
@@ -81,7 +80,7 @@ export const BookEvent = () => {
     setProcessMenu(true);
     return setChosenSeats(arr);
   };
-  const updateAllBookedSeats = async () => {
+  const updateAllBookedSeats = useCallback(async () => {
     try {
       const currentEvent = currentEventsInfo?.map((item) =>
         JSON.parse(item.eventseats)
@@ -91,24 +90,34 @@ export const BookEvent = () => {
           chosenSeats.map((chosen) => {
             if (seat.id === Number(chosen.replace(/\D/g, ""))) {
               seat.booked = true;
+              seat.bokker = user.email;
+              seat.ticket = ticketLink;
             }
           });
           return seat;
         });
+        console.log(item, "items");
         return item;
       });
-      return updateBookedEvents({
+      console.log(updatedSeats, "seats");
+      updateBookedEvents({
         id: currentEventsInfo[0].id,
         eventSeats: JSON.stringify(updatedSeats[0]),
       });
     } catch (error) {
       setNotificationMessage(error);
     }
-  };
+  }, [
+    chosenSeats,
+    currentEventsInfo,
+    setNotificationMessage,
+    ticketLink,
+    user,
+  ]);
   // Navigation between pages
   const handleGoToPaymentSection = async () => {
     try {
-      await checkLoginned({ bookedEvents: false });
+      await checkLoginned();
       setBookEventStep("payment");
       bookEvent.current.slickNext();
     } catch (error) {
@@ -118,10 +127,9 @@ export const BookEvent = () => {
   };
   const handleGoToRecieveSection = async () => {
     try {
-      console.log("enter");
-      updateAllBookedSeats();
       setPaymentStatus(true);
       bookEvent.current.slickNext();
+      console.log(ticket.current, "current");
     } catch (error) {
       setNotificationMessage(error);
     }
@@ -153,23 +161,17 @@ export const BookEvent = () => {
   }, [subtotal]);
   // saving ticket
   const downloadTicket = () => {
-    try {
-      const currentTicket = ticket.current;
-      if (currentTicket) {
-        html2canvas(currentTicket).then((canvas) => {
-          const fakeLink = window.document.createElement("a");
-          fakeLink.style = "display:none;";
-          fakeLink.download = `YourTicket${chosenSeats.map((item) => item)}`;
-          fakeLink.href = canvas.toDataURL("image/png");
-          console.log(fakeLink);
-          document.body.appendChild(fakeLink);
-          fakeLink.click();
-          document.body.removeChild(fakeLink);
-          fakeLink.remove();
-        });
-      }
-    } catch (error) {
-      setNotificationMessage(error);
+    const currentTicket = ticket.current;
+    if (currentTicket) {
+      const fakeLink = window.document.createElement("a");
+      fakeLink.style = "display:none;";
+      fakeLink.download = `YourTicket${chosenSeats.map((item) => item)}`;
+      fakeLink.href = ticketLink;
+      console.log(fakeLink);
+      document.body.appendChild(fakeLink);
+      fakeLink.click();
+      document.body.removeChild(fakeLink);
+      fakeLink.remove();
     }
   };
 
@@ -185,35 +187,28 @@ export const BookEvent = () => {
       setNotificationMessage(error);
     }
   };
-  // saving user booked event
-  const saveUserBookedEvent = useCallback(
-    async ({ ticket, eventsInfo }) => {
-      try {
-        console.log(user, ticket, eventsInfo, "user");
-      } catch (error) {
-        // setNotificationMessage(error);
-      }
-    },
-    [user]
-  );
   // socket logic
   const socketUpdateEvent = useCallback(async () => {
-    socket.emit("updatedEvent", chosenSeats);
-    // setTicketImg();
-    // saveUserBookedEvent({
-    //   ticket: ticketLink,
-    //   eventsInfo: currentEventsInfo,
-    // });
+    if (chosenSeats?.length) {
+      socket.emit("updatedEvent", chosenSeats);
+    }
   }, [chosenSeats]);
   const socketGetNewSeats = useCallback(async () => {
     try {
       socket.on("newSeats", (data) => {
         const isEqual = JSON.stringify(data) === JSON.stringify(chosenSeats);
-        if (isEqual) {
+        if (isEqual && !ticket.current) {
           setProcessMenu(false);
+          setChosenSeats([]);
         }
-        if (isEqual && bookEventStep === "payment" && !paymentStatus) {
+        if (
+          isEqual &&
+          bookEventStep === "payment" &&
+          !paymentStatus &&
+          !ticket.current
+        ) {
           bookEvent.current.slickPrev();
+          setChosenSeats([]);
         }
         if (bookEventStep === "book") {
           setGetCurrentEventInfo({
@@ -247,15 +242,24 @@ export const BookEvent = () => {
     setNotificationMessage,
   ]);
   useEffect(() => {
-    if (paymentStatus && bookEventStep === "payment") {
-      console.log("socket");
+    if (paymentStatus) {
       socketUpdateEvent();
+      if (ticket.current) {
+        html2canvas(ticket.current).then((canvas) => {
+          return setTicketLink(canvas.toDataURL("image/png"));
+        });
+      }
     }
   }, [bookEventStep, paymentStatus, socketUpdateEvent]);
 
   useEffect(() => {
     socketGetNewSeats();
   }, [socketGetNewSeats]);
+  useEffect(() => {
+    if (ticketLink) {
+      updateAllBookedSeats();
+    }
+  }, [ticketLink, updateAllBookedSeats]);
   // set up stripe
   useEffect(() => {
     if (subtotal) {
@@ -316,7 +320,7 @@ export const BookEvent = () => {
       </div>
       <div
         style={
-          processMenu && chosenSeats.length && bookEventStep === "book"
+          processMenu && chosenSeats.length && sliderIndex === 0
             ? { bottom: "0px" }
             : { bottom: "-100px" }
         }

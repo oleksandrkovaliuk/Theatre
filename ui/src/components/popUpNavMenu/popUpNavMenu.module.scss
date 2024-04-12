@@ -22,6 +22,10 @@
   display: grid;
   grid-template-rows: 0fr;
   transition: all 0.4s ease-in;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+
+  box-shadow: 0px 8px 10px -10px rgba(0, 0, 0, 0.5);
   &.show {
     grid-template-rows: 1fr;
     overflow: hidden;

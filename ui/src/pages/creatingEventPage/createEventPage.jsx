@@ -61,7 +61,6 @@ export const CreateEventPage = () => {
       dispathAction(setEventDisc(inputValue));
     }
     if (fieldName === "setEventDate") {
-      console.log(formatTime(inputValue));
       if (
         formatTime(inputValue) !== "invalid date" &&
         inputValue.length >= 15
@@ -76,21 +75,18 @@ export const CreateEventPage = () => {
       if (inputValue.length >= 3) {
         dispathAction(checkAgeField(true));
       } else {
-        console.log("false");
         dispathAction(checkAgeField(false));
       }
       dispathAction(setEventAge(inputValue));
     }
     if (fieldName === "setHallEvent") {
       const setUpSeats = functionSetUpSeats(inputValue);
-      console.log(setUpSeats);
       if (setUpSeats) {
         dispathAction(setTypeOfHall(inputValue));
         dispathAction(setHallSeats(setUpSeats));
         dispathAction(checkHallField(true));
       } else {
         dispathAction(checkHallField(false));
-        setNotificationMessage("please chose the hall");
       }
     }
   };
@@ -101,7 +97,7 @@ export const CreateEventPage = () => {
         dispathAction(setEventImg(resUrl.url));
         dispathAction(checkImgUploaded(true));
       }
-      setNotificationMessage(resUrl.message);
+      setNotificationMessage(resUrl.message, "success");
     } catch (error) {
       dispathAction(checkImgUploaded(false));
       setNotificationMessage(error);
@@ -119,7 +115,7 @@ export const CreateEventPage = () => {
         hall: typeOfHall,
         eventseats: hallSeats,
       });
-      setNotificationMessage(res.succesfull);
+      setNotificationMessage(res.succesfull, "success");
 
       const events = await getEvents();
       setCommingEvents(events);

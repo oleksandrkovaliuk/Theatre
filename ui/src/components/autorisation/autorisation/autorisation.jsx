@@ -111,11 +111,11 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       localStorage.setItem("user_jwt_token", res.jwtToken);
       setUserInfo(res.user);
       setNotificationMessage(
-        signIn ? "succesfully registered" : "succesfully loggined"
+        signIn ? "succesfully registered" : "succesfully loggined",
+        "success"
       );
       closeMenu();
     } catch (error) {
-      console.log(error, "error");
       setNotificationMessage(error);
     }
   };

@@ -19,7 +19,6 @@ export const MageneEvents = () => {
   };
   const submitAllChanges = async () => {
     try {
-      console.log(changedEvents, "events");
       const res =
         changedEvents.length > 1
           ? await callForChangeMultipleEvents({
@@ -36,7 +35,7 @@ export const MageneEvents = () => {
             });
       const events = await getEvents();
       setCommingEvents(events);
-      setNotificationMessage(res.text);
+      setNotificationMessage(res.text , "success");
       setSubmited(true);
     } catch (error) {
       setNotificationMessage(error);

@@ -70,7 +70,7 @@ export const EventCard = ({
           dispathAction(setTransformCardInEditMode(true));
         } else {
           if (isInputsChanged) {
-            setNotificationMessage("your changes saved");
+            setNotificationMessage("your changes saved" , "succes");
           }
           dispathAction(setTransformCardInEditMode(false));
         }
@@ -86,7 +86,7 @@ export const EventCard = ({
       if (formatTime(inputValue) !== "invalid date" && inputValue.length) {
         dispathAction(setNewDateEvent(inputValue));
       } else {
-        setNotificationMessage(`please follow example YYYY-MM-DD HH:MIN`);
+        setNotificationMessage(`please follow example YYYY-MM-DD HH:MIN` , "warning");
       }
     }
     if (inputName === "itemAge") {
@@ -94,14 +94,14 @@ export const EventCard = ({
       if (inputValue.length <= 3 && checkFieldValid.test(inputValue)) {
         dispathAction(setNewAgeEvent(inputValue));
       } else {
-        setNotificationMessage(`please follow example "00+`);
+        setNotificationMessage(`please follow example "00+` , "warning");
       }
     }
     if (inputName === "itemName") {
       if (inputValue.length > 4) {
         dispathAction(setNewNameEvent(inputValue));
       } else {
-        setNotificationMessage("name should contain at least 4 chapters");
+        setNotificationMessage("name should contain at least 4 chapters" , "warning");
       }
     }
     if (inputName === "itemDisc") {
@@ -109,7 +109,7 @@ export const EventCard = ({
         dispathAction(setNewDiscEvent(inputValue));
       } else {
         setNotificationMessage(
-          "discription should contain at least 20 chapters"
+          "discription should contain at least 20 chapters" , "warning"
         );
       }
     }
@@ -150,7 +150,7 @@ export const EventCard = ({
     console.log("declined");
     dispathAction(setDoubleCheckMenu(false));
     setNotificationMessage(
-      `deleting event "${eventInfoFromdb?.name}" declined`
+      `deleting event "${eventInfoFromdb?.name}" declined` , "info"
     );
   };
 
@@ -161,7 +161,7 @@ export const EventCard = ({
       setCommingEvents(events);
       dispathAction(setDoubleCheckMenu(false));
       setNotificationMessage(
-        `event "${eventInfoFromdb?.name}" succesfully deleted`
+        `event "${eventInfoFromdb?.name}" succesfully deleted` , "success"
       );
     } catch (error) {
       setNotificationMessage(error);
@@ -181,7 +181,7 @@ export const EventCard = ({
       if (resUrl.url) {
         dispathAction(setNewImgEvent(resUrl.url));
       }
-      setNotificationMessage(resUrl.message);
+      setNotificationMessage(resUrl.message , "success");
     } catch (error) {
       setNotificationMessage(error);
     }

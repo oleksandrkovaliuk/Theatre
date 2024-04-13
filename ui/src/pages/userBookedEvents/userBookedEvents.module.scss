@@ -1,0 +1,94 @@
+.user {
+  padding: 50px 50px 50px;
+  th {
+    &:last-child {
+      text-align: right;
+    }
+  }
+  .title {
+    font-size: 25px;
+    font-family: var(--font-SfRegular);
+    color: var(--color-title);
+  }
+}
+.popInfo {
+  max-width: 300px;
+}
+.eventSeats {
+  padding: 2px;
+  background-color: var(--color-red);
+  border-radius: 3px;
+  margin-right: 4px;
+
+  color: var(--color-white);
+  font-family: var(--font-SfMedium);
+  font-weight: unset;
+}
+.eventInfo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  .eventImg {
+    width: 80px;
+    img {
+      border-radius: 5px;
+    }
+  }
+  .eventDisc {
+    display: flex;
+    flex-direction: column;
+    span {
+      font-family: var(--font-SfMedium);
+      font-weight: unset;
+      &:nth-child(1) {
+        font-size: 20px;
+      }
+    }
+  }
+}
+.managingTicket {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  button {
+    &:nth-child(1) {
+      background-color: unset;
+      border: unset;
+      svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        path {
+          transition: all 0.4s ease-in-out;
+        }
+      }
+      &:hover {
+        svg {
+          path {
+            fill: var(--color-red);
+          }
+        }
+      }
+    }
+    &:nth-child(2) {
+      padding: 4px 5px;
+      background-color: var(--color-red);
+      border-radius: 8px;
+
+      color: var(--color-white);
+      transition: all 0.4s ease-in-out;
+      &:hover {
+        background-color: transparent;
+        color: var(--color-red);
+      }
+    }
+  }
+  .ticket {
+    img {
+      max-width: 100px;
+    }
+  }
+}

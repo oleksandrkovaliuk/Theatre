@@ -14,12 +14,12 @@ import { EventsContext } from "../context/eventsContext";
 import { userContext } from "../context/userInfoContext";
 import { CreateEventPage } from "../pages/creatingEventPage";
 import { NotificationContext } from "../context/notificationContext";
-import { Notification } from "../components/nitification";
 import { MageneEvents } from "../pages/manegeEventsPage";
 import { NotificationProvider } from "../context/NotificationProvider";
 import { BookEvent } from "../pages/bookEventPage";
 import { UserBookedEvents } from "../pages/userBookedEvents";
-
+import { Toaster } from "sonner";
+import { NextUIProvider } from "@nextui-org/system";
 export const App = () => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const [events, setEvents] = useState(null);
@@ -56,21 +56,23 @@ export const App = () => {
     getAllData();
   }, [getAllData]);
   return (
-    <userContext.Provider value={userContextValue}>
-      <EventsContext.Provider value={eventsContextValue}>
-        <NotificationProvider>
-          <Notification />
-          <Header />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="*" element={<UnfoundPage />} />
-            <Route path="/createEvent" element={<CreateEventPage />} />
-            <Route path="/manageEvents" element={<MageneEvents />} />
-            <Route path="/bookEvent" element={<BookEvent />} />
-            <Route path="/userBookedEvents" element={<UserBookedEvents />} />
-          </Routes>
-        </NotificationProvider>
-      </EventsContext.Provider>
-    </userContext.Provider>
+    <NextUIProvider>
+      <userContext.Provider value={userContextValue}>
+        <EventsContext.Provider value={eventsContextValue}>
+          <NotificationProvider>
+            <Toaster richColors />
+            <Header />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="*" element={<UnfoundPage />} />
+              <Route path="/createEvent" element={<CreateEventPage />} />
+              <Route path="/manageEvents" element={<MageneEvents />} />
+              <Route path="/bookEvent" element={<BookEvent />} />
+              <Route path="/userBookedEvents" element={<UserBookedEvents />} />
+            </Routes>
+          </NotificationProvider>
+        </EventsContext.Provider>
+      </userContext.Provider>
+    </NextUIProvider>
   );
 };

@@ -27,12 +27,16 @@ export const PaymentForm = ({ goToRecieve, updateAllBookedSeats }) => {
           redirect: "if_required",
         });
         if (!error && paymentIntent && paymentIntent.status === "succeeded") {
-          setNotificationMessage("your payment succesfully completed");
+          setNotificationMessage(
+            "your payment succesfully completed",
+            "success"
+          );
           setIsProcesing(false);
           goToRecieve();
         } else {
-          console.log("error");
-          setNotificationMessage(`Payment status: ${paymentIntent.status}`);
+          setNotificationMessage(
+            `Error: Payment status: ${paymentIntent.status}`
+          );
           setIsProcesing(false);
         }
       }

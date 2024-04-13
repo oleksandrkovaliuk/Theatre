@@ -182,7 +182,7 @@ export const BookEvent = () => {
         email: user.email,
         ticket: `<img src=${ticketLink} />`,
       });
-      setNotificationMessage(sent.text);
+      setNotificationMessage(sent.text , "success");
     } catch (error) {
       setNotificationMessage(error);
     }

@@ -58,7 +58,7 @@ export const LogInSignIn = () => {
 
   const logOutUser = () => {
     setUserInfo(null);
-    setNotificationMessage("succesfully logout");
+    setNotificationMessage("succesfully logout", "success");
     localStorage.removeItem("user_jwt_token");
     navigate("/");
   };
@@ -68,7 +68,6 @@ export const LogInSignIn = () => {
     } catch (error) {
       openLogInAutorisationMenu();
       handleOpeningNavMenu();
-      console.log(autorisationMenu, "check");
     }
   }, []);
   useEffect(() => {

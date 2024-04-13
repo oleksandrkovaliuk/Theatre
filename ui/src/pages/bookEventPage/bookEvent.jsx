@@ -52,7 +52,7 @@ export const BookEvent = () => {
   const bookEvent = useRef(null);
   const ticket = useRef(null);
   const currentEventsInfo = events?.filter(
-    (item) => item.id === Number(searchParams.get("id")),
+    (item) => item.id === Number(searchParams.get("id"))
   );
 
   const settings = {
@@ -64,6 +64,7 @@ export const BookEvent = () => {
     swipe: false,
     afterChange: (index) => setSliderIndex(index),
   };
+  console.log("hello");
   // work with chosen seats
   const handleShowingProccesMenu = (event, price) => {
     setChosenSeats((prevState) => {
@@ -87,7 +88,7 @@ export const BookEvent = () => {
   const updateAllBookedSeats = useCallback(async () => {
     try {
       const currentEvent = currentEventsInfo?.map((item) =>
-        JSON.parse(item.eventseats),
+        JSON.parse(item.eventseats)
       );
       const updatedSeats = currentEvent.map((item) => {
         item.map((seat) => {
@@ -406,7 +407,7 @@ export const BookEvent = () => {
                         {parsedSeats.slice(0, 6).map((item) => {
                           const itemId = item.id + item.letter;
                           const checkIfItemChosen = chosenSeats.find(
-                            (item) => item === itemId,
+                            (item) => item === itemId
                           );
                           return (
                             <button
@@ -454,7 +455,7 @@ export const BookEvent = () => {
                           .map((item) => {
                             const itemId = item.id + item.letter;
                             const checkIfItemChosen = chosenSeats.find(
-                              (item) => item === itemId,
+                              (item) => item === itemId
                             );
                             return (
                               <button
@@ -503,7 +504,7 @@ export const BookEvent = () => {
                           .map((item) => {
                             const itemId = item.id + item.letter;
                             const checkIfItemChosen = chosenSeats.find(
-                              (item) => item === itemId,
+                              (item) => item === itemId
                             );
                             return (
                               <button

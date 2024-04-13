@@ -1,23 +1,9 @@
 const db = require("../../../database");
+const events = require("./events");
 
-const updateSeats = (req, res) => {
-  const { eventSeats, id } = req.body;
-  if (eventSeats && id) {
-    db.query(
-      "UPDATE events SET eventseats = $1 WHERE id = $2",
-      [eventSeats, id],
-      (err, dbRes) => {
-        if (err) {
-          return res
-            .status(401)
-            .json({ errorText: "failed with updating booked events" });
-        } else {
-          return res.status(200).json({ text: "succesfull" });
-        }
-      }
-    );
-  } else {
-    res.status(401).json({ errorText: "failed with getting info" });
-  }
+const bookedEventsByUser = (req, res) => {
+  const { email } = req.body;
+
+  const events = events(req, res);
 };
 module.exports = updateSeats;

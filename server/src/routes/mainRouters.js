@@ -23,6 +23,7 @@ router.route("/changeSingleEvent").post(checkRole, changeSingleEvent);
 router.route("/changeMultipleEvents").post(checkRole, changeMultipleEvent);
 router.route("/deleteEvent").post(checkRole, deleteEvent);
 router.route("/updateSeats").post(updateSeats);
+router.route("/bookedEventsByUser").post(updateSeats);
 
 // Work with autorisation
 router.route("/signIn").post(signIn);

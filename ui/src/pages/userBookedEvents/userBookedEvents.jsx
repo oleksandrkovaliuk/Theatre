@@ -33,6 +33,7 @@ export const UserBookedEvents = () => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const [listOfBookedEvents, setListOfBookedEvents] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const createListOfBookedEvent = (user, events) => {
     const resultArr = events.reduce((acc, event) => {
       const bookedSeats = JSON.parse(event.eventseats).filter(

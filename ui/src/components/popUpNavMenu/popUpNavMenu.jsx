@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import classNames from "classnames";
 import m from "./popUpNavMenu.module.scss";
-import { userContext } from "../../context/userInfoContext";
+import { UserContext } from "../../context/userInfoContext";
 import { USER_ROLE } from "../../shared/enums";
 export const PopUpMenu = ({
   data,
@@ -12,7 +12,7 @@ export const PopUpMenu = ({
   showMenu,
   closeMenu,
 }) => {
-  const { user } = useContext(userContext);
+  const { user } = useContext(UserContext);
   const ref = useRef(null);
   const location = useLocation();
   const [styleForMenuBg, setStyleForMenuBg] = useState(null);

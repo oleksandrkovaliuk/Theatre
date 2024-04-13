@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import u from "./userBookedEvents.module.scss";
 import { checkLoginned, getEvents } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
@@ -34,6 +28,7 @@ import {
 } from "../../utilitis/bookedEventsTable";
 import { formatTime } from "../../services/formatTime";
 import { Ticket } from "../../icons/ticket";
+
 export const UserBookedEvents = () => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const [listOfBookedEvents, setListOfBookedEvents] = useState(null);
@@ -42,7 +37,7 @@ export const UserBookedEvents = () => {
     const resultArr = events.reduce((acc, event) => {
       const bookedSeats = JSON.parse(event.eventseats).filter(
         (item) =>
-          item.bokker === user.email && item.booked && item.ticket.length > 0
+          item.bokker === user.email && item.booked && item.ticket.length > 0,
       );
       if (bookedSeats.length > 0) {
         acc.push({

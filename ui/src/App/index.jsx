@@ -11,7 +11,7 @@ import { UnfoundPage } from "../pages/404unfoundPage";
 import { HomePage } from "../pages/homePage";
 import { checkLoginned, getEvents } from "../services/apiCallConfig";
 import { EventsContext } from "../context/eventsContext";
-import { userContext } from "../context/userInfoContext";
+import { UserContext } from "../context/userInfoContext";
 import { CreateEventPage } from "../pages/creatingEventPage";
 import { NotificationContext } from "../context/notificationContext";
 import { MageneEvents } from "../pages/manegeEventsPage";
@@ -35,7 +35,7 @@ export const App = () => {
       events,
       setCommingEvents: setEvents,
     }),
-    [events]
+    [events],
   );
 
   const getAllData = useCallback(async () => {
@@ -57,7 +57,7 @@ export const App = () => {
   }, [getAllData]);
   return (
     <NextUIProvider>
-      <userContext.Provider value={userContextValue}>
+      <UserContext.Provider value={userContextValue}>
         <EventsContext.Provider value={eventsContextValue}>
           <NotificationProvider>
             <Toaster richColors />
@@ -72,7 +72,7 @@ export const App = () => {
             </Routes>
           </NotificationProvider>
         </EventsContext.Provider>
-      </userContext.Provider>
+      </UserContext.Provider>
     </NextUIProvider>
   );
 };

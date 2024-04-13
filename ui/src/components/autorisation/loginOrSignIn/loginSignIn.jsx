@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { USER_ROLE } from "../../../shared/enums";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AutorisationMenu } from "../autorisation";
-import { userContext } from "../../../context/userInfoContext";
+import { UserContext } from "../../../context/userInfoContext";
 import { PopUpMenu } from "../../popUpNavMenu";
 import { UserIcon } from "../../../icons/userIcon";
 import {
@@ -17,7 +17,7 @@ import { NotificationContext } from "../../../context/notificationContext";
 import { checkLoginned } from "../../../services/apiCallConfig";
 
 export const LogInSignIn = () => {
-  const { user, setUserInfo } = useContext(userContext);
+  const { user, setUserInfo } = useContext(UserContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const navMenuData =
     user?.role === USER_ROLE.ADMIN ? adminDataList : userDataList;

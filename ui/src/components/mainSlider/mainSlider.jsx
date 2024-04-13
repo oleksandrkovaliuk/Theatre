@@ -23,11 +23,18 @@ export const MainSlider = () => {
   return (
     <div className={m.slider_container}>
       <h1 className={m.title}>Kazan Theater of the Young Spectator</h1>
-      <div className="mainSlider">
+      <div className={m.mainSlider}>
         <Slider ref={mainSliderRef} {...settings}>
           {maingSliderImgs.map((item) => (
             <div key={item.id} className={m.mainSliderImgs}>
-              <img src={item.imgUrl} alt={item.id} />
+              <div
+                className={m.bgImage}
+                style={{
+                  backgroundImage: `url(${item.imgUrl})`,
+                }}
+              >
+                test
+              </div>
             </div>
           ))}
         </Slider>

@@ -28,11 +28,11 @@ import { NotificationContext } from "../../context/notificationContext";
 import QRCode from "qrcode.react";
 import { socket } from "../../services/socketSetUp";
 import html2canvas from "html2canvas";
-import { userContext } from "../../context/userInfoContext";
-let total = 0;
+import { UserContext } from "../../context/userInfoContext";
+
 export const BookEvent = () => {
   const { events, setCommingEvents } = useContext(EventsContext);
-  const { user } = useContext(userContext);
+  const { user } = useContext(UserContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
   const [processMenu, setProcessMenu] = useState(false);
@@ -52,7 +52,7 @@ export const BookEvent = () => {
   const bookEvent = useRef(null);
   const ticket = useRef(null);
   const currentEventsInfo = events?.filter(
-    (item) => item.id === Number(searchParams.get("id"))
+    (item) => item.id === Number(searchParams.get("id")),
   );
 
   const settings = {
@@ -66,24 +66,28 @@ export const BookEvent = () => {
   };
   // work with chosen seats
   const handleShowingProccesMenu = (event, price) => {
-    const currentElem = event.target.getAttribute("id");
-    const arr = [...chosenSeats];
-    const checkIfItemIncluded = arr.indexOf(currentElem);
-    if (currentElem && checkIfItemIncluded === -1) {
-      arr.push(currentElem);
-      total += price;
-    } else {
-      total -= price;
-      arr.splice(checkIfItemIncluded, 1);
-    }
-    setSubtotal(total);
-    setProcessMenu(true);
-    return setChosenSeats(arr);
+    setChosenSeats((prevState) => {
+      const currentElem = event.target.getAttribute("id");
+      const arr = [...prevState];
+      const checkIfItemIncluded = arr.indexOf(currentElem);
+      let total = 0;
+      if (currentElem && checkIfItemIncluded === -1) {
+        arr.push(currentElem);
+        total += price;
+      } else {
+        total -= price;
+        arr.splice(checkIfItemIncluded, 1);
+      }
+      setSubtotal(total);
+      setProcessMenu(true);
+
+      return arr;
+    });
   };
   const updateAllBookedSeats = useCallback(async () => {
     try {
       const currentEvent = currentEventsInfo?.map((item) =>
-        JSON.parse(item.eventseats)
+        JSON.parse(item.eventseats),
       );
       const updatedSeats = currentEvent.map((item) => {
         item.map((seat) => {
@@ -93,6 +97,7 @@ export const BookEvent = () => {
               seat.bokker = user.email;
               seat.ticket = ticketLink;
             }
+            return seat;
           });
           return seat;
         });
@@ -182,7 +187,7 @@ export const BookEvent = () => {
         email: user.email,
         ticket: `<img src=${ticketLink} />`,
       });
-      setNotificationMessage(sent.text , "success");
+      setNotificationMessage(sent.text, "success");
     } catch (error) {
       setNotificationMessage(error);
     }
@@ -401,7 +406,7 @@ export const BookEvent = () => {
                         {parsedSeats.slice(0, 6).map((item) => {
                           const itemId = item.id + item.letter;
                           const checkIfItemChosen = chosenSeats.find(
-                            (item) => item === itemId
+                            (item) => item === itemId,
                           );
                           return (
                             <button
@@ -449,7 +454,7 @@ export const BookEvent = () => {
                           .map((item) => {
                             const itemId = item.id + item.letter;
                             const checkIfItemChosen = chosenSeats.find(
-                              (item) => item === itemId
+                              (item) => item === itemId,
                             );
                             return (
                               <button
@@ -498,7 +503,7 @@ export const BookEvent = () => {
                           .map((item) => {
                             const itemId = item.id + item.letter;
                             const checkIfItemChosen = chosenSeats.find(
-                              (item) => item === itemId
+                              (item) => item === itemId,
                             );
                             return (
                               <button

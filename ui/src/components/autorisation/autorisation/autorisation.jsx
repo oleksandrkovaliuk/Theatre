@@ -19,7 +19,7 @@ import {
 } from "./reducer/action";
 import { logIn, signInUser } from "../../../services/apiCallConfig";
 import { RedDoneIcon } from "../../../icons/redDoneIcon";
-import { userContext } from "../../../context/userInfoContext";
+import { UserContext } from "../../../context/userInfoContext";
 import {
   testOnLowerCase,
   testOnNumber,
@@ -28,7 +28,7 @@ import {
 } from "../../../utilitis/patterForCheckPass";
 import { NotificationContext } from "../../../context/notificationContext";
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
-  const { user, setUserInfo } = useContext(userContext);
+  const { user, setUserInfo } = useContext(UserContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [
     {
@@ -112,7 +112,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       setUserInfo(res.user);
       setNotificationMessage(
         signIn ? "succesfully registered" : "succesfully loggined",
-        "success"
+        "success",
       );
       closeMenu();
     } catch (error) {
@@ -141,7 +141,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
           height: `${autoMenu.height}px`,
           top: `${autoMenu.top}px`,
           maxWidth: `${autoMenu.width}px`,
-        })
+        }),
       );
     }
     return () => {
@@ -254,8 +254,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                       ? { opacity: "1", pointerEvents: "unset" }
                       : { opacity: "0.4", pointerEvents: "none" }
                     : emailValue && passValue
-                    ? { opacity: "1", pointerEvents: "unset" }
-                    : { opacity: "0.4", pointerEvents: "none" }
+                      ? { opacity: "1", pointerEvents: "unset" }
+                      : { opacity: "0.4", pointerEvents: "none" }
                 }
                 className={a.submitBtn}
               >

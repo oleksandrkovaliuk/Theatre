@@ -1,6 +1,9 @@
 .slider_container {
   position: relative;
 }
+.mainSlider {
+    height: 50vh;
+}
 .title {
   color: var(--color-white);
   font-size: 71px;
@@ -18,6 +21,13 @@
   img {
     height: 100%;
   }
+}
+.bgImage {
+  height: 50vh;
+  width: 100%;
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
 }
 .switcherWrap {
   position: absolute;

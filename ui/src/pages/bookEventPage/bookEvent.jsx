@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useContext,
   Fragment,
+  useMemo,
 } from "react";
 import { EventsContext } from "../../context/eventsContext";
 import { NavLink, useSearchParams } from "react-router-dom";
@@ -19,7 +20,7 @@ import {
   getConfig,
   getEvents,
   sendTicket,
-  updateBookedEvents,
+  updatedAndSetBookedEvent,
 } from "../../services/apiCallConfig";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
@@ -64,7 +65,6 @@ export const BookEvent = () => {
     swipe: false,
     afterChange: (index) => setSliderIndex(index),
   };
-  console.log("hello");
   // work with chosen seats
   const handleShowingProccesMenu = (event, price) => {
     setChosenSeats((prevState) => {
@@ -85,30 +85,29 @@ export const BookEvent = () => {
       return arr;
     });
   };
+
   const updateAllBookedSeats = useCallback(async () => {
     try {
-      const currentEvent = currentEventsInfo?.map((item) =>
+      const currentEvent = currentEventsInfo.map((item) =>
         JSON.parse(item.eventseats)
       );
       const updatedSeats = currentEvent.map((item) => {
         item.map((seat) => {
           chosenSeats.map((chosen) => {
             if (seat.id === Number(chosen.replace(/\D/g, ""))) {
-              seat.booked = true;
-              seat.bokker = user.email;
-              seat.ticket = ticketLink;
+              seat.booked = user.email;
             }
-            return seat;
           });
-          return seat;
         });
-        console.log(item, "items");
         return item;
       });
-      console.log(updatedSeats, "seats");
-      updateBookedEvents({
-        id: currentEventsInfo[0].id,
+      await updatedAndSetBookedEvent({
+        eventId: currentEventsInfo[0].id,
         eventSeats: JSON.stringify(updatedSeats[0]),
+        chosenSeats: JSON.stringify(chosenSeats),
+        userEmail: user?.email,
+        ticket: ticketLink,
+        daybeenbooked: new Date(),
       });
     } catch (error) {
       setNotificationMessage(error);
@@ -135,7 +134,6 @@ export const BookEvent = () => {
     try {
       setPaymentStatus(true);
       bookEvent.current.slickNext();
-      console.log(ticket.current, "current");
     } catch (error) {
       setNotificationMessage(error);
     }
@@ -199,7 +197,7 @@ export const BookEvent = () => {
       socket.emit("updatedEvent", chosenSeats);
     }
   }, [chosenSeats]);
-  const socketGetNewSeats = useCallback(async () => {
+  const socketGetNewSeats = useCallback(() => {
     try {
       socket.on("newSeats", (data) => {
         const isEqual = JSON.stringify(data) === JSON.stringify(chosenSeats);
@@ -216,7 +214,7 @@ export const BookEvent = () => {
           bookEvent.current.slickPrev();
           setChosenSeats([]);
         }
-        if (bookEventStep === "book") {
+        if (bookEventStep === "book" && sliderIndex === 0) {
           setGetCurrentEventInfo({
             value: true,
             discription: `${
@@ -246,6 +244,7 @@ export const BookEvent = () => {
     paymentStatus,
     setCommingEvents,
     setNotificationMessage,
+    sliderIndex,
   ]);
   useEffect(() => {
     if (paymentStatus) {
@@ -414,19 +413,19 @@ export const BookEvent = () => {
                               key={item.id}
                               id={itemId}
                               style={
-                                checkIfItemChosen || item.booked
+                                checkIfItemChosen || item.booked.length
                                   ? {
-                                      backgroundColor: item.booked
+                                      backgroundColor: item.booked.length
                                         ? "var(--color-red)"
                                         : checkIfItemChosen &&
                                           "var(--color-subtitle)",
-                                      pointerEvents: item.booked
+                                      pointerEvents: item.booked.length
                                         ? "none"
                                         : "unset",
                                     }
                                   : {
                                       backgroundColor: "var(--color-lightgray)",
-                                      pointerEvents: !item.booked
+                                      pointerEvents: !item.booked.length
                                         ? "unset"
                                         : "none",
                                     }
@@ -462,20 +461,20 @@ export const BookEvent = () => {
                                 key={item.id}
                                 id={itemId}
                                 style={
-                                  checkIfItemChosen || item.booked
+                                  checkIfItemChosen || item.booked.length
                                     ? {
-                                        backgroundColor: item.booked
+                                        backgroundColor: item.booked.length
                                           ? "var(--color-red)"
                                           : checkIfItemChosen &&
                                             "var(--color-subtitle)",
-                                        pointerEvents: item.booked
+                                        pointerEvents: item.booked.length
                                           ? "none"
                                           : "unset",
                                       }
                                     : {
                                         backgroundColor:
                                           "var(--color-lightgray)",
-                                        pointerEvents: !item.booked
+                                        pointerEvents: !item.booked.length
                                           ? "unset"
                                           : "none",
                                       }
@@ -511,22 +510,22 @@ export const BookEvent = () => {
                                 key={item.id}
                                 id={itemId}
                                 style={
-                                  checkIfItemChosen || item.booked
+                                  checkIfItemChosen || item.booked.length
                                     ? {
-                                        backgroundColor: item.booked
+                                        backgroundColor: item.booked.length
                                           ? "var(--color-red)"
                                           : checkIfItemChosen &&
                                             "var(--color-subtitle)",
-                                        pointerEvents: item.booked
+                                        pointerEvents: item.booked.length
                                           ? "none"
                                           : "unset",
                                       }
                                     : {
-                                        backgroundColor: item.booked
+                                        backgroundColor: item.booked.length
                                           ? "var(--color-red)"
                                           : checkIfItemChosen &&
                                             "var(--color-subtitle)",
-                                        pointerEvents: !item.booked
+                                        pointerEvents: !item.booked.length
                                           ? "unset"
                                           : "none",
                                       }

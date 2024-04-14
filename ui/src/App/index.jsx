@@ -35,7 +35,7 @@ export const App = () => {
       events,
       setCommingEvents: setEvents,
     }),
-    [events],
+    [events]
   );
 
   const getAllData = useCallback(async () => {
@@ -45,7 +45,6 @@ export const App = () => {
         getEvents(),
       ]);
       setUserInfo(userRes.value);
-      console.log(eventsRes.value);
       setEvents(eventsRes.value);
     } catch (error) {
       setNotificationMessage(error);

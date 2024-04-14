@@ -6,7 +6,6 @@ const createEvent = require("../apiFunctions/events/createEvent");
 const changeSingleEvent = require("../apiFunctions/events/changeSingleEvent");
 const changeMultipleEvent = require("../apiFunctions/events/changeMultipleEvent");
 const deleteEvent = require("../apiFunctions/events/deleteEvent");
-const updateSeats = require("../apiFunctions/events/updateSeats");
 const signIn = require("../apiFunctions/autorisation/signIn");
 const loginIn = require("../apiFunctions/autorisation/loginIn");
 const checkLoginned = require("../apiFunctions/autorisation/checkLoginned");
@@ -15,6 +14,8 @@ const createPaymentIntent = require("../apiFunctions/stripe/create_payment_inten
 const checkRole = require("../middleWare/checkRole");
 const checkAuth = require("../middleWare/checkAuth");
 const sendTicket = require("../apiFunctions/ticket/sendTicket");
+const updatedAndSetBookedEvent = require("../apiFunctions/events/updatedAndSetBookedEvent");
+const bookedEventsByUser = require("../apiFunctions/events/bookedEventsByUser");
 
 // Work with events
 router.route("/events").get(events);
@@ -22,9 +23,8 @@ router.route("/createEvent").post(checkRole, createEvent);
 router.route("/changeSingleEvent").post(checkRole, changeSingleEvent);
 router.route("/changeMultipleEvents").post(checkRole, changeMultipleEvent);
 router.route("/deleteEvent").post(checkRole, deleteEvent);
-router.route("/updateSeats").post(updateSeats);
-router.route("/bookedEventsByUser").post(updateSeats);
-
+router.route("/updatedAndSetBookedEvent").post(updatedAndSetBookedEvent);
+router.route("/bookedEventsByUser").post(bookedEventsByUser);
 // Work with autorisation
 router.route("/signIn").post(signIn);
 router.route("/logIn").post(loginIn);

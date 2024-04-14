@@ -5,7 +5,7 @@ const events = async (req, res) => {
       if (err) {
         return res.status(500).json({ errorText: "Failed with getting data" });
       }
-      return res.status(200).json(dbRes?.rows || []);
+      res.status(200).json(dbRes.rows);
     });
   } catch (error) {
     return res.status(500).json({ errorText: `${error} err` });

@@ -8,7 +8,7 @@ import "./stripeCustomStyle.scss";
 import p from "./paymentForm.module.scss";
 import { NotificationContext } from "../../context/notificationContext";
 
-export const PaymentForm = ({ goToRecieve, updateAllBookedSeats }) => {
+export const PaymentForm = ({ goToRecieve }) => {
   const { setNotificationMessage } = useContext(NotificationContext);
   const stripe = useStripe();
   const elements = useElements();
@@ -27,12 +27,12 @@ export const PaymentForm = ({ goToRecieve, updateAllBookedSeats }) => {
           redirect: "if_required",
         });
         if (!error && paymentIntent && paymentIntent.status === "succeeded") {
+          await goToRecieve();
           setNotificationMessage(
             "your payment succesfully completed",
             "success"
           );
           setIsProcesing(false);
-          goToRecieve();
         } else {
           setNotificationMessage(
             `Error: Payment status: ${paymentIntent.status}`

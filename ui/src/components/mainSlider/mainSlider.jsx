@@ -32,9 +32,7 @@ export const MainSlider = () => {
                 style={{
                   backgroundImage: `url(${item.imgUrl})`,
                 }}
-              >
-                test
-              </div>
+              ></div>
             </div>
           ))}
         </Slider>

@@ -1,6 +1,9 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import u from "./userBookedEvents.module.scss";
-import { checkLoginned, getEvents } from "../../services/apiCallConfig";
+import {
+  bookedEventsByUser,
+  checkLoginned,
+} from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
 import {
   Table,
@@ -34,40 +37,42 @@ export const UserBookedEvents = () => {
   const [listOfBookedEvents, setListOfBookedEvents] = useState(null);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const createListOfBookedEvent = (user, events) => {
-    const resultArr = events.reduce((acc, event) => {
-      const bookedSeats = JSON.parse(event.eventseats).filter(
-        (item) =>
-          item.bokker === user.email && item.booked && item.ticket.length > 0,
-      );
-      if (bookedSeats.length > 0) {
-        acc.push({
-          eventId: event.id,
-          eventName: event.name,
-          eventDisc: event.disc,
-          eventAge: event.age,
-          eventTime: event.startingtime,
-          eventStatus:
-            formatTime(event.startingtime) < formatTime(new Date())
-              ? "finished"
-              : "active",
-          eventImg: event.imgurl,
-          bookedSeats: bookedSeats.map((seat) => {
-            return {
-              seats: seat.id + seat.letter,
-              tickets: seat.ticket,
-            };
-          }),
-        });
-      }
-      return acc;
-    }, []);
-    return setListOfBookedEvents(resultArr);
-  };
+  // const createListOfBookedEvent = (user, events) => {
+  //   const resultArr = events.reduce((acc, event) => {
+  //     const bookedSeats = JSON.parse(event.eventseats).filter(
+  //       (item) =>
+  //         item.bokker === user.email && item.booked && item.ticket.length > 0,
+  //     );
+  //     if (bookedSeats.length > 0) {
+  //       acc.push({
+  //         eventId: event.id,
+  //         eventName: event.name,
+  //         eventDisc: event.disc,
+  //         eventAge: event.age,
+  //         eventTime: event.startingtime,
+  //         eventStatus:
+  //           formatTime(event.startingtime) < formatTime(new Date())
+  //             ? "finished"
+  //             : "active",
+  //         eventImg: event.imgurl,
+  //         bookedSeats: bookedSeats.map((seat) => {
+  //           return {
+  //             seats: seat.id + seat.letter,
+  //             tickets: seat.ticket,
+  //           };
+  //         }),
+  //       });
+  //     }
+  //     return acc;
+  //   }, []);
+  //   return setListOfBookedEvents(resultArr);
+  // };
   const getListOfBookedEventsByUser = useCallback(async () => {
     try {
-      const [user, events] = await Promise.all([checkLoginned(), getEvents()]);
-      createListOfBookedEvent(user, events);
+      // const [user, events] = await Promise.all([checkLoginned(), getEvents()]);
+      // createListOfBookedEvent(user, events);
+      const user = await checkLoginned();
+      bookedEventsByUser({ email: user?.email });
     } catch (error) {
       setNotificationMessage(error);
     }

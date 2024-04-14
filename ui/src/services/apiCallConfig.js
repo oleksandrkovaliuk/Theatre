@@ -48,8 +48,7 @@ export const signInUser = async ({ username, email, password, role }) =>
 export const logIn = async ({ email, password }) =>
   postMethod("logIn", { email, password });
 // Working with modifying events (Admin side)
-export const checkLoginned = async () =>
-  postMethod("checkLoginned");
+export const checkLoginned = async () => postMethod("checkLoginned");
 export const creatingEvent = async ({
   eventName,
   eventDisc,
@@ -91,8 +90,24 @@ export const callForChangeMultipleEvents = ({ dataWithChangedEvents }) =>
 export const callToDeleteEvent = ({ id }) => {
   postMethod("deleteEvent", { id });
 };
-export const updateBookedEvents = ({ id, eventSeats }) =>
-  postMethod("updateSeats", { id, eventSeats });
+export const updatedAndSetBookedEvent = ({
+  eventId,
+  eventSeats,
+  chosenSeats,
+  userEmail,
+  ticket,
+  daybeenbooked
+}) =>
+  postMethod("updatedAndSetBookedEvent", {
+    eventId,
+    eventSeats,
+    chosenSeats,
+    userEmail,
+    ticket,
+    daybeenbooked
+  });
+export const bookedEventsByUser = ({ email }) =>
+  postMethod("bookedEventsByUser", { email });
 // Work with payment
 
 export const getConfig = () => getMethod("stripe_config");

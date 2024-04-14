@@ -26,18 +26,19 @@ export const PaymentForm = ({ goToRecieve }) => {
           },
           redirect: "if_required",
         });
-        if (!error && paymentIntent && paymentIntent.status === "succeeded") {
-          await goToRecieve();
+        if (error) {
+          setIsProcesing(false);
+        }
+        if (!error && paymentIntent) {
+          goToRecieve({ status: paymentIntent.status });
           setNotificationMessage(
             "your payment succesfully completed",
             "success"
           );
-          setIsProcesing(false);
         } else {
           setNotificationMessage(
             `Error: Payment status: ${paymentIntent.status}`
           );
-          setIsProcesing(false);
         }
       }
     } catch (error) {

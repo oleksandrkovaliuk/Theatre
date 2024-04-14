@@ -30,7 +30,7 @@ import QRCode from "qrcode.react";
 import { socket } from "../../services/socketSetUp";
 import html2canvas from "html2canvas";
 import { UserContext } from "../../context/userInfoContext";
-
+let total = 0;
 export const BookEvent = () => {
   const { events, setCommingEvents } = useContext(EventsContext);
   const { user } = useContext(UserContext);
@@ -55,7 +55,9 @@ export const BookEvent = () => {
   const currentEventsInfo = events?.filter(
     (item) => item.id === Number(searchParams.get("id"))
   );
-
+  const currentEvent = currentEventsInfo?.map((item) =>
+    JSON.parse(item.eventseats)
+  );
   const settings = {
     infinite: false,
     speed: 700,
@@ -65,19 +67,19 @@ export const BookEvent = () => {
     swipe: false,
     afterChange: (index) => setSliderIndex(index),
   };
+
   // work with chosen seats
   const handleShowingProccesMenu = (event, price) => {
     setChosenSeats((prevState) => {
       const currentElem = event.target.getAttribute("id");
       const arr = [...prevState];
       const checkIfItemIncluded = arr.indexOf(currentElem);
-      let total = 0;
       if (currentElem && checkIfItemIncluded === -1) {
         arr.push(currentElem);
         total += price;
       } else {
-        total -= price;
         arr.splice(checkIfItemIncluded, 1);
+        total -= price;
       }
       setSubtotal(total);
       setProcessMenu(true);
@@ -85,40 +87,45 @@ export const BookEvent = () => {
       return arr;
     });
   };
-
-  const updateAllBookedSeats = useCallback(async () => {
+  const updateAllBookedSeats = async ({ status }) => {
     try {
-      const currentEvent = currentEventsInfo.map((item) =>
-        JSON.parse(item.eventseats)
-      );
-      const updatedSeats = currentEvent.map((item) => {
-        item.map((seat) => {
-          chosenSeats.map((chosen) => {
-            if (seat.id === Number(chosen.replace(/\D/g, ""))) {
-              seat.booked = user.email;
+      if (status === "succeeded" && bookEventStep !== "book") {
+        setPaymentStatus(status);
+        await new Promise((resolve) => {
+          const interval = setInterval(() => {
+            if (ticket.current) {
+              clearInterval(interval);
+              html2canvas(ticket.current).then((canvas) => {
+                bookEvent.current.slickNext();
+                const updatedSeats = currentEvent.map((item) => {
+                  item.map((seat) => {
+                    chosenSeats.map((chosen) => {
+                      if (seat.id === Number(chosen.replace(/\D/g, ""))) {
+                        seat.booked = user.email;
+                      }
+                    });
+                  });
+                  return item;
+                });
+                updatedAndSetBookedEvent({
+                  eventId: currentEventsInfo[0].id,
+                  eventSeats: JSON.stringify(updatedSeats[0]),
+                  chosenSeats: JSON.stringify(chosenSeats),
+                  userEmail: user?.email,
+                  ticket: canvas.toDataURL("image/png"),
+                  daybeenbooked: new Date(),
+                });
+                setTicketLink(canvas.toDataURL("image/png"));
+                resolve();
+              });
             }
-          });
+          }, 100);
         });
-        return item;
-      });
-      await updatedAndSetBookedEvent({
-        eventId: currentEventsInfo[0].id,
-        eventSeats: JSON.stringify(updatedSeats[0]),
-        chosenSeats: JSON.stringify(chosenSeats),
-        userEmail: user?.email,
-        ticket: ticketLink,
-        daybeenbooked: new Date(),
-      });
+      }
     } catch (error) {
       setNotificationMessage(error);
     }
-  }, [
-    chosenSeats,
-    currentEventsInfo,
-    setNotificationMessage,
-    ticketLink,
-    user,
-  ]);
+  };
   // Navigation between pages
   const handleGoToPaymentSection = async () => {
     try {
@@ -127,14 +134,6 @@ export const BookEvent = () => {
       bookEvent.current.slickNext();
     } catch (error) {
       console.log(error);
-      setNotificationMessage(error);
-    }
-  };
-  const handleGoToRecieveSection = async () => {
-    try {
-      setPaymentStatus(true);
-      bookEvent.current.slickNext();
-    } catch (error) {
       setNotificationMessage(error);
     }
   };
@@ -197,9 +196,9 @@ export const BookEvent = () => {
       socket.emit("updatedEvent", chosenSeats);
     }
   }, [chosenSeats]);
-  const socketGetNewSeats = useCallback(() => {
+  const socketGetNewSeats = useCallback(async () => {
     try {
-      socket.on("newSeats", (data) => {
+      socket.on("newSeats", async (data) => {
         const isEqual = JSON.stringify(data) === JSON.stringify(chosenSeats);
         if (isEqual && !ticket.current) {
           setProcessMenu(false);
@@ -249,22 +248,11 @@ export const BookEvent = () => {
   useEffect(() => {
     if (paymentStatus) {
       socketUpdateEvent();
-      if (ticket.current) {
-        html2canvas(ticket.current).then((canvas) => {
-          return setTicketLink(canvas.toDataURL("image/png"));
-        });
-      }
     }
-  }, [bookEventStep, paymentStatus, socketUpdateEvent]);
-
+  }, [bookEventStep, paymentStatus, socketUpdateEvent, ticketLink]);
   useEffect(() => {
     socketGetNewSeats();
   }, [socketGetNewSeats]);
-  useEffect(() => {
-    if (ticketLink) {
-      updateAllBookedSeats();
-    }
-  }, [ticketLink, updateAllBookedSeats]);
   // set up stripe
   useEffect(() => {
     if (subtotal) {
@@ -587,7 +575,9 @@ export const BookEvent = () => {
             <>
               <h1>Payment</h1>
               <Elements stripe={stripePublishKey} options={{ clientSecret }}>
-                <PaymentForm goToRecieve={handleGoToRecieveSection} />
+                <PaymentForm
+                  goToRecieve={({ status }) => updateAllBookedSeats({ status })}
+                />
               </Elements>
             </>
           )}
@@ -597,35 +587,41 @@ export const BookEvent = () => {
               <div className={b.recievePage}>
                 <div className={b.ticket_instruction}>
                   <div ref={ticket} className={b.ticket}>
-                    <div className={b.left_info}>
-                      <div className={b.topSection}>
-                        <img src="./images/logo.png" alt="logo" />
-                        <span>Best wishes by Theater</span>
-                      </div>
-                      {currentEventsInfo?.map((item) => (
-                        <div key={item.id} className={b.infoAboutTicket}>
-                          <div className={b.info}>
-                            <span>Event</span>
-                            <h2>{item.name}</h2>
+                    {ticket.current ? (
+                      <>
+                        <div className={b.left_info}>
+                          <div className={b.topSection}>
+                            <img src="./images/logo.png" alt="logo" />
+                            <span>Best wishes by Theater</span>
                           </div>
-                          <div className={b.info}>
-                            <span>Starting time</span>
-                            <h2>{formatTime(item.startingtime)}</h2>
+                          {currentEventsInfo?.map((item) => (
+                            <div key={item.id} className={b.infoAboutTicket}>
+                              <div className={b.info}>
+                                <span>Event</span>
+                                <h2>{item.name}</h2>
+                              </div>
+                              <div className={b.info}>
+                                <span>Starting time</span>
+                                <h2>{formatTime(item.startingtime)}</h2>
+                              </div>
+                            </div>
+                          ))}
+                          <div className={b.ticketSeats}>
+                            <span>Seats:</span>
+                            {chosenSeats.map((item) => (
+                              <span key={item}>{item}</span>
+                            ))}
                           </div>
                         </div>
-                      ))}
-                      <div className={b.ticketSeats}>
-                        <span>Seats:</span>
-                        {chosenSeats.map((item) => (
-                          <span key={item}>{item}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className={b.rightSection}>
-                      <QRCode
-                        value={chosenSeats.map((item) => toString(item))}
-                      />
-                    </div>
+                        <div className={b.rightSection}>
+                          <QRCode
+                            value={chosenSeats.map((item) => toString(item))}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <span>loading...</span>
+                    )}
                   </div>
 
                   <ul className={b.instruction}>

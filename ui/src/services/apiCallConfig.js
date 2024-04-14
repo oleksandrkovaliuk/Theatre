@@ -96,7 +96,7 @@ export const updatedAndSetBookedEvent = ({
   chosenSeats,
   userEmail,
   ticket,
-  daybeenbooked
+  daybeenbooked,
 }) =>
   postMethod("updatedAndSetBookedEvent", {
     eventId,
@@ -104,7 +104,7 @@ export const updatedAndSetBookedEvent = ({
     chosenSeats,
     userEmail,
     ticket,
-    daybeenbooked
+    daybeenbooked,
   });
 export const bookedEventsByUser = ({ email }) =>
   postMethod("bookedEventsByUser", { email });

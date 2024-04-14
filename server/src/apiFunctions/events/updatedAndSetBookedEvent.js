@@ -3,7 +3,7 @@ const queryToUpdateEvents = "UPDATE events SET eventseats = $1 WHERE id = $2";
 const queryToInsetNewBookedTicket =
   "INSERT INTO bookedticketsbyusers (eventid , useremail , eventticket , bookedseats , daybeenbooked) VALUES($1 , $2 , $3 , $4 , $5) RETURNING *;";
 
-const updatedAndSetBookedEvent = async (req, res) => {
+const updatedAndSetBookedEvent = (req, res) => {
   const { eventId, eventSeats, chosenSeats, userEmail, ticket, daybeenbooked } =
     req.body;
   const valueForUpdateEvent = [eventSeats, eventId];
@@ -14,7 +14,15 @@ const updatedAndSetBookedEvent = async (req, res) => {
     chosenSeats,
     daybeenbooked,
   ];
-  if (eventSeats && eventId && chosenSeats && userEmail && ticket) {
+
+  if (
+    eventSeats &&
+    eventId &&
+    chosenSeats &&
+    userEmail &&
+    ticket &&
+    daybeenbooked
+  ) {
     db.query(queryToUpdateEvents, valueForUpdateEvent, (err, dbRes) => {
       if (err) {
         return res
@@ -31,7 +39,7 @@ const updatedAndSetBookedEvent = async (req, res) => {
               });
             }
             res.status(200).json({
-              text: "succed",
+              text: bookedTicketDbRes.rows[0].eventId,
             });
           }
         );
@@ -43,4 +51,5 @@ const updatedAndSetBookedEvent = async (req, res) => {
       .json({ errorText: "failed with getting info from request" });
   }
 };
+
 module.exports = updatedAndSetBookedEvent;

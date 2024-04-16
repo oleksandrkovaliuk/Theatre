@@ -67,7 +67,7 @@ export const App = () => {
               <Route path="/createEvent" element={<CreateEventPage />} />
               <Route path="/manageEvents" element={<MageneEvents />} />
               <Route path="/bookEvent" element={<BookEvent />} />
-              <Route path="/userBookedEvents" element={<UserBookedEvents />} />
+              <Route path="/historyOfBookedEvents" element={<UserBookedEvents />} />
             </Routes>
           </NotificationProvider>
         </EventsContext.Provider>

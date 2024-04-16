@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useContext,
   Fragment,
-  useMemo,
 } from "react";
 import { EventsContext } from "../../context/eventsContext";
 import { NavLink, useSearchParams } from "react-router-dom";
@@ -26,10 +25,11 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { PaymentForm } from "../../components/paymentForm";
 import { NotificationContext } from "../../context/notificationContext";
-import QRCode from "qrcode.react";
 import { socket } from "../../services/socketSetUp";
-import html2canvas from "html2canvas";
 import { UserContext } from "../../context/userInfoContext";
+import { Ticket } from "../../components/displayTicket";
+import { getTicketUrl } from "../../services/getTicketUrl";
+import { downloadTicket } from "../../services/downloadTicket";
 let total = 0;
 export const BookEvent = () => {
   const { events, setCommingEvents } = useContext(EventsContext);
@@ -48,7 +48,6 @@ export const BookEvent = () => {
     value: false,
     discription: "",
   });
-  const [ticketLink, setTicketLink] = useState("");
   const [sliderIndex, setSliderIndex] = useState(0);
   const bookEvent = useRef(null);
   const ticket = useRef(null);
@@ -91,35 +90,23 @@ export const BookEvent = () => {
     try {
       if (status === "succeeded" && bookEventStep !== "book") {
         setPaymentStatus(status);
-        await new Promise((resolve) => {
-          const interval = setInterval(() => {
-            if (ticket.current) {
-              clearInterval(interval);
-              html2canvas(ticket.current).then((canvas) => {
-                bookEvent.current.slickNext();
-                const updatedSeats = currentEvent.map((item) => {
-                  item.map((seat) => {
-                    chosenSeats.map((chosen) => {
-                      if (seat.id === Number(chosen.replace(/\D/g, ""))) {
-                        seat.booked = user.email;
-                      }
-                    });
-                  });
-                  return item;
-                });
-                updatedAndSetBookedEvent({
-                  eventId: currentEventsInfo[0].id,
-                  eventSeats: JSON.stringify(updatedSeats[0]),
-                  chosenSeats: JSON.stringify(chosenSeats),
-                  userEmail: user?.email,
-                  ticket: canvas.toDataURL("image/png"),
-                  daybeenbooked: new Date(),
-                });
-                setTicketLink(canvas.toDataURL("image/png"));
-                resolve();
-              });
-            }
-          }, 100);
+        bookEvent.current.slickNext();
+        const updatedSeats = currentEvent.map((item) => {
+          item.map((seat) => {
+            chosenSeats.map((chosen) => {
+              if (seat.id === Number(chosen.replace(/\D/g, ""))) {
+                seat.booked = user.email;
+              }
+            });
+          });
+          return item;
+        });
+        updatedAndSetBookedEvent({
+          eventId: currentEventsInfo[0].id,
+          eventSeats: JSON.stringify(updatedSeats[0]),
+          chosenSeats: JSON.stringify(chosenSeats),
+          userEmail: user?.email,
+          daybeenbooked: new Date(),
         });
       }
     } catch (error) {
@@ -163,29 +150,18 @@ export const BookEvent = () => {
     }
   }, [subtotal]);
   // saving ticket
-  const downloadTicket = () => {
-    const currentTicket = ticket.current;
-    if (currentTicket) {
-      const fakeLink = window.document.createElement("a");
-      fakeLink.style = "display:none;";
-      fakeLink.download = `YourTicket${chosenSeats.map((item) => item)}`;
-      fakeLink.href = ticketLink;
-      console.log(fakeLink);
-      document.body.appendChild(fakeLink);
-      fakeLink.click();
-      document.body.removeChild(fakeLink);
-      fakeLink.remove();
-    }
-  };
 
   const recieveTicketOnEmail = async () => {
     try {
-      const sent = await sendTicket({
-        username: user.username,
-        email: user.email,
-        ticket: `<img src=${ticketLink} />`,
+      await getTicketUrl(ticket.current).then(async (href) => {
+
+        const sent = await sendTicket({
+          username: user.username,
+          email: user.email,
+          ticket: `<img src="${href}"/>`,
+        });
+        setNotificationMessage(sent.text, "success");
       });
-      setNotificationMessage(sent.text, "success");
     } catch (error) {
       setNotificationMessage(error);
     }
@@ -249,7 +225,7 @@ export const BookEvent = () => {
     if (paymentStatus) {
       socketUpdateEvent();
     }
-  }, [bookEventStep, paymentStatus, socketUpdateEvent, ticketLink]);
+  }, [bookEventStep, paymentStatus, socketUpdateEvent]);
   useEffect(() => {
     socketGetNewSeats();
   }, [socketGetNewSeats]);
@@ -586,44 +562,11 @@ export const BookEvent = () => {
               <h1>Recieve</h1>
               <div className={b.recievePage}>
                 <div className={b.ticket_instruction}>
-                  <div ref={ticket} className={b.ticket}>
-                    {ticket.current ? (
-                      <>
-                        <div className={b.left_info}>
-                          <div className={b.topSection}>
-                            <img src="./images/logo.png" alt="logo" />
-                            <span>Best wishes by Theater</span>
-                          </div>
-                          {currentEventsInfo?.map((item) => (
-                            <div key={item.id} className={b.infoAboutTicket}>
-                              <div className={b.info}>
-                                <span>Event</span>
-                                <h2>{item.name}</h2>
-                              </div>
-                              <div className={b.info}>
-                                <span>Starting time</span>
-                                <h2>{formatTime(item.startingtime)}</h2>
-                              </div>
-                            </div>
-                          ))}
-                          <div className={b.ticketSeats}>
-                            <span>Seats:</span>
-                            {chosenSeats.map((item) => (
-                              <span key={item}>{item}</span>
-                            ))}
-                          </div>
-                        </div>
-                        <div className={b.rightSection}>
-                          <QRCode
-                            value={chosenSeats.map((item) => toString(item))}
-                          />
-                        </div>
-                      </>
-                    ) : (
-                      <span>loading...</span>
-                    )}
-                  </div>
-
+                  <Ticket
+                    current={ticket}
+                    currentEventsInfo={currentEventsInfo}
+                    chosenSeats={chosenSeats}
+                  />
                   <ul className={b.instruction}>
                     <li className={b.main_text}>Term & Condition</li>
                     <li>- Show the ticket at the entrance</li>
@@ -642,7 +585,16 @@ export const BookEvent = () => {
                     Chose way how you wanna recieve or save your ticket
                   </span>
                   <div className={b.ways}>
-                    <button onClick={downloadTicket}>Download</button>
+                    <button
+                      onClick={() =>
+                        downloadTicket({
+                          ticket: ticket,
+                          chosenSeats: chosenSeats,
+                        })
+                      }
+                    >
+                      Download
+                    </button>
                     <button onClick={recieveTicketOnEmail}>
                       Recieve on email
                     </button>

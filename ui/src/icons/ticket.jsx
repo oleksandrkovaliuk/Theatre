@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Ticket = () => {
+export const TicketIcon = () => {
   return (
     <svg
       width="512.000000pt"

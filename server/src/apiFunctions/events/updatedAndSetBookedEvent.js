@@ -1,28 +1,21 @@
 const db = require("../../../database");
 const queryToUpdateEvents = "UPDATE events SET eventseats = $1 WHERE id = $2";
 const queryToInsetNewBookedTicket =
-  "INSERT INTO bookedticketsbyusers (eventid , useremail , eventticket , bookedseats , daybeenbooked) VALUES($1 , $2 , $3 , $4 , $5) RETURNING *;";
+  "INSERT INTO bookedticketsbyusers (eventid , useremail , bookedseats , daybeenbooked) VALUES($1 , $2 , $3 , $4 ) RETURNING *;";
 
 const updatedAndSetBookedEvent = (req, res) => {
-  const { eventId, eventSeats, chosenSeats, userEmail, ticket, daybeenbooked } =
+  const { eventId, eventSeats, chosenSeats, userEmail, daybeenbooked } =
     req.body;
   const valueForUpdateEvent = [eventSeats, eventId];
   const valueForAddBookedtickets = [
     eventId,
     userEmail,
-    ticket,
+
     chosenSeats,
     daybeenbooked,
   ];
 
-  if (
-    eventSeats &&
-    eventId &&
-    chosenSeats &&
-    userEmail &&
-    ticket &&
-    daybeenbooked
-  ) {
+  if (eventSeats && eventId && chosenSeats && userEmail && daybeenbooked) {
     db.query(queryToUpdateEvents, valueForUpdateEvent, (err, dbRes) => {
       if (err) {
         return res

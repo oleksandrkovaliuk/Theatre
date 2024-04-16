@@ -1,7 +1,7 @@
 export const userDataList = [
   {
-    link: "/userBookedEvents",
-    name: "Booked events",
+    link: "/historyOfBookedEvents",
+    name: "History",
   },
 ];
 export const adminDataList = [

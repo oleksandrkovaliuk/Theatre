@@ -9,9 +9,26 @@ const bookedEventsByUser = async (req, res) => {
       return res.status(401).json({ errorText: "failed with getting email" });
     }
     const allEvents = (await db.query(queryToGetAllEvents)).rows;
-    const allBookedSeats = await db.query(queryToGetAllBookedEvents, [email])
-      .rows;
-    return res.status(200).json({ a: allEvents, b: allBookedSeats });
+    const allBookedSeats = await db.query(queryToGetAllBookedEvents, [email]);
+    const respons = allBookedSeats.rows.reduce((acc, item) => {
+      const correctItem = allEvents.find(
+        (event) => event.id === Number(item.eventid)
+      );
+      if (correctItem) {
+        acc.push({
+          eventId: item.eventid,
+          bookedSeats: item.bookedseats,
+          beenBooked: item.daybeenbooked,
+          eventName: correctItem.name,
+          eventDisc: correctItem.disc,
+          eventTime: correctItem.startingtime,
+          eventUrl: correctItem.imgurl,
+          eventAge: correctItem.age,
+        });
+      }
+      return acc;
+    }, []);
+    return res.status(200).json(respons);
   } catch (error) {}
 };
 module.exports = bookedEventsByUser;

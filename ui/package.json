@@ -24,6 +24,7 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.2",
     "react-zoom-pan-pinch": "^3.4.3",
+    "reactdom": "^2.0.0",
     "sass": "^1.71.1",
     "shadcn-ui": "^0.8.0",
     "slick": "^1.12.2",

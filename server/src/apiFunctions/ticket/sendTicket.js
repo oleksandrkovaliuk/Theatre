@@ -18,6 +18,7 @@ const mailOptions = ({ userEmail, userName, ticket }) => {
 const sendTicket = (req, res) => {
   const { username, email, ticket } = req.body;
   console.log("hello");
+  console.log(ticket, "ticket");
   try {
     if (username && email && ticket) {
       const mailOpt = mailOptions({

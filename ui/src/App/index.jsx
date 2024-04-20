@@ -20,7 +20,13 @@ import { BookEvent } from "../pages/bookEventPage";
 import { UserBookedEvents } from "../pages/userBookedEvents";
 import { Toaster } from "sonner";
 import { NextUIProvider } from "@nextui-org/system";
+import { useDispatch } from "react-redux";
+import { setUser } from "../store/reducers/user";
+import { userFetch } from "../store/thunks/user";
+
 export const App = () => {
+  const dispatch = useDispatch();
+
   const { setNotificationMessage } = useContext(NotificationContext);
   const [events, setEvents] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -41,37 +47,42 @@ export const App = () => {
   const getAllData = useCallback(async () => {
     try {
       const [userRes, eventsRes] = await Promise.allSettled([
-        checkLoginned(),
+        // checkLoginned(),
         getEvents(),
       ]);
-      setUserInfo(userRes.value);
+      dispatch(setUser(userRes.value));
+      // dispatch(userFetch());
+      // setUserInfo(userRes.value);
       setEvents(eventsRes.value);
     } catch (error) {
       setNotificationMessage(error);
     }
-  }, [setNotificationMessage]);
+  }, [setNotificationMessage, dispatch]);
 
   useEffect(() => {
     getAllData();
   }, [getAllData]);
   return (
     <NextUIProvider>
-      <UserContext.Provider value={userContextValue}>
-        <EventsContext.Provider value={eventsContextValue}>
-          <NotificationProvider>
-            <Toaster richColors />
-            <Header />
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="*" element={<UnfoundPage />} />
-              <Route path="/createEvent" element={<CreateEventPage />} />
-              <Route path="/manageEvents" element={<MageneEvents />} />
-              <Route path="/bookEvent" element={<BookEvent />} />
-              <Route path="/historyOfBookedEvents" element={<UserBookedEvents />} />
-            </Routes>
-          </NotificationProvider>
-        </EventsContext.Provider>
-      </UserContext.Provider>
+      {/* <UserContext.Provider value={userContextValue}> */}
+      <EventsContext.Provider value={eventsContextValue}>
+        <NotificationProvider>
+          <Toaster richColors />
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="*" element={<UnfoundPage />} />
+            <Route path="/createEvent" element={<CreateEventPage />} />
+            <Route path="/manageEvents" element={<MageneEvents />} />
+            <Route path="/bookEvent" element={<BookEvent />} />
+            <Route
+              path="/historyOfBookedEvents"
+              element={<UserBookedEvents />}
+            />
+          </Routes>
+        </NotificationProvider>
+      </EventsContext.Provider>
+      {/* </UserContext.Provider> */}
     </NextUIProvider>
   );
 };

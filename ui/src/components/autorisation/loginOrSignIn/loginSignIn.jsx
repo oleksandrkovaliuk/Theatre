@@ -15,9 +15,16 @@ import { LogOutIcon } from "../../../icons/logOutIcon";
 import { SettingsIcon } from "../../../icons/settingsIcon";
 import { NotificationContext } from "../../../context/notificationContext";
 import { checkLoginned } from "../../../services/apiCallConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteUser } from "../../../store/reducers/user";
 
 export const LogInSignIn = () => {
-  const { user, setUserInfo } = useContext(UserContext);
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => ({
+    user: state.user,
+  }));
+
   const { setNotificationMessage } = useContext(NotificationContext);
   const navMenuData =
     user?.role === USER_ROLE.ADMIN ? adminDataList : userDataList;
@@ -57,7 +64,7 @@ export const LogInSignIn = () => {
   }, []);
 
   const logOutUser = () => {
-    setUserInfo(null);
+    dispatch(deleteUser());
     setNotificationMessage("succesfully logout", "success");
     localStorage.removeItem("user_jwt_token");
     navigate("/");

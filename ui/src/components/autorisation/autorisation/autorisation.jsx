@@ -27,8 +27,17 @@ import {
   testOnUpperCase,
 } from "../../../utilitis/patterForCheckPass";
 import { NotificationContext } from "../../../context/notificationContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../../store/reducers/user";
+import { loginUser } from "../../../store/thunks/user";
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
-  const { user, setUserInfo } = useContext(UserContext);
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => ({
+    user: state.user,
+  }));
+
+  // const { user, setUserInfo } = useContext(UserContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [
     {
@@ -107,12 +116,12 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
             password: passValue,
             role: "user",
           })
-        : await logIn({ email: emailValue, password: passValue });
+        : dispatch(loginUser({ email: emailValue, password: passValue }));
       localStorage.setItem("user_jwt_token", res.jwtToken);
-      setUserInfo(res.user);
+      dispatch(setUser(res.user));
       setNotificationMessage(
         signIn ? "succesfully registered" : "succesfully loggined",
-        "success",
+        "success"
       );
       closeMenu();
     } catch (error) {
@@ -141,7 +150,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
           height: `${autoMenu.height}px`,
           top: `${autoMenu.top}px`,
           maxWidth: `${autoMenu.width}px`,
-        }),
+        })
       );
     }
     return () => {
@@ -254,8 +263,8 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                       ? { opacity: "1", pointerEvents: "unset" }
                       : { opacity: "0.4", pointerEvents: "none" }
                     : emailValue && passValue
-                      ? { opacity: "1", pointerEvents: "unset" }
-                      : { opacity: "0.4", pointerEvents: "none" }
+                    ? { opacity: "1", pointerEvents: "unset" }
+                    : { opacity: "0.4", pointerEvents: "none" }
                 }
                 className={a.submitBtn}
               >

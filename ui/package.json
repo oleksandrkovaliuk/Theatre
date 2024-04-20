@@ -6,6 +6,7 @@
     "@nextui-org/chip": "^2.0.25",
     "@nextui-org/react": "^2.2.10",
     "@nextui-org/table": "^2.0.28",
+    "@nextui-org/use-infinite-scroll": "^2.1.3",
     "@stripe/react-stripe-js": "^2.6.2",
     "@stripe/stripe-js": "^3.1.0",
     "@testing-library/jest-dom": "^5.17.0",

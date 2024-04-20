@@ -26,6 +26,7 @@
   border-bottom-right-radius: 10px;
 
   box-shadow: 0px 8px 10px -10px rgba(0, 0, 0, 0.5);
+  will-change: grid-template-rows;
   &.show {
     grid-template-rows: 1fr;
     overflow: hidden;
@@ -101,9 +102,4 @@
       }
     }
   }
-  // @keyframes closeMenu {
-  //   to {
-  //     grid-template-rows: 0fr;
-  //   }
-  // }
 }

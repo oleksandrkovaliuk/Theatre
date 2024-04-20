@@ -104,8 +104,10 @@ export const updatedAndSetBookedEvent = ({
     userEmail,
     daybeenbooked,
   });
-export const bookedEventsByUser = ({ email }) =>
-  postMethod("bookedEventsByUser", { email });
+export const cancelBookedSeat = ({ eventId, seatsId }) =>
+  postMethod("cancelSeat", { eventId, seatsId });
+export const bookedEventsByUser = ({ email, amountOfItems }) =>
+  postMethod("bookedEventsByUser", { email, amountOfItems });
 // Work with payment
 
 export const getConfig = () => getMethod("stripe_config");

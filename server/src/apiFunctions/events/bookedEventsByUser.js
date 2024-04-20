@@ -3,7 +3,7 @@ const queryToGetAllEvents = "SELECT * FROM events";
 const queryToGetAllBookedEvents =
   "SELECT * FROM bookedticketsbyusers WHERE useremail = $1";
 const bookedEventsByUser = async (req, res) => {
-  const { email } = req.body;
+  const { email, amountOfItems } = req.body;
   try {
     if (!email) {
       return res.status(401).json({ errorText: "failed with getting email" });
@@ -28,7 +28,7 @@ const bookedEventsByUser = async (req, res) => {
       }
       return acc;
     }, []);
-    return res.status(200).json(respons);
+    return res.status(200).json(respons.slice(0, amountOfItems));
   } catch (error) {}
 };
 module.exports = bookedEventsByUser;

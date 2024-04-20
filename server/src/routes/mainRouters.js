@@ -16,6 +16,7 @@ const checkAuth = require("../middleWare/checkAuth");
 const sendTicket = require("../apiFunctions/ticket/sendTicket");
 const updatedAndSetBookedEvent = require("../apiFunctions/events/updatedAndSetBookedEvent");
 const bookedEventsByUser = require("../apiFunctions/events/bookedEventsByUser");
+const cancelBookedSeats = require("../apiFunctions/events/cancelBookedSeat");
 
 // Work with events
 router.route("/events").get(events);
@@ -25,6 +26,7 @@ router.route("/changeMultipleEvents").post(checkRole, changeMultipleEvent);
 router.route("/deleteEvent").post(checkRole, deleteEvent);
 router.route("/updatedAndSetBookedEvent").post(updatedAndSetBookedEvent);
 router.route("/bookedEventsByUser").post(bookedEventsByUser);
+router.route("/cancelSeat").post(cancelBookedSeats);
 // Work with autorisation
 router.route("/signIn").post(signIn);
 router.route("/logIn").post(loginIn);

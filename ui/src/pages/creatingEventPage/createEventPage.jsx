@@ -96,8 +96,10 @@ export const CreateEventPage = () => {
       if (resUrl.url) {
         dispathAction(setEventImg(resUrl.url));
         dispathAction(checkImgUploaded(true));
+        setNotificationMessage(resUrl.message, "success");
+      } else {
+        setNotificationMessage(resUrl.message, "warning");
       }
-      setNotificationMessage(resUrl.message, "success");
     } catch (error) {
       dispathAction(checkImgUploaded(false));
       setNotificationMessage(error);

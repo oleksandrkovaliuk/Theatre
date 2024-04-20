@@ -90,6 +90,7 @@ export const BookEvent = () => {
     try {
       if (status === "succeeded" && bookEventStep !== "book") {
         setPaymentStatus(status);
+        total = 0;
         bookEvent.current.slickNext();
         const updatedSeats = currentEvent.map((item) => {
           item.map((seat) => {
@@ -154,7 +155,6 @@ export const BookEvent = () => {
   const recieveTicketOnEmail = async () => {
     try {
       await getTicketUrl(ticket.current).then(async (href) => {
-
         const sent = await sendTicket({
           username: user.username,
           email: user.email,

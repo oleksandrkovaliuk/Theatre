@@ -8,9 +8,14 @@ import {
   getEvents,
 } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
+import { useDispatch, useSelector } from "react-redux";
+import { storeEvents } from "../../store/reducers/event/getEvent";
 
 export const MageneEvents = () => {
-  const { events, setCommingEvents } = useContext(EventsContext);
+  const dispatch = useDispatch();
+  const { events } = useSelector((state) => ({
+    events: state.events,
+  }));
   const { setNotificationMessage } = useContext(NotificationContext);
   const [changedEvents, setChangedEvents] = useState(null);
   const [checkIfSubmited, setSubmited] = useState(false);
@@ -34,8 +39,8 @@ export const MageneEvents = () => {
               currentHall: changedEvents[0].currentHall,
             });
       const events = await getEvents();
-      setCommingEvents(events);
-      setNotificationMessage(res.text , "success");
+      dispatch(storeEvents(events));
+      setNotificationMessage(res.text, "success");
       setSubmited(true);
     } catch (error) {
       setNotificationMessage(error);
@@ -53,7 +58,8 @@ export const MageneEvents = () => {
     <div className={m.manegeEvents_page}>
       <h1 className={m.manegeEvents}>Maneging your events</h1>
       <div className={m.eventsEditable}>
-        {events
+        {events.events
+          ?.map((item) => item)
           ?.sort((a, b) => b.id - a.id)
           .map((item) => (
             <EventCard

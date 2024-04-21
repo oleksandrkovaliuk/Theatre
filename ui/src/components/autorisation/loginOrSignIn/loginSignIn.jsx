@@ -16,18 +16,19 @@ import { SettingsIcon } from "../../../icons/settingsIcon";
 import { NotificationContext } from "../../../context/notificationContext";
 import { checkLoginned } from "../../../services/apiCallConfig";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteUser } from "../../../store/reducers/user";
+import {
+  deleteUser,
+  setUser,
+} from "../../../store/reducers/user/userCheckLogin";
 
 export const LogInSignIn = () => {
   const dispatch = useDispatch();
-
   const { user } = useSelector((state) => ({
     user: state.user,
   }));
-
   const { setNotificationMessage } = useContext(NotificationContext);
   const navMenuData =
-    user?.role === USER_ROLE.ADMIN ? adminDataList : userDataList;
+  user.loginned?.role === USER_ROLE.ADMIN ? adminDataList : userDataList;
 
   const [openSignIn, setOpenSignIn] = useState(false);
   const [autorisationMenu, setAutorisationMenu] = useState(false);
@@ -71,7 +72,7 @@ export const LogInSignIn = () => {
   };
   const checkIfUserLoginned = useCallback(async () => {
     try {
-      await checkLoginned();
+      dispatch(setUser(await checkLoginned()));
     } catch (error) {
       openLogInAutorisationMenu();
       handleOpeningNavMenu();
@@ -88,13 +89,13 @@ export const LogInSignIn = () => {
         closeMenu={handleClosingMenu}
       />
       <PopUpMenu
-        logIn={!!user}
+        logIn={!!user.loginned}
         showMenu={navMenu}
-        data={user ? navMenuData : []}
+        data={user.loginned ? navMenuData : []}
         top={posForNavMenu?.top}
         closeMenu={closeNavMenu}
       >
-        {!user ? (
+        {!user.loginned ? (
           <div className={l.logInSignInContainer}>
             <button
               style={

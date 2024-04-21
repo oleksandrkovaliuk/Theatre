@@ -44,19 +44,20 @@ import { Ticket } from "../../components/displayTicket";
 import { downloadTicket } from "../../services/downloadTicket";
 import { getTicketUrl } from "../../services/getTicketUrl";
 import { UserContext } from "../../context/userInfoContext";
-import { EventsContext } from "../../context/eventsContext";
 import { ObservationHandler } from "../../services/observationHandler";
-import { TopArrow } from "../../icons/topArrow";
 import "./tableCustom.scss";
 import { SearchIcon } from "../../icons/search";
+import { useDispatch, useSelector } from "react-redux";
+import { storeEvents } from "../../store/reducers/event/getEvent";
 export const UserBookedEvents = () => {
-  const { user } = useContext(UserContext);
-  const { setCommingEvents } = useContext(EventsContext);
+  const { user } = useSelector((state) => ({
+    user: state.user,
+  }));
+  const dispatch = useDispatch();
   const { setNotificationMessage } = useContext(NotificationContext);
   const [listOfBookedEvents, setListOfBookedEvents] = useState(null);
   const [ticketInfo, setTicketInfo] = useState({});
   const [showSpinner, setShowSpinner] = useState(false);
-  const [showBackToTop, setShowBackToTop] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const ticket = useRef();
   const tableElem = useRef();
@@ -70,8 +71,10 @@ export const UserBookedEvents = () => {
         eventId: item?.eventId,
         seatsId: item?.bookedSeats,
       });
-      const newEvents = await bookedEventsByUser({ email: user?.email });
-      setCommingEvents(await getEvents());
+      const newEvents = await bookedEventsByUser({
+        email: user.loginned.email,
+      });
+      dispatch(storeEvents(await getEvents()));
       setNotificationMessage(res.text, "success");
       setListOfBookedEvents(newEvents);
     } catch (error) {
@@ -82,8 +85,8 @@ export const UserBookedEvents = () => {
     try {
       await getTicketUrl(ticket.current).then(async (href) => {
         const sent = await sendTicket({
-          username: user.username,
-          email: user.email,
+          username: user.loginned.username,
+          email: user.loginned.email,
           ticket: `<img src="${href}"/>`,
         });
         setNotificationMessage(sent.text, "success");

@@ -10,7 +10,6 @@ const updatedAndSetBookedEvent = (req, res) => {
   const valueForAddBookedtickets = [
     eventId,
     userEmail,
-
     chosenSeats,
     daybeenbooked,
   ];

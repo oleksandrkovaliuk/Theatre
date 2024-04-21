@@ -2,8 +2,8 @@ import React, { useEffect, useContext, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import classNames from "classnames";
 import m from "./popUpNavMenu.module.scss";
-import { UserContext } from "../../context/userInfoContext";
 import { USER_ROLE } from "../../shared/enums";
+import { useSelector } from "react-redux";
 export const PopUpMenu = ({
   data,
   top,
@@ -12,7 +12,9 @@ export const PopUpMenu = ({
   showMenu,
   closeMenu,
 }) => {
-  const { user } = useContext(UserContext);
+  const { user } = useSelector((state) => ({
+    user: state.user,
+  }));
   const ref = useRef(null);
   const location = useLocation();
   const [styleForMenuBg, setStyleForMenuBg] = useState(null);
@@ -60,11 +62,11 @@ export const PopUpMenu = ({
             <div className={m.userInfo}>
               <span>Account Info</span>
               <p>
-                {user?.role === USER_ROLE.ADMIN && "admin"}
+                {user.loginned.role === USER_ROLE.ADMIN && "admin"}
                 <span>/</span>
-                {user?.username}
+                {user.loginned.username}
               </p>
-              <p>{user?.email}</p>
+              <p>{user.loginned.email}</p>
             </div>
           )}
           <ul className={m.navigation_wrap}>

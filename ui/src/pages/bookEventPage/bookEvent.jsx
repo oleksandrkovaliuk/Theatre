@@ -26,14 +26,18 @@ import { Elements } from "@stripe/react-stripe-js";
 import { PaymentForm } from "../../components/paymentForm";
 import { NotificationContext } from "../../context/notificationContext";
 import { socket } from "../../services/socketSetUp";
-import { UserContext } from "../../context/userInfoContext";
 import { Ticket } from "../../components/displayTicket";
 import { getTicketUrl } from "../../services/getTicketUrl";
 import { downloadTicket } from "../../services/downloadTicket";
+import { useDispatch, useSelector } from "react-redux";
+import { storeEvents } from "../../store/reducers/event/getEvent";
 let total = 0;
 export const BookEvent = () => {
-  const { events, setCommingEvents } = useContext(EventsContext);
-  const { user } = useContext(UserContext);
+  const dispatch = useDispatch();
+  const { events, user } = useSelector((state) => ({
+    events: state.events,
+    user: state.user,
+  }));
   const { setNotificationMessage } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
   const [processMenu, setProcessMenu] = useState(false);
@@ -51,9 +55,9 @@ export const BookEvent = () => {
   const [sliderIndex, setSliderIndex] = useState(0);
   const bookEvent = useRef(null);
   const ticket = useRef(null);
-  const currentEventsInfo = events?.filter(
-    (item) => item.id === Number(searchParams.get("id"))
-  );
+  const currentEventsInfo = events.events
+    ?.map((item) => item)
+    .filter((item) => item.id === Number(searchParams.get("id")));
   const currentEvent = currentEventsInfo?.map((item) =>
     JSON.parse(item.eventseats)
   );
@@ -96,17 +100,18 @@ export const BookEvent = () => {
           item.map((seat) => {
             chosenSeats.map((chosen) => {
               if (seat.id === Number(chosen.replace(/\D/g, ""))) {
-                seat.booked = user.email;
+                seat.booked = user.loginned.email;
               }
             });
           });
           return item;
         });
+        console.log(updatedSeats, "hello");
         updatedAndSetBookedEvent({
           eventId: currentEventsInfo[0].id,
           eventSeats: JSON.stringify(updatedSeats[0]),
           chosenSeats: JSON.stringify(chosenSeats),
-          userEmail: user?.email,
+          userEmail: user.loginned.email,
           daybeenbooked: new Date(),
         });
       }
@@ -202,7 +207,7 @@ export const BookEvent = () => {
           });
           setTimeout(async () => {
             const updatedEvents = await getEvents();
-            setCommingEvents(updatedEvents);
+            dispatch(storeEvents(updatedEvents));
             setGetCurrentEventInfo({
               value: false,
               discription: "",
@@ -216,8 +221,8 @@ export const BookEvent = () => {
   }, [
     bookEventStep,
     chosenSeats,
+    dispatch,
     paymentStatus,
-    setCommingEvents,
     setNotificationMessage,
     sliderIndex,
   ]);

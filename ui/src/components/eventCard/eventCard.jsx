@@ -25,6 +25,8 @@ import { Error } from "../../icons/error";
 import { callToDeleteEvent, getEvents } from "../../services/apiCallConfig";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
 import { NavLink } from "react-router-dom";
+import { storeEvents } from "../../store/reducers/event/getEvent";
+import { useDispatch } from "react-redux";
 export const EventCard = ({
   eventInfoFromdb,
   eventInfoAge,
@@ -52,8 +54,9 @@ export const EventCard = ({
     },
     dispathAction,
   ] = useReducer(reducer, InitState);
+  const dispatch = useDispatch();
   const { setNotificationMessage } = useContext(NotificationContext);
-  const { setCommingEvents } = useContext(EventsContext);
+  // const { setCommingEvents } = useContext(EventsContext);
   const ref = useRef(null);
 
   const isInputsChanged =
@@ -70,7 +73,7 @@ export const EventCard = ({
           dispathAction(setTransformCardInEditMode(true));
         } else {
           if (isInputsChanged) {
-            setNotificationMessage("your changes saved" , "succes");
+            setNotificationMessage("your changes saved", "succes");
           }
           dispathAction(setTransformCardInEditMode(false));
         }
@@ -86,7 +89,10 @@ export const EventCard = ({
       if (formatTime(inputValue) !== "invalid date" && inputValue.length) {
         dispathAction(setNewDateEvent(inputValue));
       } else {
-        setNotificationMessage(`please follow example YYYY-MM-DD HH:MIN` , "warning");
+        setNotificationMessage(
+          `please follow example YYYY-MM-DD HH:MIN`,
+          "warning"
+        );
       }
     }
     if (inputName === "itemAge") {
@@ -94,14 +100,17 @@ export const EventCard = ({
       if (inputValue.length <= 3 && checkFieldValid.test(inputValue)) {
         dispathAction(setNewAgeEvent(inputValue));
       } else {
-        setNotificationMessage(`please follow example "00+` , "warning");
+        setNotificationMessage(`please follow example "00+`, "warning");
       }
     }
     if (inputName === "itemName") {
       if (inputValue.length > 4) {
         dispathAction(setNewNameEvent(inputValue));
       } else {
-        setNotificationMessage("name should contain at least 4 chapters" , "warning");
+        setNotificationMessage(
+          "name should contain at least 4 chapters",
+          "warning"
+        );
       }
     }
     if (inputName === "itemDisc") {
@@ -109,7 +118,8 @@ export const EventCard = ({
         dispathAction(setNewDiscEvent(inputValue));
       } else {
         setNotificationMessage(
-          "discription should contain at least 20 chapters" , "warning"
+          "discription should contain at least 20 chapters",
+          "warning"
         );
       }
     }
@@ -150,7 +160,8 @@ export const EventCard = ({
     console.log("declined");
     dispathAction(setDoubleCheckMenu(false));
     setNotificationMessage(
-      `deleting event "${eventInfoFromdb?.name}" declined` , "info"
+      `deleting event "${eventInfoFromdb?.name}" declined`,
+      "info"
     );
   };
 
@@ -158,10 +169,11 @@ export const EventCard = ({
     try {
       callToDeleteEvent({ id: eventInfoFromdb.id });
       const events = await getEvents();
-      setCommingEvents(events);
+      dispatch(storeEvents(events));
       dispathAction(setDoubleCheckMenu(false));
       setNotificationMessage(
-        `event "${eventInfoFromdb?.name}" succesfully deleted` , "success"
+        `event "${eventInfoFromdb?.name}" succesfully deleted`,
+        "success"
       );
     } catch (error) {
       setNotificationMessage(error);
@@ -181,7 +193,7 @@ export const EventCard = ({
       if (resUrl.url) {
         dispathAction(setNewImgEvent(resUrl.url));
       }
-      setNotificationMessage(resUrl.message , "success");
+      setNotificationMessage(resUrl.message, "success");
     } catch (error) {
       setNotificationMessage(error);
     }

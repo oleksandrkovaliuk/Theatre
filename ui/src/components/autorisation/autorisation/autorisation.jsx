@@ -28,16 +28,15 @@ import {
 } from "../../../utilitis/patterForCheckPass";
 import { NotificationContext } from "../../../context/notificationContext";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../../store/reducers/user";
-import { loginUser } from "../../../store/thunks/user";
+import { setUser } from "../../../store/reducers/user/userCheckLogin";
+import { loginUser } from "../../../store/thunks/user/loginUser";
+import { newUser } from "../../../store/thunks/user/signInUser";
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => ({
     user: state.user,
   }));
-
-  // const { user, setUserInfo } = useContext(UserContext);
   const { setNotificationMessage } = useContext(NotificationContext);
   const [
     {
@@ -110,22 +109,31 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     event.preventDefault();
     try {
       const res = signIn
-        ? await signInUser({
-            username: userNameValue,
-            email: emailValue,
-            password: passValue,
-            role: "user",
-          })
-        : dispatch(loginUser({ email: emailValue, password: passValue }));
-      localStorage.setItem("user_jwt_token", res.jwtToken);
-      dispatch(setUser(res.user));
-      setNotificationMessage(
-        signIn ? "succesfully registered" : "succesfully loggined",
-        "success"
-      );
-      closeMenu();
+        ? await dispatch(
+            newUser({
+              username: userNameValue,
+              email: emailValue,
+              password: passValue,
+              role: "user",
+            })
+          )
+        : await dispatch(loginUser({ email: emailValue, password: passValue }));
+      if (
+        res.meta.requestStatus !== "rejected" ||
+        !res.meta.rejectedWithValue
+      ) {
+        localStorage.setItem("user_jwt_token", res.payload.jwtToken);
+        dispatch(setUser(res.payload.user));
+        setNotificationMessage(
+          signIn ? "succesfully registered" : "succesfully loggined",
+          "success"
+        );
+        closeMenu();
+      } else {
+        setNotificationMessage(res.payload);
+      }
     } catch (error) {
-      setNotificationMessage(error);
+      setNotificationMessage(error, "danger");
     }
   };
   useEffect(() => {
@@ -162,7 +170,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   }, [show, signIn]);
   return (
     <>
-      {show && !user && (
+      {show && !user.loginned && (
         <>
           <div onClick={closeMenu} className={a.background} />
           <div style={blurBgStyle} className={a.blurMenuBg} />
@@ -213,6 +221,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                   type="password"
                   id="password"
                   name="password"
+                  autocomplete="current-password"
                   className={a.autorisationInput}
                   onChange={checkInputsInfo}
                 ></input>

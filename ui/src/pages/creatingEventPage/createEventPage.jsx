@@ -23,12 +23,12 @@ import { NotificationContext } from "../../context/notificationContext";
 import { useNavigate } from "react-router-dom";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
 import { functionSetUpSeats } from "../../services/hallSeatsArraysForDB";
-import { EventsContext } from "../../context/eventsContext";
+import { useDispatch, useSelector } from "react-redux";
+import { storeEvents } from "../../store/reducers/event/getEvent";
 export const CreateEventPage = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const { setNotificationMessage } = useContext(NotificationContext);
-  const { setCommingEvents } = useContext(EventsContext);
   const [
     {
       checkAllField,
@@ -119,9 +119,7 @@ export const CreateEventPage = () => {
       });
       setNotificationMessage(res.succesfull, "success");
 
-      const events = await getEvents();
-      setCommingEvents(events);
-
+      dispatch(storeEvents(await getEvents()));
       navigate("/");
     } catch (error) {
       setNotificationMessage(error);

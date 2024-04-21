@@ -6,7 +6,6 @@ import React, {
   useContext,
   Fragment,
 } from "react";
-import { EventsContext } from "../../context/eventsContext";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { formatTime } from "../../services/formatTime";
 import Slider from "react-slick";
@@ -14,11 +13,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import b from "./bookEvents.module.scss";
 import {
-  checkLoginned,
-  createPaymentIntent,
-  getConfig,
-  getEvents,
   sendTicket,
+  getConfig,
+  createPaymentIntent,
   updatedAndSetBookedEvent,
 } from "../../services/apiCallConfig";
 import { loadStripe } from "@stripe/stripe-js";
@@ -30,7 +27,7 @@ import { Ticket } from "../../components/displayTicket";
 import { getTicketUrl } from "../../services/getTicketUrl";
 import { downloadTicket } from "../../services/downloadTicket";
 import { useDispatch, useSelector } from "react-redux";
-import { storeEvents } from "../../store/reducers/event/getEvent";
+import { fetchEvents } from "../../store/thunks/events";
 let total = 0;
 export const BookEvent = () => {
   const dispatch = useDispatch();
@@ -122,7 +119,6 @@ export const BookEvent = () => {
   // Navigation between pages
   const handleGoToPaymentSection = async () => {
     try {
-      await checkLoginned();
       setBookEventStep("payment");
       bookEvent.current.slickNext();
     } catch (error) {
@@ -206,8 +202,7 @@ export const BookEvent = () => {
             } . Here is updated seats`,
           });
           setTimeout(async () => {
-            const updatedEvents = await getEvents();
-            dispatch(storeEvents(updatedEvents));
+            dispatch(fetchEvents())
             setGetCurrentEventInfo({
               value: false,
               discription: "",

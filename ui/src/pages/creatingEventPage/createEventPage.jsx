@@ -18,13 +18,12 @@ import {
 } from "./reducer/action";
 import { EventCard } from "../../components/eventCard";
 import { formatTime } from "../../services/formatTime";
-import { creatingEvent, getEvents } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
 import { useNavigate } from "react-router-dom";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
 import { functionSetUpSeats } from "../../services/hallSeatsArraysForDB";
-import { useDispatch, useSelector } from "react-redux";
-import { storeEvents } from "../../store/reducers/event/getEvent";
+import { useDispatch } from "react-redux";
+import { createEvent } from "../../store/thunks/events";
 export const CreateEventPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -108,18 +107,18 @@ export const CreateEventPage = () => {
   const submitCreatingEvent = async (event) => {
     event.preventDefault();
     try {
-      const res = await creatingEvent({
-        eventName: eventName,
-        eventDisc: eventDisc,
-        eventDate: eventDate,
-        eventAge: eventAge,
-        eventImg: eventImg,
-        hall: typeOfHall,
-        eventseats: hallSeats,
-      });
+      const res = await dispatch(
+        createEvent({
+          eventName: eventName,
+          eventDisc: eventDisc,
+          eventDate: eventDate,
+          eventAge: eventAge,
+          eventImg: eventImg,
+          hall: typeOfHall,
+          eventseats: hallSeats,
+        })
+      ).unwrap();
       setNotificationMessage(res.succesfull, "success");
-
-      dispatch(storeEvents(await getEvents()));
       navigate("/");
     } catch (error) {
       setNotificationMessage(error);

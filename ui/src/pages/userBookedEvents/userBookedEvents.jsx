@@ -7,11 +7,9 @@ import React, {
 } from "react";
 import u from "./userBookedEvents.module.scss";
 import {
-  bookedEventsByUser,
-  checkLoginned,
   sendTicket,
   cancelBookedSeat,
-  getEvents,
+  bookedEventsByUser,
 } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
 import {
@@ -43,15 +41,15 @@ import { TicketIcon } from "../../icons/ticket";
 import { Ticket } from "../../components/displayTicket";
 import { downloadTicket } from "../../services/downloadTicket";
 import { getTicketUrl } from "../../services/getTicketUrl";
-import { UserContext } from "../../context/userInfoContext";
 import { ObservationHandler } from "../../services/observationHandler";
 import "./tableCustom.scss";
 import { SearchIcon } from "../../icons/search";
 import { useDispatch, useSelector } from "react-redux";
-import { storeEvents } from "../../store/reducers/event/getEvent";
+import { fetchEvents } from "../../store/thunks/events";
+
 export const UserBookedEvents = () => {
   const { user } = useSelector((state) => ({
-    user: state.user,
+    user: state.user.data,
   }));
   const dispatch = useDispatch();
   const { setNotificationMessage } = useContext(NotificationContext);
@@ -72,10 +70,10 @@ export const UserBookedEvents = () => {
         seatsId: item?.bookedSeats,
       });
       const newEvents = await bookedEventsByUser({
-        email: user.loginned.email,
+        email: user.email,
       });
-      dispatch(storeEvents(await getEvents()));
-      setNotificationMessage(res.text, "success");
+      dispatch(fetchEvents());
+      setNotificationMessage(res?.text, "success");
       setListOfBookedEvents(newEvents);
     } catch (error) {
       setNotificationMessage(error, "danger");
@@ -85,8 +83,8 @@ export const UserBookedEvents = () => {
     try {
       await getTicketUrl(ticket.current).then(async (href) => {
         const sent = await sendTicket({
-          username: user.loginned.username,
-          email: user.loginned.email,
+          username: user.username,
+          email: user.email,
           ticket: `<img src="${href}"/>`,
         });
         setNotificationMessage(sent.text, "success");
@@ -99,7 +97,6 @@ export const UserBookedEvents = () => {
     async (amoutToShow) => {
       try {
         setShowSpinner(true);
-        const user = await checkLoginned();
         const res = await bookedEventsByUser({
           email: user?.email,
           amountOfItems: amoutToShow,
@@ -115,7 +112,7 @@ export const UserBookedEvents = () => {
         setNotificationMessage(error, "danger");
       }
     },
-    [setNotificationMessage]
+    [setNotificationMessage, user?.email]
   );
   const handleScrollCall = useCallback(async () => {
     try {

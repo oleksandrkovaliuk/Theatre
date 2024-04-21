@@ -5,7 +5,6 @@ import { EditStick } from "../../icons/edit";
 import { NotificationContext } from "../../context/notificationContext";
 import { CloseBold } from "../../icons/close";
 import { Download } from "../../icons/download";
-import { EventsContext } from "../../context/eventsContext";
 import { InitState, reducer } from "./reducer/reduce";
 import {
   setChangedEvent,
@@ -22,11 +21,11 @@ import {
 import { SaveChanges } from "../../icons/saveChanges";
 import { Bin } from "../../icons/bid";
 import { Error } from "../../icons/error";
-import { callToDeleteEvent, getEvents } from "../../services/apiCallConfig";
+import { callToDeleteEvent } from "../../services/apiCallConfig";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
 import { NavLink } from "react-router-dom";
-import { storeEvents } from "../../store/reducers/event/getEvent";
 import { useDispatch } from "react-redux";
+import { fetchEvents } from "../../store/thunks/events";
 export const EventCard = ({
   eventInfoFromdb,
   eventInfoAge,
@@ -38,10 +37,10 @@ export const EventCard = ({
   itemId,
   showSubmitBtn,
   checkIfSubmited,
+  handleChangeEvent,
 }) => {
   const [
     {
-      changedEvents,
       updatedDate,
       updatedAge,
       updatedName,
@@ -56,7 +55,6 @@ export const EventCard = ({
   ] = useReducer(reducer, InitState);
   const dispatch = useDispatch();
   const { setNotificationMessage } = useContext(NotificationContext);
-  // const { setCommingEvents } = useContext(EventsContext);
   const ref = useRef(null);
 
   const isInputsChanged =
@@ -126,8 +124,7 @@ export const EventCard = ({
   };
 
   const functionForInsertChangedEvent = () => {
-    const IndexOfElem = changedEvents.findIndex((item) => item.id === itemId);
-    const insertingObj = {
+    const updatedData = {
       id: itemId,
       currentDate: updatedDate.length
         ? updatedDate
@@ -139,17 +136,9 @@ export const EventCard = ({
       currentHallInfo: eventInfoFromdb.hall,
       currentHall: eventInfoFromdb.eventseats,
     };
-    if (IndexOfElem === -1) {
-      dispathAction(setTransformCardInEditMode(false));
-      changedEvents.push(insertingObj);
-    } else {
-      dispathAction(setTransformCardInEditMode(false));
-      return (changedEvents[IndexOfElem] = insertingObj);
-    }
-    if (changedEvents.length > 0) {
-      console.log(changedEvents);
-      showSubmitBtn(changedEvents);
-    }
+
+    dispathAction(setTransformCardInEditMode(false));
+    handleChangeEvent(updatedData, itemId);
   };
 
   const showDoubleCheckMenuForDeleting = () => {
@@ -168,8 +157,7 @@ export const EventCard = ({
   const handleDeletingEvent = async () => {
     try {
       callToDeleteEvent({ id: eventInfoFromdb.id });
-      const events = await getEvents();
-      dispatch(storeEvents(events));
+      dispatch(fetchEvents());
       dispathAction(setDoubleCheckMenu(false));
       setNotificationMessage(
         `event "${eventInfoFromdb?.name}" succesfully deleted`,
@@ -214,12 +202,6 @@ export const EventCard = ({
       body.classList.remove("disable-scroll-page");
     };
   }, [doubleCheckMenu]);
-  // Cleare changedEvents storage after confirming changes
-  useEffect(() => {
-    if (checkIfSubmited && changedEvents.length) {
-      dispathAction(setChangedEvent([]));
-    }
-  }, [checkIfSubmited, changedEvents]);
   // Handling changing eventCard Text Background on text changes
   useEffect(() => {
     if (ref.current) {
@@ -285,6 +267,7 @@ export const EventCard = ({
           {editAble && (
             <>
               <button
+                type="button"
                 onClick={getInfoAboutClickedEvent}
                 className={s.editButton}
               >
@@ -300,6 +283,7 @@ export const EventCard = ({
               </button>
               {transformCardInEditMode && (
                 <button
+                  type="button"
                   onClick={showDoubleCheckMenuForDeleting}
                   className={s.deleteButton}
                 >

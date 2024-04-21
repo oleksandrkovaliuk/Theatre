@@ -9,7 +9,6 @@ const createEvent = async (req, res) => {
     hall,
     eventseats,
   } = req.body;
-  console.log(req.body);
   try {
     if (!eventName || !eventDisc || !eventDate || !eventAge || !eventImg) {
       return res
@@ -19,15 +18,23 @@ const createEvent = async (req, res) => {
     db.query(
       "INSERT INTO events (name , disc , startingtime , age , imgUrl , hall , eventseats) VALUES($1 , $2 , $3 , $4 , $5 , $6 , $7) RETURNING *;",
       [eventName, eventDisc, eventDate, eventAge, eventImg, hall, eventseats],
-      (err, dbRes) => {
+      async (err, dbRes) => {
         if (err) {
           console.log(err, "error");
           res
             .status(401)
             .json({ errorText: "failed with inserting new event into table" });
         } else {
-          return res.status(200).json({
-            succesfull: `event "${dbRes.rows[0].name}" succesfully created`,
+          db.query("SELECT * FROM events", (err, dbRes) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ errorText: "Failed with getting data" });
+            }
+            return res.status(200).json({
+              succesfull: `event "${dbRes.rows[0].name}" succesfully created`,
+              events: dbRes.rows,
+            });
           });
         }
       }

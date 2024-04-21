@@ -1,6 +1,0 @@
-import { createContext } from "react";
-
-export const EventsContext = createContext({
-  events: null,
-  setCommingEvents: (values) => {},
-});

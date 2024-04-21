@@ -29,7 +29,17 @@ const changeMultipleEvent = async (req, res) => {
       });
       Promise.all([dataWithChangedEvents])
         .then(() => {
-          return res.status(200).json({ text: "your events succesfully aded" });
+          db.query("SELECT * FROM events", (err, dbRes) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ errorText: "Failed with getting data" });
+            }
+            return res.status(200).json({
+              text: "your events succesfully changed",
+              events: dbRes.rows,
+            });
+          });
         })
         .catch((err) => {
           return res.status(401).json({ errorText: err });

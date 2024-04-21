@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import classNames from "classnames";
 import m from "./popUpNavMenu.module.scss";
@@ -13,7 +13,7 @@ export const PopUpMenu = ({
   closeMenu,
 }) => {
   const { user } = useSelector((state) => ({
-    user: state.user,
+    user: state.user.data,
   }));
   const ref = useRef(null);
   const location = useLocation();
@@ -62,11 +62,11 @@ export const PopUpMenu = ({
             <div className={m.userInfo}>
               <span>Account Info</span>
               <p>
-                {user.loginned.role === USER_ROLE.ADMIN && "admin"}
+                {user.role === USER_ROLE.ADMIN && "admin"}
                 <span>/</span>
-                {user.loginned.username}
+                {user.username}
               </p>
-              <p>{user.loginned.email}</p>
+              <p>{user.email}</p>
             </div>
           )}
           <ul className={m.navigation_wrap}>

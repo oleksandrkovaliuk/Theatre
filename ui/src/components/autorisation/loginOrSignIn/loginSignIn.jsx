@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { USER_ROLE } from "../../../shared/enums";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AutorisationMenu } from "../autorisation";
-import { UserContext } from "../../../context/userInfoContext";
 import { PopUpMenu } from "../../popUpNavMenu";
 import { UserIcon } from "../../../icons/userIcon";
 import {
@@ -14,21 +13,18 @@ import l from "./loginSignIn.module.scss";
 import { LogOutIcon } from "../../../icons/logOutIcon";
 import { SettingsIcon } from "../../../icons/settingsIcon";
 import { NotificationContext } from "../../../context/notificationContext";
-import { checkLoginned } from "../../../services/apiCallConfig";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteUser,
-  setUser,
-} from "../../../store/reducers/user/userCheckLogin";
+import { deleteUser } from "../../../store/reducers/user";
 
 export const LogInSignIn = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => ({
-    user: state.user,
+    user: state.user.data,
   }));
+
   const { setNotificationMessage } = useContext(NotificationContext);
   const navMenuData =
-  user.loginned?.role === USER_ROLE.ADMIN ? adminDataList : userDataList;
+    user?.role === USER_ROLE.ADMIN ? adminDataList : userDataList;
 
   const [openSignIn, setOpenSignIn] = useState(false);
   const [autorisationMenu, setAutorisationMenu] = useState(false);
@@ -67,20 +63,15 @@ export const LogInSignIn = () => {
   const logOutUser = () => {
     dispatch(deleteUser());
     setNotificationMessage("succesfully logout", "success");
-    localStorage.removeItem("user_jwt_token");
     navigate("/");
   };
-  const checkIfUserLoginned = useCallback(async () => {
-    try {
-      dispatch(setUser(await checkLoginned()));
-    } catch (error) {
+
+  useEffect(() => {
+    if (!user?.email) {
       openLogInAutorisationMenu();
       handleOpeningNavMenu();
     }
-  }, []);
-  useEffect(() => {
-    checkIfUserLoginned();
-  }, [checkIfUserLoginned]);
+  }, [user?.email]);
   return (
     <>
       <AutorisationMenu
@@ -89,13 +80,13 @@ export const LogInSignIn = () => {
         closeMenu={handleClosingMenu}
       />
       <PopUpMenu
-        logIn={!!user.loginned}
+        logIn={!!user?.email}
         showMenu={navMenu}
-        data={user.loginned ? navMenuData : []}
+        data={user?.email ? navMenuData : []}
         top={posForNavMenu?.top}
         closeMenu={closeNavMenu}
       >
-        {!user.loginned ? (
+        {!user?.email ? (
           <div className={l.logInSignInContainer}>
             <button
               style={

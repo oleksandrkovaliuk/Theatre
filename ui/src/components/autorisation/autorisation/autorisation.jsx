@@ -17,9 +17,7 @@ import {
   checkPasswordOnLowerCase,
   checkPasswordOnUpperCase,
 } from "./reducer/action";
-import { logIn, signInUser } from "../../../services/apiCallConfig";
 import { RedDoneIcon } from "../../../icons/redDoneIcon";
-import { UserContext } from "../../../context/userInfoContext";
 import {
   testOnLowerCase,
   testOnNumber,
@@ -28,15 +26,16 @@ import {
 } from "../../../utilitis/patterForCheckPass";
 import { NotificationContext } from "../../../context/notificationContext";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../../store/reducers/user/userCheckLogin";
 import { loginUser } from "../../../store/thunks/user/loginUser";
-import { newUser } from "../../../store/thunks/user/signInUser";
+import { registerUser } from "../../../store/thunks/user/registerUser";
+
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => ({
-    user: state.user,
+    user: state.user.data,
   }));
+
   const { setNotificationMessage } = useContext(NotificationContext);
   const [
     {
@@ -50,6 +49,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     },
     dispathAction,
   ] = useReducer(reducerForAutorisation, InitialStates);
+
   const checkInputsInfo = (event) => {
     const elem = event.target;
     const inputName = elem.name;
@@ -110,28 +110,23 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     try {
       const res = signIn
         ? await dispatch(
-            newUser({
+            registerUser({
               username: userNameValue,
               email: emailValue,
               password: passValue,
               role: "user",
-            })
+            }).unwrap()
           )
-        : await dispatch(loginUser({ email: emailValue, password: passValue }));
-      if (
-        res.meta.requestStatus !== "rejected" ||
-        !res.meta.rejectedWithValue
-      ) {
-        localStorage.setItem("user_jwt_token", res.payload.jwtToken);
-        dispatch(setUser(res.payload.user));
-        setNotificationMessage(
-          signIn ? "succesfully registered" : "succesfully loggined",
-          "success"
-        );
-        closeMenu();
-      } else {
-        setNotificationMessage(res.payload);
-      }
+        : await dispatch(
+            loginUser({ email: emailValue, password: passValue })
+          ).unwrap();
+
+      const notification = signIn
+        ? "succesfully registered"
+        : "succesfully loggined";
+
+      setNotificationMessage(notification, "success");
+      closeMenu();
     } catch (error) {
       setNotificationMessage(error, "danger");
     }
@@ -170,7 +165,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   }, [show, signIn]);
   return (
     <>
-      {show && !user.loginned && (
+      {show && !user?.email && (
         <>
           <div onClick={closeMenu} className={a.background} />
           <div style={blurBgStyle} className={a.blurMenuBg} />
@@ -221,7 +216,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                   type="password"
                   id="password"
                   name="password"
-                  autocomplete="current-password"
+                  autoComplete="current-password"
                   className={a.autorisationInput}
                   onChange={checkInputsInfo}
                 ></input>

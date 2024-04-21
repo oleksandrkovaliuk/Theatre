@@ -2,7 +2,7 @@ import React from "react";
 
 export const SaveChanges = ({ clickAction }) => {
   return (
-    <button onClick={clickAction}>
+    <button type="button" onClick={clickAction}>
       <svg
         width="512.000000pt"
         height="512.000000pt"

@@ -38,8 +38,16 @@ const changeSingleEvent = async (req, res) => {
             .status(401)
             .json({ errorText: "Failed with updating data into events db" });
         } else {
-          return res.status(200).json({
-            text: "your events succesfully changed",
+          db.query("SELECT * FROM events", (err, dbRes) => {
+            if (err) {
+              return res
+                .status(500)
+                .json({ errorText: "Failed with getting data" });
+            }
+            return res.status(200).json({
+              text: "your events succesfully changed",
+              events: dbRes.rows,
+            });
           });
         }
       }

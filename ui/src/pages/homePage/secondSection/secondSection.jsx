@@ -6,13 +6,14 @@ import { useSelector } from "react-redux";
 
 export const SecondSection = () => {
   const { events } = useSelector((state) => ({
-    events: state.events,
+    events: state.events.list,
   }));
+
   return (
     <div className={s.upcomingEvents}>
       <h1 className={s.title}>Upcoming premiers</h1>
       <div className={s.cardContainer}>
-        {events.events
+        {events
           ?.map((item) => item)
           .sort((a, b) => a.id - b.id)
           .filter(

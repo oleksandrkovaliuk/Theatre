@@ -2,7 +2,7 @@
   position: fixed;
   cursor: pointer;
   inset: 0;
-  z-index: 5;
+  z-index: 19;
   background: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.1),
@@ -14,7 +14,7 @@
 .menu_container {
   position: absolute;
   background-color: var(--color-white);
-  z-index: 6;
+  z-index: 21;
   padding-inline: 50px;
   width: 100%;
   right: 0;

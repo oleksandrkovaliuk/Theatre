@@ -1,5 +1,6 @@
 const updatingEventsQuery = require("./query");
 const db = require("../../../database");
+const getAllEvents = require("../../services/getAllEvents");
 const changeMultipleEvent = async (req, res) => {
   const { dataWithChangedEvents } = req.body;
   try {
@@ -28,17 +29,10 @@ const changeMultipleEvent = async (req, res) => {
         );
       });
       Promise.all([dataWithChangedEvents])
-        .then(() => {
-          db.query("SELECT * FROM events", (err, dbRes) => {
-            if (err) {
-              return res
-                .status(500)
-                .json({ errorText: "Failed with getting data" });
-            }
-            return res.status(200).json({
-              text: "your events succesfully changed",
-              events: dbRes.rows,
-            });
+        .then(async () => {
+          return res.status(200).json({
+            text: "your events succesfully changed",
+            events: await getAllEvents(),
           });
         })
         .catch((err) => {

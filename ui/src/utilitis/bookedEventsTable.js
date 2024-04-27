@@ -18,6 +18,7 @@ export const bookedEventHead = [
   },
 ];
 export const statusColorMap = {
+  all: "default",
   active: "success",
   finished: "danger",
 };

@@ -1,12 +1,8 @@
-const db = require("../../../database");
+const getAllEvents = require("../../services/getAllEvents");
+
 const events = async (req, res) => {
   try {
-    db.query("SELECT * FROM events", (err, dbRes) => {
-      if (err) {
-        return res.status(500).json({ errorText: "Failed with getting data" });
-      }
-      res.status(200).json(dbRes.rows);
-    });
+    res.status(200).json(await getAllEvents());
   } catch (error) {
     return res.status(500).json({ errorText: `${error} err` });
   }

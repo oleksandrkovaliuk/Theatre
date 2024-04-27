@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  bookedEventsByUser,
   callForChangeMultipleEvents,
   callForChangeSingleEvent,
   creatingEvent,
@@ -13,7 +14,7 @@ export const fetchEvents = createAsyncThunk(
       const res = await getEvents();
       return res;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error);
     }
   }
 );
@@ -36,7 +37,7 @@ export const createEvent = createAsyncThunk(
       });
       return res;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error);
     }
   }
 );
@@ -67,7 +68,7 @@ export const changeSingleEvent = createAsyncThunk(
       });
       return res;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error);
     }
   }
 );
@@ -81,7 +82,7 @@ export const changeMultipleEvents = createAsyncThunk(
       });
       return res;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error);
     }
   }
 );

@@ -13,15 +13,9 @@ export const SecondSection = () => {
     <div className={s.upcomingEvents}>
       <h1 className={s.title}>Upcoming premiers</h1>
       <div className={s.cardContainer}>
-        {events
-          ?.map((item) => item)
-          .sort((a, b) => a.id - b.id)
-          .filter(
-            (item) => formatTime(item.startingtime) > formatTime(new Date())
-          )
-          .map((item) => (
-            <EventCard key={item.id} eventInfoFromdb={item} />
-          ))}
+        {events.map((item) => (
+          <EventCard key={item.id} eventInfoFromdb={item} />
+        ))}
       </div>
     </div>
   );

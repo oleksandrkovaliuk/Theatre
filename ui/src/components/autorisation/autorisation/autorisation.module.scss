@@ -2,7 +2,7 @@
   position: fixed;
   cursor: pointer;
   inset: 0;
-  z-index: 6;
+  z-index: 20;
 }
 .blurMenuBg {
   position: fixed;
@@ -19,7 +19,7 @@
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   border-radius: 20px;
-  z-index: 6;
+  z-index: 20;
 }
 .autorisationMenu {
   position: fixed;
@@ -29,13 +29,13 @@
   max-width: 375px;
   margin: auto;
 
-  z-index: 8;
+  z-index: 23;
   background-color: transparent;
   border: 2px solid var(--color-red);
   border-radius: 20px;
   padding: 10px 20px 20px;
   .title {
-    color: var(--color-white);
+    color: var(--color-red);
     font-family: var(--font-SfMedium);
     font-size: 25px;
     text-align: center;
@@ -112,15 +112,13 @@
           font-size: 14px;
         }
       }
-      &:last-of-type {
+      &:not(:last-of-type) {
         margin-bottom: 20px;
       }
-      &:not(:last-of-type) {
-        margin-bottom: 19px;
-      }
+
       .autorisationInput {
         padding: 8px 10px;
-        background-color: transparent;
+        background-color: transparent !important;
         border-radius: 6px;
         border: unset;
         border-bottom: 2px solid var(--color-red);
@@ -156,6 +154,63 @@
         transform: translateY(-23px);
         font-size: 14px;
         left: 2px;
+      }
+    }
+  }
+}
+.differentTypeAutorisate {
+  width: 100%;
+  text-align: center;
+  padding-block: 20px;
+  .or {
+    color: var(--color-red);
+    font-family: var(--font-SfMedium);
+    font-size: 19px;
+    text-align: center;
+    margin-bottom: 5px;
+    position: relative;
+    &::before,
+    &::after {
+      content: " ";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 0;
+      width: 46%;
+      height: 2px;
+
+      background-color: var(--color-red);
+    }
+    &::after {
+      left: unset;
+      right: 0;
+    }
+  }
+  .wayHowToAutorisate {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    button {
+      background-color: unset;
+      border: unset;
+      padding: 3px;
+      &:nth-child(1) {
+        svg {
+          width: 25px;
+          height: 25px;
+          path {
+            transition: all 0.2s ease-in-out;
+            fill: var(--color-red);
+          }
+        }
+        &:hover {
+          svg {
+            path {
+              fill: var(--color-black);
+            }
+          }
+        }
       }
     }
   }

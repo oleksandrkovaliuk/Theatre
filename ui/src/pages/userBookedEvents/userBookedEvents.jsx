@@ -6,11 +6,7 @@ import React, {
   useState,
 } from "react";
 import u from "./userBookedEvents.module.scss";
-import {
-  sendTicket,
-  cancelBookedSeat,
-  bookedEventsByUser,
-} from "../../services/apiCallConfig";
+import { sendTicket } from "../../services/apiCallConfig";
 import { NotificationContext } from "../../context/notificationContext";
 import {
   Table,
@@ -31,6 +27,11 @@ import {
   ModalBody,
   ModalFooter,
   Spinner,
+  ScrollShadow,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
 import {
   bookedEventHead,
@@ -45,40 +46,129 @@ import { ObservationHandler } from "../../services/observationHandler";
 import "./tableCustom.scss";
 import { SearchIcon } from "../../icons/search";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEvents } from "../../store/thunks/events";
+import {
+  cancelBooked,
+  allBookedTicketsByUser,
+  deleteExpiredSeats,
+} from "../../store/thunks/tickets";
+import { TopArrow } from "../../icons/topArrow";
+import { useDebounce } from "../../hooks/useDebounce";
+import { Bin } from "../../icons/bid";
 
 export const UserBookedEvents = () => {
-  const { user } = useSelector((state) => ({
+  const { user, tickets } = useSelector((state) => ({
     user: state.user.data,
+    tickets: state.tickets.list,
   }));
+
   const dispatch = useDispatch();
+
   const { setNotificationMessage } = useContext(NotificationContext);
-  const [listOfBookedEvents, setListOfBookedEvents] = useState(null);
+
   const [ticketInfo, setTicketInfo] = useState({});
   const [showSpinner, setShowSpinner] = useState(false);
+  const [statusFilter, selectedStatusFilter] = useState(new Set(["all"]));
+  const [timeFilter, selectedTimeFilter] = useState(new Set(["All time"]));
+  const [searchValue, setSearchValue] = useState("");
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const ticket = useRef();
   const tableElem = useRef();
+
+  const getFilterValue = (filter) => {
+    return Array.from(filter).join(", ").replaceAll("_", " ");
+  };
+
   const openTicket = (item) => {
     setTicketInfo(item);
     onOpen();
   };
-  const cancelBookedEvent = async (item) => {
+
+  const cancelBookedEvent = async (item, toShow) => {
     try {
-      const res = await cancelBookedSeat({
-        eventId: item?.eventId,
-        seatsId: item?.bookedSeats,
-      });
-      const newEvents = await bookedEventsByUser({
-        email: user.email,
-      });
-      dispatch(fetchEvents());
+      const res = await dispatch(
+        cancelBooked({
+          eventId: item?.eventId,
+          seatsId: item?.bookedSeats,
+          email: user.email,
+          toShow: toShow,
+        })
+      ).unwrap();
       setNotificationMessage(res?.text, "success");
-      setListOfBookedEvents(newEvents);
     } catch (error) {
       setNotificationMessage(error, "danger");
     }
   };
+
+  const getListOfBookedEventsByUser = useCallback(
+    async (amoutToShow) => {
+      try {
+        if (user?.email) {
+          setShowSpinner(true);
+          await dispatch(
+            allBookedTicketsByUser({
+              email: user?.email,
+              toShow: amoutToShow,
+              search: null,
+              filterByTime: null,
+              filterByStatus: null,
+            })
+          ).unwrap();
+        }
+        setShowSpinner(false);
+      } catch (error) {
+        setNotificationMessage(error, "danger");
+      }
+    },
+    [dispatch, setNotificationMessage, user?.email]
+  );
+
+  const getSearchedItemByValue = () => {
+    try {
+      dispatch(
+        allBookedTicketsByUser({
+          email: user?.email,
+          toShow: 10,
+          search: searchValue?.length ? searchValue : null,
+          filterByTime: timeFilter ? getFilterValue(timeFilter) : null,
+          filterByStatus: statusFilter ? getFilterValue(statusFilter) : null,
+        })
+      );
+    } catch (error) {
+      setNotificationMessage("couldnt search event by this name", "danger");
+    }
+  };
+
+  const getValueForSearching = useDebounce(getSearchedItemByValue, 300);
+
+  const getResultBySearchValue = (e) => {
+    getValueForSearching();
+    setSearchValue(e.target.value);
+  };
+  const sendFilterSettings = useCallback(() => {
+    try {
+      return dispatch(
+        allBookedTicketsByUser({
+          email: user?.email,
+          toShow: 10,
+          search: searchValue?.length ? searchValue : null,
+          filterByTime: timeFilter ? getFilterValue(timeFilter) : null,
+          filterByStatus: statusFilter ? getFilterValue(statusFilter) : null,
+        })
+      );
+    } catch (error) {
+      setNotificationMessage("something wend wrong with seted you filters");
+    }
+  }, [
+    dispatch,
+    user?.email,
+    searchValue,
+    timeFilter,
+    statusFilter,
+    setNotificationMessage,
+  ]);
+
   const recieveTicketOnEmail = async () => {
     try {
       await getTicketUrl(ticket.current).then(async (href) => {
@@ -93,43 +183,25 @@ export const UserBookedEvents = () => {
       setNotificationMessage(error, "danger");
     }
   };
-  const getListOfBookedEventsByUser = useCallback(
-    async (amoutToShow) => {
-      try {
-        setShowSpinner(true);
-        const res = await bookedEventsByUser({
-          email: user?.email,
-          amountOfItems: amoutToShow,
-        });
-        setListOfBookedEvents((prev) => {
-          if (prev?.length !== res?.length) {
-            return res;
-          }
-          return prev;
-        });
-        setShowSpinner(false);
-      } catch (error) {
-        setNotificationMessage(error, "danger");
-      }
-    },
-    [setNotificationMessage, user?.email]
-  );
+
   const handleScrollCall = useCallback(async () => {
     try {
-      if (listOfBookedEvents?.length >= 10) {
-        await getListOfBookedEventsByUser(listOfBookedEvents?.length + 10);
+      if (tickets?.length >= 10) {
+        await getListOfBookedEventsByUser(tickets?.length + 10);
       }
     } catch (error) {
       setNotificationMessage(error, "danger");
     }
-  }, [
-    getListOfBookedEventsByUser,
-    listOfBookedEvents?.length,
-    setNotificationMessage,
-  ]);
+  }, [tickets?.length, getListOfBookedEventsByUser, setNotificationMessage]);
+  console.log(Array.from(timeFilter).join(", ").replaceAll("_", " "), "check");
   useEffect(() => {
     getListOfBookedEventsByUser(10);
   }, [getListOfBookedEventsByUser]);
+  useEffect(() => {
+    if (statusFilter || timeFilter) {
+      sendFilterSettings();
+    }
+  }, [sendFilterSettings, statusFilter, timeFilter]);
   return (
     <>
       <div className={u.navigationIntoPage}>
@@ -138,16 +210,88 @@ export const UserBookedEvents = () => {
             type="text"
             id="searchBar"
             name="searchBar"
-            className={u.searchBar}
+            placeholder=" "
+            onChange={getResultBySearchValue}
+            className={u.searchBarInput}
           />
-          <label htmlFor="searchBar" className={u.searchbarLabel}>
+          <label htmlFor="searchBar" className={u.searchBarLabel}>
             <SearchIcon />
             Search by event name....
           </label>
         </div>
-        <div className={u.filterNrest}>
-          <button key="time">by time</button>
-          <button key="time">by status</button>
+        <div className={u.filter}>
+          <Dropdown
+            showArrow
+            // classNames={{
+            //   base: "before:bg-default-200", // change arrow background
+            //   content: "p-0 border-small border-divider bg-background",
+            // }}
+          >
+            <DropdownTrigger>
+              <button>
+                <Chip
+                  size="sm"
+                  color={statusColorMap[getFilterValue(statusFilter)]}
+                  variant="flat"
+                >
+                  {getFilterValue(statusFilter) === "finished"
+                    ? "expired"
+                    : getFilterValue(statusFilter)}
+                </Chip>
+                <TopArrow />
+              </button>
+            </DropdownTrigger>
+            <DropdownMenu
+              selectedKeys={statusFilter}
+              onSelectionChange={selectedStatusFilter}
+              disallowEmptySelection
+              selectionMode="single"
+              variant="flat"
+            >
+              <DropdownItem key="all">
+                <Chip
+                  color={statusColorMap["default"]}
+                  size="sm"
+                  variant="flat"
+                >
+                  all
+                </Chip>
+              </DropdownItem>
+              <DropdownItem key="active">
+                <Chip color={statusColorMap["active"]} size="sm" variant="flat">
+                  active
+                </Chip>
+              </DropdownItem>
+              <DropdownItem key="finished">
+                <Chip
+                  color={statusColorMap["finished"]}
+                  size="sm"
+                  variant="flat"
+                >
+                  expired
+                </Chip>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+          <Dropdown showArrow>
+            <DropdownTrigger>
+              <button>
+                {getFilterValue(timeFilter)} <TopArrow />
+              </button>
+            </DropdownTrigger>
+            <DropdownMenu
+              selectedKeys={timeFilter}
+              onSelectionChange={selectedTimeFilter}
+              disallowEmptySelection
+              selectionMode="single"
+              variant="flat"
+            >
+              <DropdownItem key="All time">All time</DropdownItem>
+              <DropdownItem key="Past 24h">Past 24h</DropdownItem>
+              <DropdownItem key="Past week">Past week</DropdownItem>
+              <DropdownItem key="Past month">Past month</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </div>
       <div className={u.user}>
@@ -200,109 +344,162 @@ export const UserBookedEvents = () => {
         <Table
           ref={tableElem}
           isHeaderSticky
-          bottomContent={<ObservationHandler onObserv={handleScrollCall} />}
+          removeWrapper
           className="custom-table"
+          bottomContent={<ObservationHandler onObserv={handleScrollCall} />}
         >
           <TableHeader>
             {bookedEventHead.map((headers) => (
               <TableColumn key={headers.id}>{headers.label}</TableColumn>
             ))}
           </TableHeader>
-          {!listOfBookedEvents?.length ? (
+          {!tickets?.length ? (
             <TableBody emptyContent={"No tickets booked yet."}>{[]}</TableBody>
           ) : (
             <TableBody>
-              {listOfBookedEvents
-                ?.sort(
-                  (a, b) => new Date(b.beenBooked) - new Date(a.beenBooked)
-                )
-                .map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      <Popover placement="top-start" showArrow={true}>
-                        <PopoverTrigger>
-                          <div className={u.eventInfo}>
-                            <div className={u.eventImg}>
-                              <img src={item.eventUrl} alt="eventImg" />
-                            </div>
-                            <div className={u.eventDisc}>
-                              <span>{item.eventName}</span>
-                              <button>{item.eventAge}</button>
-                              <span>
-                                Booked at <b>{formatTime(item.beenBooked)}</b>
-                              </span>
-                            </div>
+              {tickets.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <Popover placement="top-start" showArrow={true}>
+                      <PopoverTrigger>
+                        <div className={u.eventInfo}>
+                          <div className={u.eventImg}>
+                            <img src={item.eventUrl} alt="eventImg" />
                           </div>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <div className={u.popInfo}>
-                            <div className="text-small font-SF-Display-Medium">
-                              About event:
-                            </div>
-                            <div className="text-tiny">{item.eventDisc}</div>
+                          <div className={u.eventDisc}>
+                            <span>{item.eventName}</span>
+                            <button>{item.eventAge}</button>
+                            <span>
+                              Booked at <b>{formatTime(item.beenBooked)}</b>
+                            </span>
                           </div>
-                        </PopoverContent>
-                      </Popover>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        color={
-                          statusColorMap[
-                            formatTime(item.eventTime) < formatTime(new Date())
-                              ? "finished"
-                              : "active"
-                          ]
-                        }
-                        size="sm"
-                        variant="flat"
-                      >
-                        {formatTime(item.eventTime) < formatTime(new Date())
-                          ? "finished"
-                          : "active"}
-                      </Chip>
-                    </TableCell>
-                    <TableCell>{formatTime(item.eventTime)}</TableCell>
-                    <TableCell>
-                      {JSON.parse(item.bookedSeats).map((seat, i) => (
-                        <span key={seat} className={u.eventSeats}>
-                          {seat}
-                        </span>
-                      ))}
-                    </TableCell>
-                    <TableCell style={{ textAlign: "right" }}>
-                      <div className={u.managingTicket}>
-                        <Tooltip showArrow content="Open your tickets">
-                          <button onClick={() => openTicket(item)}>
-                            <TicketIcon />
-                          </button>
-                        </Tooltip>
-
-                        {formatTime(item.eventTime) >
-                          formatTime(new Date()) && (
-                          <Popover placement="bottom-end" showArrow={true}>
-                            <PopoverTrigger>
-                              <button>cancel</button>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                              <div className={u.doubleCheckMenu}>
-                                <h1>
-                                  You sure you wanna <b>cancel</b> this book ?
-                                </h1>
-                                <button onClick={() => cancelBookedEvent(item)}>
-                                  Cancel
-                                </button>
-                                <p>
-                                  After you canceled <b>Money</b> will be
-                                  <b> Refunded</b> on your <b>Bank account</b>
-                                </p>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                        </div>
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <div className={u.popInfo}>
+                          <div className="text-small font-SF-Display-Medium">
+                            About event:
+                          </div>
+                          <div className="text-tiny">{item.eventDisc}</div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      color={
+                        statusColorMap[
+                          formatTime(item.eventTime) < formatTime(new Date())
+                            ? "finished"
+                            : "active"
+                        ]
+                      }
+                      size="sm"
+                      variant="flat"
+                    >
+                      {formatTime(item.eventTime) < formatTime(new Date())
+                        ? "expired"
+                        : "active"}
+                    </Chip>
+                  </TableCell>
+                  <TableCell>{formatTime(item.eventTime)}</TableCell>
+                  <TableCell>
+                    {JSON.parse(item.bookedSeats).map((seat, i) => (
+                      <span key={seat} className={u.eventSeats}>
+                        {seat}
+                      </span>
+                    ))}
+                  </TableCell>
+                  <TableCell style={{ textAlign: "right" }}>
+                    <div className={u.managingTicket}>
+                      <Tooltip showArrow content="Open your tickets">
+                        <button
+                          className={u.navIcons}
+                          onClick={() => openTicket(item)}
+                        >
+                          <TicketIcon />
+                        </button>
+                      </Tooltip>
+                      {formatTime(item.eventTime) > formatTime(new Date()) ? (
+                        <Popover
+                          placement="bottom-end"
+                          showArrow={true}
+                          shouldFlip={true}
+                          shouldBlockScroll={true}
+                        >
+                          <PopoverTrigger>
+                            <button>cancel</button>
+                          </PopoverTrigger>
+                          <PopoverContent>
+                            <div className={u.doubleCheckMenu}>
+                              <h1>
+                                You sure you wanna <b>cancel</b> this book ?
+                              </h1>
+                              <button
+                                onClick={() => cancelBookedEvent(item, 10)}
+                              >
+                                Cancel
+                              </button>
+                              <p>
+                                After you canceled <b>Money</b> will be
+                                <b> Refunded</b> on your <b>Bank account</b>
+                              </p>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      ) : (
+                        <Popover
+                          placement="bottom-end"
+                          showArrow={true}
+                          shouldFlip={true}
+                          shouldBlockScroll={true}
+                        >
+                          <PopoverTrigger>
+                            <button className={u.navIcons}>
+                              <Bin />
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent>
+                            <div className={u.doubleCheckMenu}>
+                              <h1>
+                                Are you sure you wanna delete <b>expired </b>
+                                event ?
+                              </h1>
+                              <button
+                                onClick={() =>
+                                  dispatch(
+                                    deleteExpiredSeats({
+                                      seat: item.bookedSeats,
+                                      email: user?.email,
+                                      toShow: 10,
+                                      search: searchValue.length
+                                        ? searchValue
+                                        : null,
+                                      filterByTime: timeFilter
+                                        ? getFilterValue(timeFilter)
+                                        : null,
+                                      filterByStatus: statusFilter
+                                        ? getFilterValue(statusFilter)
+                                        : null,
+                                    })
+                                  )
+                                }
+                              >
+                                Delete
+                              </button>
+                              <p>
+                                Deleting <b>expired</b> events , it is more
+                                about <b>making</b> your <b>booked</b>history
+                                <b>orginized</b>
+                              </p>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           )}
         </Table>

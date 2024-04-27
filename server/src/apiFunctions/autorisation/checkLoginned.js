@@ -1,7 +1,6 @@
 const db = require("../../../database");
 const parsToken = (token) => token?.replace("Bearer", "")?.replace(" ", "");
 const checkLoginned = async (req, res) => {
-  const { bookedEvents } = req.body;
   try {
     const jwt = parsToken(req.headers?.authorization);
     const findUserWithJwtToken = "SELECT * FROM users where jwt = $1";

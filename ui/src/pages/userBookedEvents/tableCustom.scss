@@ -1,5 +1,8 @@
 .custom-table {
-  padding: 50px;
+  padding: 0px 50px 50px;
   max-height: 800px;
-  overflow-y: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+
+  // border-radius: unset;
 }

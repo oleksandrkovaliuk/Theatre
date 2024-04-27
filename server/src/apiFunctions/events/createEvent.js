@@ -33,7 +33,9 @@ const createEvent = async (req, res) => {
             }
             return res.status(200).json({
               succesfull: `event "${dbRes.rows[0].name}" succesfully created`,
-              events: dbRes.rows,
+              events: dbRes.rows.filter(
+                (item) => formatTime(item.startingtime) > formatTime(new Date())
+              ),
             });
           });
         }

@@ -32,8 +32,8 @@ let total = 0;
 export const BookEvent = () => {
   const dispatch = useDispatch();
   const { events, user } = useSelector((state) => ({
-    events: state.events,
-    user: state.user,
+    events: state.events.list,
+    user: state.user.data,
   }));
   const { setNotificationMessage } = useContext(NotificationContext);
   const [searchParams] = useSearchParams();
@@ -52,9 +52,9 @@ export const BookEvent = () => {
   const [sliderIndex, setSliderIndex] = useState(0);
   const bookEvent = useRef(null);
   const ticket = useRef(null);
-  const currentEventsInfo = events.events
-    ?.map((item) => item)
-    .filter((item) => item.id === Number(searchParams.get("id")));
+  const currentEventsInfo = events?.filter(
+    (item) => item.id === Number(searchParams.get("id"))
+  );
   const currentEvent = currentEventsInfo?.map((item) =>
     JSON.parse(item.eventseats)
   );
@@ -97,7 +97,7 @@ export const BookEvent = () => {
           item.map((seat) => {
             chosenSeats.map((chosen) => {
               if (seat.id === Number(chosen.replace(/\D/g, ""))) {
-                seat.booked = user.loginned.email;
+                seat.booked = user.email;
               }
             });
           });
@@ -108,7 +108,7 @@ export const BookEvent = () => {
           eventId: currentEventsInfo[0].id,
           eventSeats: JSON.stringify(updatedSeats[0]),
           chosenSeats: JSON.stringify(chosenSeats),
-          userEmail: user.loginned.email,
+          userEmail: user.email,
           daybeenbooked: new Date(),
         });
       }
@@ -187,7 +187,7 @@ export const BookEvent = () => {
           !paymentStatus &&
           !ticket.current
         ) {
-          bookEvent.current.slickPrev();
+          bookEvent?.current.slickPrev();
           setChosenSeats([]);
         }
         if (bookEventStep === "book" && sliderIndex === 0) {
@@ -202,7 +202,7 @@ export const BookEvent = () => {
             } . Here is updated seats`,
           });
           setTimeout(async () => {
-            dispatch(fetchEvents())
+            dispatch(fetchEvents());
             setGetCurrentEventInfo({
               value: false,
               discription: "",

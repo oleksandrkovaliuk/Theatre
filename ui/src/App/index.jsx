@@ -1,8 +1,5 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-} from "react";
+import React, { useCallback, useContext, useEffect } from "react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Header } from "../components/header";
 import { Route, Routes } from "react-router-dom";
 import { UnfoundPage } from "../pages/404unfoundPage";
@@ -37,19 +34,24 @@ export const App = () => {
     getAllData();
   }, [getAllData]);
   return (
-    <NextUIProvider>
-      <NotificationProvider>
-        <Toaster richColors />
-        <Header />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="*" element={<UnfoundPage />} />
-          <Route path="/createEvent" element={<CreateEventPage />} />
-          <Route path="/manageEvents" element={<MageneEvents />} />
-          <Route path="/bookEvent" element={<BookEvent />} />
-          <Route path="/historyOfBookedEvents" element={<UserBookedEvents />} />
-        </Routes>
-      </NotificationProvider>
-    </NextUIProvider>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_CLIENT_ID}>
+      <NextUIProvider>
+        <NotificationProvider>
+          <Toaster richColors />
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="*" element={<UnfoundPage />} />
+            <Route path="/createEvent" element={<CreateEventPage />} />
+            <Route path="/manageEvents" element={<MageneEvents />} />
+            <Route path="/bookEvent" element={<BookEvent />} />
+            <Route
+              path="/historyOfBookedEvents"
+              element={<UserBookedEvents />}
+            />
+          </Routes>
+        </NotificationProvider>
+      </NextUIProvider>
+    </GoogleOAuthProvider>
   );
 };

@@ -1,8 +1,15 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import a from "./autorisation.module.scss";
 import { emailValidation } from "../../../services/emailValidation";
 import { passwordValidation } from "../../../services/passwordValidation";
 import { InitialStates, reducerForAutorisation } from "./reducer/reducer";
+import { GoogleLogin } from "@react-oauth/google";
 import {
   checkEmailValid,
   checkPassValid,
@@ -28,6 +35,8 @@ import { NotificationContext } from "../../../context/notificationContext";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../../store/thunks/user/loginUser";
 import { registerUser } from "../../../store/thunks/user/registerUser";
+import { GitHub } from "../../../icons/gitHub";
+import { Google } from "../../../icons/google";
 
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   const dispatch = useDispatch();
@@ -49,7 +58,6 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     },
     dispathAction,
   ] = useReducer(reducerForAutorisation, InitialStates);
-
   const checkInputsInfo = (event) => {
     const elem = event.target;
     const inputName = elem.name;
@@ -105,20 +113,29 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       }
     }
   };
-  const submitAutorisation = async (event) => {
-    event.preventDefault();
+  const submitAutorisation = async (event, oAuthCredential) => {
+    console.log(oAuthCredential, "from function");
+    if (event) {
+      event.preventDefault();
+    }
+
     try {
-      const res = signIn
+      signIn
         ? await dispatch(
             registerUser({
               username: userNameValue,
               email: emailValue,
               password: passValue,
               role: "user",
-            }).unwrap()
-          )
+              jwt_user: oAuthCredential,
+            })
+          ).unwrap()
         : await dispatch(
-            loginUser({ email: emailValue, password: passValue })
+            loginUser({
+              email: emailValue,
+              password: passValue,
+              jwt_user: oAuthCredential,
+            })
           ).unwrap();
 
       const notification = signIn
@@ -258,6 +275,29 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                     </li>
                   </ul>
                 )}
+              </div>
+              <div className={a.differentTypeAutorisate}>
+                <div className={a.or}>
+                  <span>Or</span>
+                </div>
+                <div className={a.wayHowToAutorisate}>
+                  <button>
+                    <GitHub />
+                  </button>
+                  <button>
+                    <GoogleLogin
+                      onSuccess={(credentialResponse) =>
+                        submitAutorisation(null, credentialResponse.credential)
+                      }
+                      onError={() => {
+                        setNotificationMessage(
+                          signIn ? "failed with sign in" : "failed with login",
+                          "danger"
+                        );
+                      }}
+                    />
+                  </button>
+                </div>
               </div>
               <button
                 onClick={submitAutorisation}

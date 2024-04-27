@@ -26,6 +26,7 @@ import { uploadEventImg } from "../../services/uploadingEventsImgs";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchEvents } from "../../store/thunks/events";
+
 export const EventCard = ({
   eventInfoFromdb,
   eventInfoAge,
@@ -35,8 +36,6 @@ export const EventCard = ({
   eventDisc,
   editAble,
   itemId,
-  showSubmitBtn,
-  checkIfSubmited,
   handleChangeEvent,
 }) => {
   const [
@@ -80,7 +79,6 @@ export const EventCard = ({
       setNotificationMessage(error);
     }
   };
-
   const updateInfoAboutEvent = (event, inputName) => {
     const inputValue = event.currentTarget.value;
     if (inputName === "itemDate") {
@@ -122,7 +120,6 @@ export const EventCard = ({
       }
     }
   };
-
   const functionForInsertChangedEvent = () => {
     const updatedData = {
       id: itemId,

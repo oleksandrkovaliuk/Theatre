@@ -1,4 +1,4 @@
-export const formatTime = (time) => {
+const formatTime = (time) => {
   const timecheck = Date.parse(time);
   if (isNaN(timecheck)) {
     return "invalid date";
@@ -18,3 +18,4 @@ export const formatTime = (time) => {
   return formattedTime;
 };
 
+module.exports = formatTime;

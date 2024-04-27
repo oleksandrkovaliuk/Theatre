@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { USER_ROLE } from "../../../shared/enums";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AutorisationMenu } from "../autorisation";
 import { PopUpMenu } from "../../popUpNavMenu";
 import { UserIcon } from "../../../icons/userIcon";
@@ -18,9 +18,12 @@ import { deleteUser } from "../../../store/reducers/user";
 
 export const LogInSignIn = () => {
   const dispatch = useDispatch();
+
   const { user } = useSelector((state) => ({
     user: state.user.data,
   }));
+
+  const location = useLocation();
 
   const { setNotificationMessage } = useContext(NotificationContext);
   const navMenuData =
@@ -67,11 +70,13 @@ export const LogInSignIn = () => {
   };
 
   useEffect(() => {
-    if (!user?.email) {
-      openLogInAutorisationMenu();
-      handleOpeningNavMenu();
-    }
-  }, [user?.email]);
+    setTimeout(() => {
+      if (!user && location.pathname === "/" && window.scrollY === 0) {
+        openLogInAutorisationMenu();
+        handleOpeningNavMenu();
+      }
+    }, 500);
+  }, [location.pathname, user]);
   return (
     <>
       <AutorisationMenu

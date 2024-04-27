@@ -29,12 +29,7 @@ export const MageneEvents = () => {
       const findItem = prevState.find((event) => event.id === itemId);
 
       if (findItem) {
-        return prevState.map((event) => {
-          if (event.id === itemId) {
-            return updatedData;
-          }
-          return event;
-        });
+        return prevState.map(() => updatedData);
       } else {
         return [...prevState, updatedData];
       }
@@ -68,7 +63,6 @@ export const MageneEvents = () => {
 
   useEffect(() => {
     if (!changedEvents?.length) {
-      console.log(changedEvents, "events");
       setSubmited(true);
     } else {
       setSubmited(false);
@@ -79,19 +73,16 @@ export const MageneEvents = () => {
     <div className={m.manegeEvents_page}>
       <h1 className={m.manegeEvents}>Maneging your events</h1>
       <div className={m.eventsEditable}>
-        {events
-          ?.map((item) => item)
-          ?.sort((a, b) => b.id - a.id)
-          .map((item) => (
-            <EventCard
-              editAble
-              key={item.id}
-              itemId={item.id}
-              eventInfoFromdb={item}
-              checkIfSubmited={checkIfSubmited}
-              handleChangeEvent={handleChangeEvent}
-            />
-          ))}
+        {events.map((item) => (
+          <EventCard
+            editAble
+            key={item.id}
+            itemId={item.id}
+            eventInfoFromdb={item}
+            checkIfSubmited={checkIfSubmited}
+            handleChangeEvent={handleChangeEvent}
+          />
+        ))}
       </div>
       <button
         className={m.submitAllChanges}

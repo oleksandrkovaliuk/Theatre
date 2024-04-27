@@ -1,6 +1,6 @@
 import { React, useEffect, useRef } from "react";
 
-export const ObservationHandler = ({ onObserv, delay = 500 }) => {
+export const ObservationHandler = ({ onObserv, delay = 200 }) => {
   const observRef = useRef(null);
   useEffect(() => {
     const observ = new IntersectionObserver(

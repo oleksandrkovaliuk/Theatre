@@ -43,10 +43,15 @@ export const getEvents = async () => getMethod("events");
 // Work with post methods
 
 // Working with autorisation
-export const signInUser = async ({ username, email, password, role }) =>
-  postMethod("signIn", { username, email, password, role });
-export const logIn = async ({ email, password }) =>
-  postMethod("logIn", { email, password });
+export const signInUser = async ({
+  username,
+  email,
+  password,
+  role,
+  jwt_user,
+}) => postMethod("signIn", { username, email, password, role, jwt_user });
+export const logIn = async ({ email, password, jwt_user }) =>
+  postMethod("logIn", { email, password, jwt_user });
 // Working with modifying events (Admin side)
 export const checkLoginned = async () => postMethod("checkLoginned");
 export const creatingEvent = async ({
@@ -104,10 +109,38 @@ export const updatedAndSetBookedEvent = ({
     userEmail,
     daybeenbooked,
   });
-export const cancelBookedSeat = ({ eventId, seatsId }) =>
-  postMethod("cancelSeat", { eventId, seatsId });
-export const bookedEventsByUser = ({ email, amountOfItems }) =>
-  postMethod("bookedEventsByUser", { email, amountOfItems });
+export const cancelBookedSeat = ({ eventId, seatsId, email, toShow }) =>
+  postMethod("cancelSeat", { eventId, seatsId, email, toShow });
+export const bookedEventsByUser = ({
+  email,
+  toShow,
+  search,
+  filterByTime,
+  filterByStatus,
+}) =>
+  postMethod("bookedEventsByUser", {
+    email,
+    toShow,
+    search,
+    filterByTime,
+    filterByStatus,
+  });
+export const deleteExpiredSeat = ({
+  seat,
+  email,
+  toShow,
+  search,
+  filterByTime,
+  filterByStatus,
+}) =>
+  postMethod("deleteExpiredSeat", {
+    seat,
+    email,
+    toShow,
+    search,
+    filterByTime,
+    filterByStatus,
+  });
 // Work with payment
 
 export const getConfig = () => getMethod("stripe_config");

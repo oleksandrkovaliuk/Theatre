@@ -1,4 +1,5 @@
 const db = require("../../../database");
+const getAllEvents = require("../../services/getAllEvents");
 const updatingEventsQuery = require("./query");
 const changeSingleEvent = async (req, res) => {
   const {
@@ -10,7 +11,6 @@ const changeSingleEvent = async (req, res) => {
     currentImg,
     currentHall,
   } = req.body;
-  console.log(currentImg);
   if (
     id &&
     currentDate &&
@@ -20,7 +20,6 @@ const changeSingleEvent = async (req, res) => {
     currentImg &&
     currentHall
   ) {
-    console.log(id, currentDate, currentAge, currentName, currentDisc, "info");
     db.query(
       updatingEventsQuery,
       [
@@ -32,22 +31,15 @@ const changeSingleEvent = async (req, res) => {
         currentImg,
         currentHall,
       ],
-      (err, dbRes) => {
+      async (err, dbRes) => {
         if (err) {
           return res
             .status(401)
             .json({ errorText: "Failed with updating data into events db" });
         } else {
-          db.query("SELECT * FROM events", (err, dbRes) => {
-            if (err) {
-              return res
-                .status(500)
-                .json({ errorText: "Failed with getting data" });
-            }
-            return res.status(200).json({
-              text: "your events succesfully changed",
-              events: dbRes.rows,
-            });
+          return res.status(200).json({
+            text: "your events succesfully changed",
+            events: await getAllEvents(),
           });
         }
       }

@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import React, { useCallback, useContext, useEffect, useReducer } from "react";
 import a from "./autorisation.module.scss";
 import { emailValidation } from "../../../services/emailValidation";
 import { passwordValidation } from "../../../services/passwordValidation";
@@ -36,7 +30,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../../store/thunks/user/loginUser";
 import { registerUser } from "../../../store/thunks/user/registerUser";
 import { GitHub } from "../../../icons/gitHub";
-import { Google } from "../../../icons/google";
+import { getCookie } from "../../../services/apiCallConfig";
 
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   const dispatch = useDispatch();
@@ -114,11 +108,9 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     }
   };
   const submitAutorisation = async (event, oAuthCredential) => {
-    console.log(oAuthCredential, "from function");
     if (event) {
       event.preventDefault();
     }
-
     try {
       signIn
         ? await dispatch(
@@ -148,6 +140,29 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       setNotificationMessage(error, "danger");
     }
   };
+  const gitHubRedirect = async (e) => {
+    e.preventDefault();
+
+    try {
+      window.location.assign(
+        `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_GITHUB_REDIRECT_URL}?path=/&scope=user:email`
+      );
+    } catch (error) {
+      setNotificationMessage(error, "danger");
+    }
+  };
+  const gettingCookies = useCallback(async () => {
+    if (!user) {
+      try {
+        await getCookie();
+      } catch (error) {
+        setNotificationMessage(error, "danger");
+      }
+    }
+  }, [setNotificationMessage, user]);
+  useEffect(() => {
+    gettingCookies();
+  }, [gettingCookies]);
   useEffect(() => {
     const body = document.body;
     if (show) {
@@ -281,7 +296,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                   <span>Or</span>
                 </div>
                 <div className={a.wayHowToAutorisate}>
-                  <button>
+                  <button onClick={gitHubRedirect}>
                     <GitHub />
                   </button>
                   <button>

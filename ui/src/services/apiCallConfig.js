@@ -43,6 +43,9 @@ export const getEvents = async () => getMethod("events");
 // Work with post methods
 
 // Working with autorisation
+
+export const checkLoginned = async () => postMethod("checkLoginned");
+
 export const signInUser = async ({
   username,
   email,
@@ -50,10 +53,11 @@ export const signInUser = async ({
   role,
   jwt_user,
 }) => postMethod("signIn", { username, email, password, role, jwt_user });
+
 export const logIn = async ({ email, password, jwt_user }) =>
   postMethod("logIn", { email, password, jwt_user });
+
 // Working with modifying events (Admin side)
-export const checkLoginned = async () => postMethod("checkLoginned");
 export const creatingEvent = async ({
   eventName,
   eventDisc,
@@ -72,6 +76,7 @@ export const creatingEvent = async ({
     hall,
     eventseats,
   });
+
 export const callForChangeSingleEvent = ({
   id,
   currentDate,
@@ -90,11 +95,14 @@ export const callForChangeSingleEvent = ({
     currentImg,
     currentHall,
   });
+
 export const callForChangeMultipleEvents = ({ dataWithChangedEvents }) =>
   postMethod("changeMultipleEvents", { dataWithChangedEvents });
+
 export const callToDeleteEvent = ({ id }) => {
   postMethod("deleteEvent", { id });
 };
+
 export const updatedAndSetBookedEvent = ({
   eventId,
   eventSeats,
@@ -109,8 +117,10 @@ export const updatedAndSetBookedEvent = ({
     userEmail,
     daybeenbooked,
   });
+
 export const cancelBookedSeat = ({ eventId, seatsId, email, toShow }) =>
   postMethod("cancelSeat", { eventId, seatsId, email, toShow });
+
 export const bookedEventsByUser = ({
   email,
   toShow,
@@ -125,6 +135,7 @@ export const bookedEventsByUser = ({
     filterByTime,
     filterByStatus,
   });
+
 export const deleteExpiredSeat = ({
   seat,
   email,
@@ -144,7 +155,11 @@ export const deleteExpiredSeat = ({
 // Work with payment
 
 export const getConfig = () => getMethod("stripe_config");
+
 export const createPaymentIntent = ({ amount }) =>
   postMethod("create_payment_intent", { amount });
+
 export const sendTicket = ({ username, email, ticket }) =>
   postMethod("sendUserTicket", { username, email, ticket });
+// services
+export const getCookie = async () => getMethod("cookies");

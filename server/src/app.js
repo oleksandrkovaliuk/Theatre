@@ -47,7 +47,6 @@ const setupRoutes = () => {
 const setupMiddlewares = () => {
   app.use(logger("dev"));
   app.use(cookieParser());
-
   app.use(express.static(path.join(__dirname, "public")));
 
   // parse application/x-www-form-urlencoded

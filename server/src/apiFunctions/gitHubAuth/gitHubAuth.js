@@ -14,8 +14,8 @@ const gitHubAuth = async (req, res) => {
       secure: false,
       maxAge: 24 * 60 * 60 * 1000,
     };
-    res.cookie('test', createJwt, cookieOptions);
-    res.status(200).redirect(process.env.UI_MAIN_PAGE);
+    res.cookie("test", createJwt, cookieOptions);
+    res.status(200).redirect(`${process.env.UI_MAIN_PAGE}?github=true`);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ errorText: "Internal server error" });

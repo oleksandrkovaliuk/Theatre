@@ -8,15 +8,13 @@ async function catchErrors(res) {
 }
 const headers = {
   "Content-Type": "application/json",
-  cookies: document.cookie, // Include the cookie in the headers
+  cookies: document.cookie,
 };
 
 const getMethod = async (apiCallUrl) =>
   fetch(`${URL}/${apiCallUrl}`, {
     method: "GET",
-    headers: {
-      ...headers,
-    },
+    headers: { ...headers },
   })
     .then(catchErrors)
     .then((res) => res.json())
@@ -164,4 +162,4 @@ export const createPaymentIntent = ({ amount }) =>
 export const sendTicket = ({ username, email, ticket }) =>
   postMethod("sendUserTicket", { username, email, ticket });
 // services
-export const getCookie = async () => getMethod("cookies");
+export const checkGitHubUser = async () => getMethod("checkGitHubUser");

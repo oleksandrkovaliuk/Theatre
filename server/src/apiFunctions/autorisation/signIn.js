@@ -20,6 +20,7 @@ const signIn = (req, res) => {
     } else {
       userToken = jwt.decode(jwt_user, process.env.JWT_PASSWORD);
     }
+    console.log(userToken);
     db.query(
       checkQuery,
       [jwt_user ? userToken.email : email],

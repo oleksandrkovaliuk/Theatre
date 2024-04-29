@@ -1,5 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { checkLoginned } from "../../../../services/apiCallConfig";
+import {
+  checkGitHubUser,
+  checkLoginned,
+} from "../../../../services/apiCallConfig";
 
 export const checkUserLogin = createAsyncThunk(
   "user/checkLogin",
@@ -9,6 +12,17 @@ export const checkUserLogin = createAsyncThunk(
       return res;
     } catch (error) {
       return rejectWithValue(error.message);
+    }
+  }
+);
+export const checkUserFromGit = createAsyncThunk(
+  "user/checkGitHubUser",
+  async (props, { rejectWithValue }) => {
+    try {
+      const res = await checkGitHubUser();
+      return res;
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
 );

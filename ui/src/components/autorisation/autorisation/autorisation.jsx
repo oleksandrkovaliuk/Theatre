@@ -30,11 +30,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../../store/thunks/user/loginUser";
 import { registerUser } from "../../../store/thunks/user/registerUser";
 import { GitHub } from "../../../icons/gitHub";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getCookie } from "../../../services/apiCallConfig";
+import { checkUserFromGit } from "../../../store/thunks/user/checkUserLogin";
 
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
   const dispatch = useDispatch();
 
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => ({
     user: state.user.data,
   }));
@@ -151,18 +155,23 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
       setNotificationMessage(error, "danger");
     }
   };
+
   const gettingCookies = useCallback(async () => {
-    if (!user) {
-      try {
-        await getCookie();
-      } catch (error) {
-        setNotificationMessage(error, "danger");
-      }
+    try {
+      await dispatch(checkUserFromGit()).unwrap();
+      navigate("/");
+    } catch (error) {
+      setNotificationMessage(error, "danger");
     }
-  }, [setNotificationMessage, user]);
+  }, [dispatch, navigate, setNotificationMessage]);
   useEffect(() => {
-    gettingCookies();
-  }, [gettingCookies]);
+    if (params.get("github")) {
+      gettingCookies();
+    } else {
+      return;
+    }
+  }, [gettingCookies, params]);
+
   useEffect(() => {
     const body = document.body;
     if (show) {

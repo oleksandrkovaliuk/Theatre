@@ -1,7 +1,10 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { loginUser } from "../../thunks/user/loginUser";
 import { registerUser } from "../../thunks/user/registerUser";
-import { checkUserLogin } from "../../thunks/user/checkUserLogin";
+import {
+  checkUserFromGit,
+  checkUserLogin,
+} from "../../thunks/user/checkUserLogin";
 
 export const deleteUser = createAction("user/delete");
 
@@ -35,6 +38,16 @@ export const userReducer = createReducer(initState, (builder) => {
     return state;
   });
   builder.addCase(checkUserLogin.rejected, (state) => {
+    state.data = null;
+    return state;
+  });
+  builder.addCase(checkUserFromGit.fulfilled, (state, action) => {
+    const { user, jwtToken } = action.payload;
+    state.data = user;
+    localStorage.setItem("user_jwt_token", jwtToken);
+    return state;
+  });
+  builder.addCase(checkUserFromGit.rejected, (state) => {
     state.data = null;
     return state;
   });

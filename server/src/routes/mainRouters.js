@@ -19,7 +19,7 @@ const bookedEventsByUser = require("../apiFunctions/events/bookedEventsByUser");
 const cancelBookedSeats = require("../apiFunctions/events/cancelBookedSeat");
 const deleteExpiredSeats = require("../apiFunctions/events/deleteExpiredSeats");
 const gitHubAuth = require("../apiFunctions/gitHubAuth/gitHubAuth");
-const getCookie = require("../services/getCookie");
+const checkGitHubUser = require("../apiFunctions/gitHubAuth/gitHubCheckUser");
 // Work with events
 router.route("/events").get(events);
 router.route("/createEvent").post(checkRole, createEvent);
@@ -46,5 +46,5 @@ router.route("/sendUserTicket").post(sendTicket);
 router.route("/auth/github").get(gitHubAuth);
 
 // services
-router.route("/cookies").get(getCookie);
+router.route("/checkGitHubUser").get(checkGitHubUser);
 module.exports = router;

@@ -4,7 +4,7 @@ import { signInUser } from "../../../../services/apiCallConfig";
 export const registerUser = createAsyncThunk(
   "user/signIn",
   async (
-    { username, email, password, role, jwt_user, cookie },
+    { username, email, password, role, jwt_user },
     { rejectWithValue }
   ) => {
     try {
@@ -14,7 +14,6 @@ export const registerUser = createAsyncThunk(
         password,
         role,
         jwt_user,
-        cookie,
       });
       return res;
     } catch (error) {

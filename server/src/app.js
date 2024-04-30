@@ -15,7 +15,11 @@ const app = express();
 const PORT = process.env.PORT;
 const http_server = require("http").createServer(app);
 const io = new Server(http_server, {
-  cors: { origin: "*", methods: "GET,HEAD,PUT,PATCH,POST,DELETE" },
+  cors: {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  },
 });
 
 const setupRoutes = () => {

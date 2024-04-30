@@ -17,9 +17,9 @@ export const checkUserLogin = createAsyncThunk(
 );
 export const checkUserFromGit = createAsyncThunk(
   "user/checkGitHubUser",
-  async (props, { rejectWithValue }) => {
+  async (code, { rejectWithValue }) => {
     try {
-      const res = await checkGitHubUser();
+      const res = await checkGitHubUser(code);
       return res;
     } catch (error) {
       return rejectWithValue(error);

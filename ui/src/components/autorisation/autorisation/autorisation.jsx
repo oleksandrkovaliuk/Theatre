@@ -152,32 +152,33 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     e.preventDefault();
 
     try {
-      // window.location.assign(
-      //   `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_GITHUB_REDIRECT_URL}?path=/&scope=user:email`
-      // );
-      await setCookies();
-      const get = await getCookies();
-      console.log(get, "cookies");
+      window.location.assign(
+        `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_GITHUB_REDIRECT_URL}?path=/&scope=user:email`
+      );
     } catch (error) {
       setNotificationMessage(error, "danger");
     }
   };
 
-  // const gettingCookies = useCallback(async () => {
-  //   try {
-  //     await dispatch(checkUserFromGit()).unwrap();
-  //     navigate("/");
-  //   } catch (error) {
-  //     setNotificationMessage(error, "danger");
-  //   }
-  // }, [dispatch, navigate, setNotificationMessage]);
-  // useEffect(() => {
-  //   if (params.get("github")) {
-  //   gettingCookies();
-  //   } else {
-  //     return;
-  //   }
-  // }, [gettingCookies]);
+  const gettingCookies = useCallback(
+    async (code) => {
+      try {
+        await dispatch(checkUserFromGit(code)).unwrap();
+        navigate("/");
+      } catch (error) {
+        setNotificationMessage(error, "danger");
+      }
+    },
+    [dispatch, navigate, setNotificationMessage]
+  );
+  useEffect(() => {
+    console.log(params.get("github"));
+    if (params.get("github")) {
+      gettingCookies(params.get("github"));
+    } else {
+      return;
+    }
+  }, [gettingCookies, params]);
 
   useEffect(() => {
     const body = document.body;

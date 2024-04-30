@@ -10,10 +10,12 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-const getMethod = async (apiCallUrl) =>
+const getMethod = async (apiCallUrl, code) =>
   fetch(`${URL}/${apiCallUrl}`, {
     method: "GET",
-    headers: { ...headers },
+    headers: code
+      ? { ...headers, Authorization: `Bearer ${code}` }
+      : { ...headers },
   })
     .then(catchErrors)
     .then((res) => res.json())
@@ -176,6 +178,4 @@ export const createPaymentIntent = ({ amount }) =>
 export const sendTicket = ({ username, email, ticket }) =>
   postMethod("sendUserTicket", { username, email, ticket });
 // services
-export const checkGitHubUser = () => getMethod("checkGitHubUser");
-export const setCookies = () => getMethod("setCookies");
-export const getCookies = () => getMethod("getCookie");
+export const checkGitHubUser = (code) => getMethod("checkGitHubUser", code);

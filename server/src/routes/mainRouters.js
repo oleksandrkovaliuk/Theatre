@@ -47,13 +47,15 @@ router.route("/auth/github").get(gitHubAuth);
 
 // services
 router.route("/checkGitHubUser").get(checkGitHubUser);
-router.route("/setCookies").get((req, res) => {
+router.route("/setCookies").get(async (req, res) => {
   try {
-    res.cookie(new Date(), new Date(), {
+    return await res.cookie("addasdsa", new Date(), {
+      secure: false,
       httpOnly: false,
-      domain: "localhost",
+      sameSite: "lax",
+      // domain: "localhost",
     });
-    res.status(200).json({ text: "Cookie set successfully" });
+    // res.status(200).json({ text: "Cookie set successfully" });
   } catch (error) {
     return res.status(401).json({ errorText: error });
   }

@@ -13,7 +13,7 @@ const gitHubAuth = async (req, res) => {
       secure: false,
       maxAge: 24 * 60 * 60 * 1000,
     };
-    res.cookie(process.env.COOKIE_NAME, createJwt, cookieOptions);
+    res.cookie("gitHubToken", createJwt, cookieOptions);
     res.status(200).redirect(`${process.env.UI_MAIN_PAGE}?github=true`);
   } catch (error) {
     console.error("Error:", error);

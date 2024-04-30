@@ -14,7 +14,6 @@ const getMethod = async (apiCallUrl) =>
   fetch(`${URL}/${apiCallUrl}`, {
     method: "GET",
     headers: { ...headers },
-    // credentials: "include",
   })
     .then(catchErrors)
     .then((res) => res.json())

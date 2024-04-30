@@ -49,15 +49,21 @@ router.route("/auth/github").get(gitHubAuth);
 router.route("/checkGitHubUser").get(checkGitHubUser);
 router.route("/setCookies").get((req, res) => {
   try {
-    res.cookie("ttt", "13wdsaaw2e2w", { httpOnly: false });
-    res.status(200).send("Cookie set successfully");
+    res.cookie(new Date(), new Date(), {
+      httpOnly: false,
+      domain: "localhost",
+    });
+    res.status(200).json({ text: "Cookie set successfully" });
   } catch (error) {
     return res.status(401).json({ errorText: error });
   }
 });
 router.route("/getCookie").get((req, res) => {
   try {
-    return res.status(200).json({ cookies: req.cookies("gitHubToken") });
+    // console.log(req, "req");
+    console.log(req.cookies, "cookies");
+    const cockie = req.cookies("gitHubToken");
+    return res.status(200).json({ cookies: cockie });
   } catch (error) {
     return res.status(401).json({ errorText: error });
   }

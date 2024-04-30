@@ -47,27 +47,4 @@ router.route("/auth/github").get(gitHubAuth);
 
 // services
 router.route("/checkGitHubUser").get(checkGitHubUser);
-router.route("/setCookies").get(async (req, res) => {
-  try {
-    return await res.cookie("addasdsa", new Date(), {
-      secure: false,
-      httpOnly: false,
-      sameSite: "lax",
-      // domain: "localhost",
-    });
-    // res.status(200).json({ text: "Cookie set successfully" });
-  } catch (error) {
-    return res.status(401).json({ errorText: error });
-  }
-});
-router.route("/getCookie").get((req, res) => {
-  try {
-    // console.log(req, "req");
-    console.log(req.cookies, "cookies");
-    const cockie = req.cookies("gitHubToken");
-    return res.status(200).json({ cookies: cockie });
-  } catch (error) {
-    return res.status(401).json({ errorText: error });
-  }
-});
 module.exports = router;

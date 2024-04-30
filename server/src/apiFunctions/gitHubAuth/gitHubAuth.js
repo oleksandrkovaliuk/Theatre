@@ -10,11 +10,10 @@ const gitHubAuth = async (req, res) => {
     const createJwt = jwt.sign(userData, process.env.JWT_PASSWORD);
     const cookieOptions = {
       httpOnly: false,
-      // domain: "localhost",
       secure: false,
       maxAge: 24 * 60 * 60 * 1000,
     };
-    res.cookie("test", createJwt, cookieOptions);
+    res.cookie(process.env.COOKIE_NAME, createJwt, cookieOptions);
     res.status(200).redirect(`${process.env.UI_MAIN_PAGE}?github=true`);
   } catch (error) {
     console.error("Error:", error);

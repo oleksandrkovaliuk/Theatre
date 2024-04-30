@@ -28,28 +28,24 @@ const allBookedTickets = async (
 
   const allEvents = (await db.query(queryToGetAllEvents)).rows;
   const allBookedSeats = await db.query(queryToGetAllBookedEvents, [email]);
-  let respons = allBookedSeats.rows
-    .reduce((acc, item) => {
-      const correctItem = allEvents.find(
-        (event) => event.id === Number(item.eventid)
-      );
-      if (correctItem) {
-        acc.push({
-          eventId: item.eventid,
-          bookedSeats: item.bookedseats,
-          beenBooked: item.daybeenbooked,
-          eventName: correctItem.name,
-          eventDisc: correctItem.disc,
-          eventTime: correctItem.startingtime,
-          eventUrl: correctItem.imgurl,
-          eventAge: correctItem.age,
-        });
-      }
-      return acc;
-    }, [])
-    .slice(0, toShow)
-    .sort((a, b) => new Date(b.beenBooked) - new Date(a.beenBooked));
-
+  let respons = allBookedSeats.rows.reduce((acc, item) => {
+    const correctItem = allEvents.find(
+      (event) => event.id === Number(item.eventid)
+    );
+    if (correctItem) {
+      acc.push({
+        eventId: item.eventid,
+        bookedSeats: item.bookedseats,
+        beenBooked: item.daybeenbooked,
+        eventName: correctItem.name,
+        eventDisc: correctItem.disc,
+        eventTime: correctItem.startingtime,
+        eventUrl: correctItem.imgurl,
+        eventAge: correctItem.age,
+      });
+    }
+    return acc;
+  }, []);
   if (filterByStatus || search || filterByTime) {
     if (search) {
       respons = respons.filter((item) => {
@@ -70,16 +66,19 @@ const allBookedTickets = async (
       if (filterByStatus !== "all") {
         if (filterByStatus === "active") {
           respons = respons.filter(
-            (item) => formatTime(item.eventTime) > formatTime(new Date())
+            (item) => new Date(item.eventTime) > new Date()
           );
         } else if (filterByStatus === "finished") {
           respons = respons.filter(
-            (item) => formatTime(item.eventTime) < formatTime(new Date())
+            (item) => new Date(item.eventTime) < new Date()
           );
         }
       }
     }
   }
-  return respons;
+
+  return respons
+    .sort((a, b) => new Date(b.beenBooked) - new Date(a.beenBooked))
+    .slice(0, toShow);
 };
 module.exports = allBookedTickets;

@@ -4,6 +4,7 @@ import {
   fetchEvents,
   changeSingleEvent,
   changeMultipleEvents,
+  deleteEvent,
 } from "../../../thunks/events";
 
 const initState = {
@@ -63,6 +64,20 @@ export const eventsReducer = createReducer(initState, (builder) => {
     return state;
   });
   builder.addCase(changeMultipleEvents.rejected, (state) => {
+    state.list = [];
+    state.loading = false;
+    return state;
+  });
+  builder.addCase(deleteEvent.pending, (state) => {
+    state.loading = true;
+    return state;
+  });
+  builder.addCase(deleteEvent.fulfilled, (state, action) => {
+    state.list = action.payload.events;
+    state.loading = false;
+    return state;
+  });
+  builder.addCase(deleteEvent.rejected, (state) => {
     state.list = [];
     state.loading = false;
     return state;

@@ -22,7 +22,6 @@ export const LogInSignIn = () => {
   const { user } = useSelector((state) => ({
     user: state.user.data,
   }));
-
   const location = useLocation();
 
   const { setNotificationMessage } = useContext(NotificationContext);
@@ -114,7 +113,7 @@ export const LogInSignIn = () => {
           </div>
         ) : (
           <div className={l.settings_logOut}>
-            <NavLink to={"/settings"}>
+            <NavLink to={"/guid"}>
               <SettingsIcon />
             </NavLink>
             <button onClick={logOutUser}>

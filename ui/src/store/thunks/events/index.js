@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
-  bookedEventsByUser,
   callForChangeMultipleEvents,
   callForChangeSingleEvent,
+  callToDeleteEvent,
   creatingEvent,
   getEvents,
 } from "../../../services/apiCallConfig";
@@ -80,6 +80,17 @@ export const changeMultipleEvents = createAsyncThunk(
       const res = await callForChangeMultipleEvents({
         dataWithChangedEvents,
       });
+      return res;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+export const deleteEvent = createAsyncThunk(
+  "events/deleteEvent",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const res = await callToDeleteEvent({ id });
       return res;
     } catch (error) {
       return rejectWithValue(error);

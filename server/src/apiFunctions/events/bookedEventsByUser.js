@@ -5,7 +5,6 @@ const bookedEventsByUser = async (req, res) => {
     if (!email) {
       return res.status(401).json({ errorText: "failed with getting email" });
     }
-
     return res.status(200).json({
       tickets: await allBookedTickets(
         email,

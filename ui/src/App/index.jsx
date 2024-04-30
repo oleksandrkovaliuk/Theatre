@@ -15,6 +15,7 @@ import { NextUIProvider } from "@nextui-org/system";
 import { useDispatch } from "react-redux";
 import { fetchEvents } from "../store/thunks/events";
 import { checkUserLogin } from "../store/thunks/user/checkUserLogin";
+import { Footer } from "../components/footer";
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ export const App = () => {
               element={<UserBookedEvents />}
             />
           </Routes>
+          <Footer />
         </NotificationProvider>
       </NextUIProvider>
     </GoogleOAuthProvider>

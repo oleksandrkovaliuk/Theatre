@@ -94,6 +94,7 @@ async function init() {
     io.on("connection", (socket) => {
       console.log("hello", socket.id);
       socket.on("updatedEvent", (data) => {
+        console.log(data, "check data");
         return io.emit("newSeats", data);
       });
     });

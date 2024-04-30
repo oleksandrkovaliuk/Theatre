@@ -5,7 +5,15 @@ const queryToUpdateEvents = "UPDATE events SET eventseats = $1 WHERE id = $2";
 const queryToDeleteFromBookedByUser =
   "DELETE FROM bookedticketsbyusers WHERE bookedseats = $1 AND eventid = $2";
 const cancelBookedSeats = async (req, res) => {
-  const { eventId, seatsId, email, toShow } = req.body;
+  const {
+    eventId,
+    seatsId,
+    email,
+    toShow,
+    search,
+    filterByTime,
+    filterByStatus,
+  } = req.body;
   try {
     if (eventId && seatsId && email && toShow) {
       db.query(queryToGetEvent, [eventId], (err, dbRes) => {
@@ -45,7 +53,13 @@ const cancelBookedSeats = async (req, res) => {
                   }
                   return res.status(200).json({
                     text: "your event succesfully canceled",
-                    tickets: await allBookedTickets(email, toShow),
+                    tickets: await allBookedTickets(
+                      email,
+                      toShow,
+                      search,
+                      filterByTime,
+                      filterByStatus
+                    ),
                   });
                 }
               );

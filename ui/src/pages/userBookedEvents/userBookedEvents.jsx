@@ -93,6 +93,9 @@ export const UserBookedEvents = () => {
           seatsId: item?.bookedSeats,
           email: user.email,
           toShow: toShow,
+          search: searchValue?.length ? searchValue : null,
+          filterByTime: timeFilter ? getFilterValue(timeFilter) : null,
+          filterByStatus: statusFilter ? getFilterValue(statusFilter) : null,
         })
       ).unwrap();
       setNotificationMessage(res?.text, "success");
@@ -110,9 +113,11 @@ export const UserBookedEvents = () => {
             allBookedTicketsByUser({
               email: user?.email,
               toShow: amoutToShow,
-              search: null,
-              filterByTime: null,
-              filterByStatus: null,
+              search: searchValue?.length ? searchValue : null,
+              filterByTime: timeFilter ? getFilterValue(timeFilter) : null,
+              filterByStatus: statusFilter
+                ? getFilterValue(statusFilter)
+                : null,
             })
           ).unwrap();
         }
@@ -121,7 +126,14 @@ export const UserBookedEvents = () => {
         setNotificationMessage(error, "danger");
       }
     },
-    [dispatch, setNotificationMessage, user?.email]
+    [
+      dispatch,
+      searchValue,
+      setNotificationMessage,
+      statusFilter,
+      timeFilter,
+      user?.email,
+    ]
   );
 
   const getSearchedItemByValue = () => {
@@ -389,7 +401,7 @@ export const UserBookedEvents = () => {
                     <Chip
                       color={
                         statusColorMap[
-                          formatTime(item.eventTime) < formatTime(new Date())
+                          new Date(item.eventTime) < new Date()
                             ? "finished"
                             : "active"
                         ]
@@ -397,7 +409,7 @@ export const UserBookedEvents = () => {
                       size="sm"
                       variant="flat"
                     >
-                      {formatTime(item.eventTime) < formatTime(new Date())
+                      {new Date(item.eventTime) < new Date()
                         ? "expired"
                         : "active"}
                     </Chip>
@@ -420,7 +432,7 @@ export const UserBookedEvents = () => {
                           <TicketIcon />
                         </button>
                       </Tooltip>
-                      {formatTime(item.eventTime) > formatTime(new Date()) ? (
+                      {new Date(item.eventTime) > new Date() ? (
                         <Popover
                           placement="bottom-end"
                           showArrow={true}
@@ -504,7 +516,6 @@ export const UserBookedEvents = () => {
           )}
         </Table>
       </div>
-      <div style={{ height: "1000px" }} />
     </>
   );
 };

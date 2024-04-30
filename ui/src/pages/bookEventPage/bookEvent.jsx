@@ -170,44 +170,50 @@ export const BookEvent = () => {
   // socket logic
   const socketUpdateEvent = useCallback(async () => {
     if (chosenSeats?.length) {
-      socket.emit("updatedEvent", chosenSeats);
+      socket.emit("updatedEvent", [chosenSeats, searchParams.get("id")]);
     }
-  }, [chosenSeats]);
+  }, [chosenSeats, searchParams]);
   const socketGetNewSeats = useCallback(async () => {
     try {
       socket.on("newSeats", async (data) => {
-        const isEqual = JSON.stringify(data) === JSON.stringify(chosenSeats);
-        if (isEqual && !ticket.current) {
-          setProcessMenu(false);
-          setChosenSeats([]);
-        }
-        if (
-          isEqual &&
-          bookEventStep === "payment" &&
-          !paymentStatus &&
-          !ticket.current
-        ) {
-          bookEvent?.current.slickPrev();
-          setChosenSeats([]);
-        }
-        if (bookEventStep === "book" && sliderIndex === 0) {
-          setGetCurrentEventInfo({
-            value: true,
-            discription: `${
-              isEqual
-                ? "Sorry . But somebody booked your"
-                : "Updated info about"
-            } ${chosenSeats.length > 1 && chosenSeats ? "seats" : "seat"} ${
-              isEqual ? chosenSeats?.map((item) => item) : ""
-            } . Here is updated seats`,
-          });
-          setTimeout(async () => {
-            dispatch(fetchEvents());
+        if (searchParams.get("id") === data[1]) {
+          const isEqual =
+            JSON.stringify(data[0]) === JSON.stringify(chosenSeats);
+          if (isEqual && !ticket.current) {
+            setProcessMenu(false);
+            setChosenSeats([]);
+          }
+          if (
+            isEqual &&
+            bookEventStep === "payment" &&
+            !paymentStatus &&
+            !ticket.current
+          ) {
+            console.log("entered");
+            bookEvent?.current.slickPrev();
+            setChosenSeats([]);
+          }
+          if (bookEventStep === "book" && sliderIndex === 0) {
             setGetCurrentEventInfo({
-              value: false,
-              discription: "",
+              value: true,
+              discription: `${
+                isEqual
+                  ? "Sorry . But somebody booked your"
+                  : "Updated info about"
+              } ${chosenSeats.length > 1 && chosenSeats ? "seats" : "seat"} ${
+                isEqual ? chosenSeats?.map((item) => item) : ""
+              } . Here is updated seats`,
             });
-          }, 2000);
+            setTimeout(async () => {
+              dispatch(fetchEvents());
+              setGetCurrentEventInfo({
+                value: false,
+                discription: "",
+              });
+            }, 2000);
+          }
+        } else {
+          return;
         }
       });
     } catch (error) {
@@ -218,6 +224,7 @@ export const BookEvent = () => {
     chosenSeats,
     dispatch,
     paymentStatus,
+    searchParams,
     setNotificationMessage,
     sliderIndex,
   ]);

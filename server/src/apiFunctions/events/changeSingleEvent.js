@@ -37,9 +37,12 @@ const changeSingleEvent = async (req, res) => {
             .status(401)
             .json({ errorText: "Failed with updating data into events db" });
         } else {
+          const events = await getAllEvents();
           return res.status(200).json({
             text: "your events succesfully changed",
-            events: await getAllEvents(),
+            events: events.filter(
+              (item) => new Date(item.startingtime) > new Date()
+            ),
           });
         }
       }

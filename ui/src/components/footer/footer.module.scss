@@ -1,0 +1,22 @@
+.policyContainer {
+  text-align: center;
+  padding-block: 40px;
+}
+.topBlock {
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--color-red);
+  max-width: 340px;
+  margin: auto;
+}
+.bottom_block {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding-top: 5px;
+}
+a {
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    color: var(--color-red);
+  }
+}

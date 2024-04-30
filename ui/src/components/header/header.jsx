@@ -15,13 +15,7 @@ export const Header = () => {
           <NavLink to={"/"}>Home</NavLink>
         </li>
         <li className={h.header_nav}>
-          <NavLink to={"/Tickets"}>Tickets</NavLink>
-        </li>
-        <li className={h.header_nav}>
-          <NavLink to={"/News"}>News</NavLink>
-        </li>
-        <li className={h.header_nav}>
-          <NavLink to={"/About"}>About Theater</NavLink>
+          <NavLink to={"/historyOfBookedEvents"}>History</NavLink>
         </li>
       </ul>
       <LogInSignIn />

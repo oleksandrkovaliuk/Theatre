@@ -118,8 +118,24 @@ export const updatedAndSetBookedEvent = ({
     daybeenbooked,
   });
 
-export const cancelBookedSeat = ({ eventId, seatsId, email, toShow }) =>
-  postMethod("cancelSeat", { eventId, seatsId, email, toShow });
+export const cancelBookedSeat = ({
+  eventId,
+  seatsId,
+  email,
+  toShow,
+  search,
+  filterByTime,
+  filterByStatus,
+}) =>
+  postMethod("cancelSeat", {
+    eventId,
+    seatsId,
+    email,
+    toShow,
+    search,
+    filterByTime,
+    filterByStatus,
+  });
 
 export const bookedEventsByUser = ({
   email,

@@ -21,11 +21,10 @@ import {
 import { SaveChanges } from "../../icons/saveChanges";
 import { Bin } from "../../icons/bid";
 import { Error } from "../../icons/error";
-import { callToDeleteEvent } from "../../services/apiCallConfig";
 import { uploadEventImg } from "../../services/uploadingEventsImgs";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { fetchEvents } from "../../store/thunks/events";
+import { deleteEvent } from "../../store/thunks/events";
 
 export const EventCard = ({
   eventInfoFromdb,
@@ -153,8 +152,7 @@ export const EventCard = ({
 
   const handleDeletingEvent = async () => {
     try {
-      callToDeleteEvent({ id: eventInfoFromdb.id });
-      dispatch(fetchEvents());
+      await dispatch(deleteEvent({ id: eventInfoFromdb.id })).unwrap();
       dispathAction(setDoubleCheckMenu(false));
       setNotificationMessage(
         `event "${eventInfoFromdb?.name}" succesfully deleted`,

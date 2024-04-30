@@ -7,13 +7,19 @@ import {
 
 export const cancelBooked = createAsyncThunk(
   "tickets/cancelBookedSeat",
-  async ({ eventId, seatsId, email, toShow }, { rejectWithValue }) => {
+  async (
+    { eventId, seatsId, email, toShow, search, filterByTime, filterByStatus },
+    { rejectWithValue }
+  ) => {
     try {
       const res = await cancelBookedSeat({
         eventId,
         seatsId,
         email,
         toShow,
+        search,
+        filterByTime,
+        filterByStatus,
       });
       return res;
     } catch (error) {

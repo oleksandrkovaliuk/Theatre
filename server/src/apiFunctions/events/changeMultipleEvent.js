@@ -28,11 +28,14 @@ const changeMultipleEvent = async (req, res) => {
           }
         );
       });
-      Promise.all([dataWithChangedEvents])
-        .then(async () => {
+      const events = await getAllEvents();
+      Promise.all([dataWithChangedEvents, events])
+        .then(() => {
           return res.status(200).json({
             text: "your events succesfully changed",
-            events: await getAllEvents(),
+            events: events.filter(
+              (item) => new Date(item.startingtime) > new Date()
+            ),
           });
         })
         .catch((err) => {

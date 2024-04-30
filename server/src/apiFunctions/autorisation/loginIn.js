@@ -18,7 +18,7 @@ const loginIn = (req, res) => {
         if (
           jwt_user
             ? user.email.toString() === userToken.email.toString()
-            : user.password.toString() === password.toString()
+            : user.password?.toString() === password.toString()
         ) {
           return res.status(200).json({
             jwtToken: user.jwt,
@@ -29,7 +29,12 @@ const loginIn = (req, res) => {
             },
           });
         } else {
-          return res.status(401).json({ errorText: "wrong password" });
+          return res
+            .status(401)
+            .json({
+              errorText:
+                "this user cannot be authorize please use github or google auth",
+            });
         }
       }
     });

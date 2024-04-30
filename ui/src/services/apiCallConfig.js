@@ -13,15 +13,14 @@ const headers = {
 const getMethod = async (apiCallUrl) =>
   fetch(`${URL}/${apiCallUrl}`, {
     method: "GET",
-    credentials: "same-origin",
     headers: { ...headers },
+    // credentials: "include",
   })
     .then(catchErrors)
     .then((res) => res.json())
     .catch((err) => {
       throw Error(err);
     });
-
 const postMethod = async (apiCallUrl, info = {}) => {
   const jwtToken = localStorage.getItem("user_jwt_token");
 
@@ -178,4 +177,6 @@ export const createPaymentIntent = ({ amount }) =>
 export const sendTicket = ({ username, email, ticket }) =>
   postMethod("sendUserTicket", { username, email, ticket });
 // services
-export const checkGitHubUser = async () => getMethod("checkGitHubUser");
+export const checkGitHubUser = () => getMethod("checkGitHubUser");
+export const setCookies = () => getMethod("setCookies");
+export const getCookies = () => getMethod("getCookie");

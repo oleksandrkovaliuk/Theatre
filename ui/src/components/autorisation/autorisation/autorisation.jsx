@@ -31,7 +31,11 @@ import { loginUser } from "../../../store/thunks/user/loginUser";
 import { registerUser } from "../../../store/thunks/user/registerUser";
 import { GitHub } from "../../../icons/gitHub";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getCookie } from "../../../services/apiCallConfig";
+import {
+  getCookie,
+  getCookies,
+  setCookies,
+} from "../../../services/apiCallConfig";
 import { checkUserFromGit } from "../../../store/thunks/user/checkUserLogin";
 
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
@@ -148,29 +152,32 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
     e.preventDefault();
 
     try {
-      window.location.assign(
-        `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_GITHUB_REDIRECT_URL}?path=/&scope=user:email`
-      );
+      // window.location.assign(
+      //   `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_GITHUB_REDIRECT_URL}?path=/&scope=user:email`
+      // );
+      await setCookies();
+      const get = await getCookies();
+      console.log(get, "cookies");
     } catch (error) {
       setNotificationMessage(error, "danger");
     }
   };
 
-  const gettingCookies = useCallback(async () => {
-    try {
-      await dispatch(checkUserFromGit()).unwrap();
-      navigate("/");
-    } catch (error) {
-      setNotificationMessage(error, "danger");
-    }
-  }, [dispatch, navigate, setNotificationMessage]);
-  useEffect(() => {
-    if (params.get("github")) {
-      gettingCookies();
-    } else {
-      return;
-    }
-  }, [gettingCookies, params]);
+  // const gettingCookies = useCallback(async () => {
+  //   try {
+  //     await dispatch(checkUserFromGit()).unwrap();
+  //     navigate("/");
+  //   } catch (error) {
+  //     setNotificationMessage(error, "danger");
+  //   }
+  // }, [dispatch, navigate, setNotificationMessage]);
+  // useEffect(() => {
+  //   if (params.get("github")) {
+  //   gettingCookies();
+  //   } else {
+  //     return;
+  //   }
+  // }, [gettingCookies]);
 
   useEffect(() => {
     const body = document.body;

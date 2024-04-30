@@ -47,14 +47,19 @@ router.route("/auth/github").get(gitHubAuth);
 
 // services
 router.route("/checkGitHubUser").get(checkGitHubUser);
-router.route("/setCookies").get((req, res, next) => {
-  res.cookie("test", "hyi");
-
-  res.send(200);
+router.route("/setCookies").get((req, res) => {
+  try {
+    res.cookie("ttt", "13wdsaaw2e2w", { httpOnly: false });
+    res.status(200).send("Cookie set successfully");
+  } catch (error) {
+    return res.status(401).json({ errorText: error });
+  }
 });
-router.route("/getCookies").get((req, res, next) => {
-  console.log(req.cookies, " req.cookies");
-
-  res.send(200);
+router.route("/getCookie").get((req, res) => {
+  try {
+    return res.status(200).json({ cookies: req.cookies("gitHubToken") });
+  } catch (error) {
+    return res.status(401).json({ errorText: error });
+  }
 });
 module.exports = router;

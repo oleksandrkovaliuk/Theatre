@@ -9,12 +9,11 @@ const gitHubAuth = async (req, res) => {
     const userData = await getTokenGitHub(code);
     const createJwt = jwt.sign(userData, process.env.JWT_PASSWORD);
     const cookieSetting = {
-      httpOnly: false,
-      secure: false,
-      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      domain: "localhost",
     };
     res.cookie("gitHubToken", createJwt, cookieSetting);
-    res.status(200).redirect(`${process.env.UI_MAIN_PAGE}?github=true`);
+    res.redirect(`${process.env.UI_MAIN_PAGE}`);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ errorText: "Internal server error" });

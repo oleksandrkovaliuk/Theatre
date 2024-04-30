@@ -47,4 +47,14 @@ router.route("/auth/github").get(gitHubAuth);
 
 // services
 router.route("/checkGitHubUser").get(checkGitHubUser);
+router.route("/setCookies").get((req, res, next) => {
+  res.cookie("test", "hyi");
+
+  res.send(200);
+});
+router.route("/getCookies").get((req, res, next) => {
+  console.log(req.cookies, " req.cookies");
+
+  res.send(200);
+});
 module.exports = router;

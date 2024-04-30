@@ -8,12 +8,12 @@ async function catchErrors(res) {
 }
 const headers = {
   "Content-Type": "application/json",
-  cookies: document.cookie,
 };
 
 const getMethod = async (apiCallUrl) =>
   fetch(`${URL}/${apiCallUrl}`, {
     method: "GET",
+    credentials: "include",
     headers: { ...headers },
   })
     .then(catchErrors)

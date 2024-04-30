@@ -61,9 +61,7 @@ const checkGitHubUser = (req, res) => {
         }
       });
     } else {
-      return res
-        .status(401)
-        .json({ errorText: "couldnt authorize information from request" });
+      return res.status(401).redirect(process.env.UI_MAIN_PAGE);
     }
   } catch (error) {
     return res.status(401).json({ errorText: "could find cookie" });

@@ -3,7 +3,7 @@ const checkQuery = require("./query");
 const simpleSingInQuery =
   "INSERT INTO users (username , email , password , role , jwt) VALUES($1 , $2 , $3 , $4 , $5) RETURNING *;";
 const oAuthQuery =
-  "INSERT INTO users (username , email  , role , jwt) VALUES($1 , $2  , $3 , $4) RETURNING *;";
+  "INSERT INTO users (username , email ,avatar , role , jwt) VALUES($1 , $2 , $3 , $4 , $5) RETURNING *;";
 const jwt = require("jsonwebtoken");
 const signIn = (req, res) => {
   const { username, email, password, role, jwt_user } = req.body;
@@ -33,7 +33,13 @@ const signIn = (req, res) => {
           db.query(
             jwt_user ? oAuthQuery : simpleSingInQuery,
             jwt_user
-              ? [userToken.name, userToken.email, role, jwt_user]
+              ? [
+                  userToken.name,
+                  userToken.email,
+                  userToken.picture,
+                  role,
+                  jwt_user,
+                ]
               : [username, email, password, role, userToken],
             (err, insertRes) => {
               if (err) {
@@ -56,6 +62,7 @@ const signIn = (req, res) => {
                         jwtToken: user.jwt,
                         user: {
                           username: user.username,
+                          img: user.avatar ? user.avatar : null,
                           email: user.email,
                           role: user.role,
                         },

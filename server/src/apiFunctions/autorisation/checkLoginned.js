@@ -13,6 +13,7 @@ const checkLoginned = async (req, res) => {
       } else {
         return res.status(200).json({
           username: dbRes.rows[0].username,
+          img: dbRes.rows[0].avatar ? dbRes.rows[0].avatar : null,
           email: dbRes.rows[0].email,
           role: dbRes.rows[0].role,
         });

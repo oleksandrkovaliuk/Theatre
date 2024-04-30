@@ -128,7 +128,24 @@ export const LogInSignIn = () => {
           onMouseOver={!navMenu ? handleOpeningNavMenu : null}
           className={l.accountBtn}
         >
-          <UserIcon active={navMenu} />
+          {user?.img ? (
+            <div
+              className={l.userAvatar}
+              style={{
+                backgroundImage: `url(${user?.img})`,
+                width: "40px",
+                height: "40px",
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                borderRadius: "50%",
+                transition: "border 0.3s easy-in-out",
+                border: navMenu && "1px solid  var(--color-red",
+              }}
+            ></div>
+          ) : (
+            <UserIcon active={navMenu} />
+          )}
         </button>
       </div>
     </>

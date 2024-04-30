@@ -25,16 +25,15 @@ const loginIn = (req, res) => {
             user: {
               username: user.username,
               email: user.email,
+              img: user.avatar ? user.avatar : null,
               role: user.role,
             },
           });
         } else {
-          return res
-            .status(401)
-            .json({
-              errorText:
-                "this user cannot be authorize please use github or google auth",
-            });
+          return res.status(401).json({
+            errorText:
+              "this user cannot be authorize please use github or google auth",
+          });
         }
       }
     });

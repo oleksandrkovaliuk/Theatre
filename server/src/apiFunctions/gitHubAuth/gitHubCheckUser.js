@@ -2,7 +2,7 @@ const db = require("../../../database");
 const checkQuery = require("../autorisation/query");
 const jwt = require("jsonwebtoken");
 const oAuthQuery =
-  "INSERT INTO users (username , email  , role , jwt) VALUES($1 , $2  , $3 , $4) RETURNING *;";
+  "INSERT INTO users (username , email ,avatar , role , jwt) VALUES($1 , $2  , $3 , $4 , $5) RETURNING *;";
 const parsToken = (token) => token?.replace("Bearer", "")?.replace(" ", "");
 const checkGitHubUser = (req, res) => {
   const jwt_user = parsToken(req.headers?.authorization);
@@ -19,6 +19,7 @@ const checkGitHubUser = (req, res) => {
               user: {
                 username: user.username,
                 email: user.email,
+                img: user.avatar ? user.avatar : null,
                 role: user.role,
               },
             });
@@ -28,7 +29,13 @@ const checkGitHubUser = (req, res) => {
         } else {
           db.query(
             oAuthQuery,
-            [userToken.name, userToken.email, role, jwt_user],
+            [
+              userToken.name,
+              userToken.email,
+              userToken.avatar_url,
+              role,
+              jwt_user,
+            ],
             (err, insertRes) => {
               if (err) {
                 console.log(err, "error");
@@ -48,6 +55,7 @@ const checkGitHubUser = (req, res) => {
                       jwtToken: user.jwt,
                       user: {
                         username: user.username,
+                        img: user.avatar ? user.avatar : null,
                         email: user.email,
                         role: user.role,
                       },

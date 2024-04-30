@@ -61,7 +61,7 @@ const checkGitHubUser = (req, res) => {
         }
       });
     } else {
-      return res.status(401).redirect(process.env.UI_MAIN_PAGE);
+      return res.status(401).json({ errorText: "fuck niggers" });
     }
   } catch (error) {
     return res.status(401).json({ errorText: "could find cookie" });

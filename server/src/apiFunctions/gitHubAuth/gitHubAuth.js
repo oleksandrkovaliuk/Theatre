@@ -8,13 +8,13 @@ const gitHubAuth = async (req, res) => {
   try {
     const userData = await getTokenGitHub(code);
     const createJwt = jwt.sign(userData, process.env.JWT_PASSWORD);
-    const cookieOptions = {
-      httpOnly: false,
-      domain: "theatre-b90h.onrender.com",
-      secure: false,
-      maxAge: 24 * 60 * 60 * 1000,
-    };
-    res.cookie("gitHubToken", createJwt, cookieOptions);
+    // const cookieOptions = {
+    //   httpOnly: false,
+    //   domain: "theatre-b90h.onrender.com",
+    //   secure: false,
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // };
+    res.cookie("gitHubToken", createJwt, { maxAge: 24 * 60 * 60 * 1000 });
     res.status(200).redirect(`${process.env.UI_MAIN_PAGE}?github=true`);
   } catch (error) {
     console.error("Error:", error);

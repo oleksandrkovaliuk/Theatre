@@ -10,6 +10,7 @@ const gitHubAuth = async (req, res) => {
     const createJwt = jwt.sign(userData, process.env.JWT_PASSWORD);
     const cookieOptions = {
       httpOnly: false,
+      domain: "https://theatre-b90h.onrender.com",
       secure: false,
       maxAge: 24 * 60 * 60 * 1000,
     };

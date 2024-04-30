@@ -18,7 +18,6 @@ const io = new Server(http_server, {
   cors: {
     origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
   },
 });
 

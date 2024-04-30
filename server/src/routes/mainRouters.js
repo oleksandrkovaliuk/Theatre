@@ -20,6 +20,7 @@ const cancelBookedSeats = require("../apiFunctions/events/cancelBookedSeat");
 const deleteExpiredSeats = require("../apiFunctions/events/deleteExpiredSeats");
 const gitHubAuth = require("../apiFunctions/gitHubAuth/gitHubAuth");
 const checkGitHubUser = require("../apiFunctions/gitHubAuth/gitHubCheckUser");
+const allowCredential = require("../configs/corsSettingCred");
 // Work with events
 router.route("/events").get(events);
 router.route("/createEvent").post(checkRole, createEvent);

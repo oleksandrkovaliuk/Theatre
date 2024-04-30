@@ -23,7 +23,7 @@ const io = new Server(http_server, {
 
 const setupRoutes = () => {
   app.use(cors(defaultCorsOptions));
-
+  app.use(cookieParser());
   app.use(
     "/api",
     // serverReadyMiddleware,

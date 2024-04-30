@@ -13,7 +13,7 @@ const headers = {
 const getMethod = async (apiCallUrl) =>
   fetch(`${URL}/${apiCallUrl}`, {
     method: "GET",
-    credentials: "include",
+    credentials: "same-origin",
     headers: { ...headers },
   })
     .then(catchErrors)

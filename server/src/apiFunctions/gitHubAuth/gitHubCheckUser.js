@@ -5,10 +5,10 @@ const jwt = require("jsonwebtoken");
 const oAuthQuery =
   "INSERT INTO users (username , email  , role , jwt) VALUES($1 , $2  , $3 , $4) RETURNING *;";
 const checkGitHubUser = (req, res) => {
-  // const jwt_user = parseCookies(req.cookies);
+  console.log(req, "req");
+  const jwt_user = req.cookies.gitHubToken;
   try {
-    console.log(req.cookies[gitHubToken], jwt_user, "check cookie");
-    if (req.cookies[gitHubToken]) {
+    if (jwt_user) {
       const userToken = jwt.decode(jwt_user, process.env.JWT_PASSWORD);
       const role = "user";
       db.query(checkQuery, [userToken.email], (err, tableRes) => {

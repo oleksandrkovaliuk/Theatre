@@ -4,7 +4,7 @@ const defaultCorsOptions = (cors.CorsOptions = {
   origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   preflightContinue: false,
-  optionsSuccessStatus: 200,
+  optionsSuccessStatus: 204,
   credentials: true,
 });
 

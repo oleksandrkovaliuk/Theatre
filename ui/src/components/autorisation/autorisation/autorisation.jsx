@@ -265,7 +265,6 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
                   type="password"
                   id="password"
                   name="password"
-                  autoComplete="current-password"
                   className={a.autorisationInput}
                   onChange={checkInputsInfo}
                 ></input>

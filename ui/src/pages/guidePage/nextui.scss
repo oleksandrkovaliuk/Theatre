@@ -1,0 +1,41 @@
+.accordion {
+  max-width: 600px;
+  border-radius: 6px !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  .mainAccordionDisc {
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+  div {
+    margin-left: auto;
+  }
+  button {
+    margin-right: auto;
+    padding: unset;
+    span {
+      font-size: 16px;
+    }
+    svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+    &[data-open="true"] {
+      span {
+        color: var(--color-red);
+      }
+    }
+  }
+  .podaccordion {
+    max-width: 600px;
+    border-radius: 6px !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    button {
+      span {
+        font-size: 15px;
+      }
+    }
+  }
+}

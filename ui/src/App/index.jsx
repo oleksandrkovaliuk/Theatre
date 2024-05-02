@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { fetchEvents } from "../store/thunks/events";
 import { checkUserLogin } from "../store/thunks/user/checkUserLogin";
 import { Footer } from "../components/footer";
+import { GuidePage } from "../pages/guidePage";
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ export const App = () => {
               path="/historyOfBookedEvents"
               element={<UserBookedEvents />}
             />
+            <Route path="/guide" element={<GuidePage />} />
           </Routes>
           <Footer />
         </NotificationProvider>

@@ -1,0 +1,124 @@
+.guidePage {
+  padding: 0px 50px 50px;
+}
+.paragraphPage {
+  max-width: 900px;
+  margin: auto;
+  position: relative;
+  padding-inline: 50px;
+  .main_text {
+    font-size: 25px;
+    text-align: center;
+    margin-bottom: 50px;
+  }
+}
+.authorization_par {
+  &:not(:last-child) {
+    margin-bottom: 15px;
+  }
+  a {
+    color: var(--color-title);
+    text-decoration: underline;
+  }
+  .title {
+    display: inline-block;
+    margin-bottom: 5px;
+    font-size: 20px;
+    position: relative;
+    transition: all 0.1s ease-in-out;
+    &:hover {
+      color: var(--color-red);
+      svg {
+        display: block;
+      }
+    }
+    svg {
+      position: absolute;
+      left: -17px;
+      top: 50%;
+      transform: translateX(-50%);
+      rotate: 90deg;
+      width: 16px;
+      height: 16px;
+      display: none;
+      font-size: var(--font-SfMedium);
+      font-size: 21px;
+      color: var(--color-red);
+      path {
+        fill: var(--color-red);
+      }
+    }
+  }
+
+  p {
+    font-size: 16px;
+    margin-bottom: 6px;
+    line-height: 110%;
+    margin-left: 10px;
+    span {
+      text-decoration: underline;
+    }
+  }
+  .ability_list {
+    max-width: 350px;
+    margin-left: 40px;
+    border-radius: 6px;
+    span {
+      display: flex;
+      font-size: 16px;
+      font-family: var(--font-SfMedium);
+      &[aria-expanded="true"] {
+        color: var(--color-red);
+        svg {
+          display: block;
+        }
+      }
+    }
+  }
+}
+.snipets,
+.snipets_border {
+  margin-left: 40px;
+  margin-top: 10px;
+  position: relative;
+
+  li {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 6px;
+
+    span {
+      margin-bottom: 2px;
+    }
+  }
+  .hiddenInfo {
+    text-decoration: underline;
+    font-size: 15px;
+  }
+  .value {
+    max-width: 300px;
+    padding: 5px 10px;
+    background-color: var(--color-bglightgray);
+    border-radius: 5px;
+  }
+}
+.snipets_border {
+  &::before {
+    content: " ";
+    position: absolute;
+    height: 85%;
+    width: 2px;
+    left: -15px;
+
+    background-color: var(--color-red);
+  }
+}
+@media (max-width: 768px) {
+  .guidePage {
+    padding: 0px 25px 25px;
+    .paragraphPage {
+      padding-inline: unset;
+    }
+  }
+}

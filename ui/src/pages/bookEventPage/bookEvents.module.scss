@@ -389,9 +389,17 @@
     }
   }
 }
-@media (max-width: 800px) {
-  .bookEvent_wrap {
-    flex-direction: column;
-    justify-content: center;
+@media (max-width: 1400px) {
+  .navigationSteps {
+    padding: 25px;
+  }
+  .bookEvent_container {
+    padding-inline: 25px;
+    .bookEventWrap {
+      flex-direction: column;
+    }
+  }
+  .seats_block {
+    margin: auto;
   }
 }

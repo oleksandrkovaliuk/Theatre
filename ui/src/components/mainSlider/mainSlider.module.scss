@@ -34,3 +34,11 @@
   right: 50px;
   bottom: 20px;
 }
+@media (max-width: 1080px) {
+  .title {
+    font-size: 45px;
+    bottom: 2vh;
+    left: 2vh;
+    max-width: 500px;
+  }
+}

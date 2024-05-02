@@ -6,3 +6,8 @@
 
   // border-radius: unset;
 }
+@media (max-width: 768px) {
+  .custom-table {
+    padding-inline: 25px;
+  }
+}

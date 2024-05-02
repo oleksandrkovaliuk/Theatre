@@ -1,6 +1,7 @@
 import React from "react";
 import f from "./first.module.scss";
 import { MainSlider } from "../../../components/mainSlider";
+import { Link } from "react-router-dom";
 export const FirstSection = () => {
   return (
     <div className={f.firstSectionContainer}>
@@ -20,7 +21,9 @@ export const FirstSection = () => {
             <p>0+</p>
           </div>
         </div>
-        <h2 className={f.learnMore}>Learn More</h2>
+        <Link className={f.learnMore} to={"/guide"}>
+          Learn More about Theater
+        </Link>
       </div>
     </div>
   );

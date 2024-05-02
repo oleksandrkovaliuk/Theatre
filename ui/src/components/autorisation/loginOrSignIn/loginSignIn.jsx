@@ -113,7 +113,7 @@ export const LogInSignIn = () => {
           </div>
         ) : (
           <div className={l.settings_logOut}>
-            <NavLink to={"/guid"}>
+            <NavLink to={"/guide"}>
               <SettingsIcon />
             </NavLink>
             <button onClick={logOutUser}>

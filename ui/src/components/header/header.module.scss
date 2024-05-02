@@ -1,4 +1,7 @@
 .header_container {
+  position: sticky;
+  top: 0;
+  transition: top 0.5s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -24,5 +27,10 @@
         }
       }
     }
+  }
+}
+@media (max-width: 768px) {
+  .header_container {
+    padding-inline: 25px;
   }
 }

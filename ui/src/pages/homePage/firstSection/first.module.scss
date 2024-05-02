@@ -35,3 +35,18 @@
     }
   }
 }
+@media (max-width: 768px) {
+  .firstSectionContainer {
+    .bottomInfo {
+      padding: 25px;
+      .leftBlock {
+        gap: 20px;
+        .leftSubBlock {
+          p {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+  }
+}

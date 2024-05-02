@@ -40,6 +40,7 @@
     align-items: center;
     gap: 20px;
     flex-wrap: wrap;
+    justify-content: center;
     padding-block: 20px;
     &::-webkit-scrollbar {
       height: 6px;
@@ -50,5 +51,13 @@
       border: unset;
       cursor: pointer;
     }
+  }
+}
+@media (max-width: 768px) {
+  .submitAllChanges {
+    margin: unset;
+    margin-inline: 15px;
+    max-width: unset;
+    width: unset;
   }
 }

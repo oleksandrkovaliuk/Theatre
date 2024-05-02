@@ -32,5 +32,10 @@
 @media (max-width: 768px) {
   .header_container {
     padding-inline: 25px;
+    .leftNavBar {
+      li:not(:first-child) {
+        display: none;
+      }
+    }
   }
 }

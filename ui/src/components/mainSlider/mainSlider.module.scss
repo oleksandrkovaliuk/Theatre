@@ -37,8 +37,16 @@
 @media (max-width: 1080px) {
   .title {
     font-size: 45px;
-    bottom: 2vh;
+    bottom: 5vh;
     left: 2vh;
     max-width: 500px;
+  }
+}
+@media (max-width: 768px) {
+  .title {
+    font-size: 45px;
+    bottom: 5vh;
+    left: 2vh;
+    max-width: 300px;
   }
 }

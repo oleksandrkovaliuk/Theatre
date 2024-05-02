@@ -28,6 +28,7 @@ import { getTicketUrl } from "../../services/getTicketUrl";
 import { downloadTicket } from "../../services/downloadTicket";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents } from "../../store/thunks/events";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 let total = 0;
 export const BookEvent = () => {
   const dispatch = useDispatch();
@@ -65,7 +66,13 @@ export const BookEvent = () => {
     slidesToScroll: 1,
     arrows: false,
     swipe: false,
-    afterChange: (index) => setSliderIndex(index),
+    afterChange: (index) => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      return setSliderIndex(index);
+    },
   };
 
   // work with chosen seats
@@ -248,7 +255,6 @@ export const BookEvent = () => {
         });
     }
   }, [setUpClientSecret, setUpStripeConfig, subtotal]);
-
   return (
     <>
       <div className={b.navigationSteps}>
@@ -356,73 +362,28 @@ export const BookEvent = () => {
                       <p>{item.disc}</p>
                     </div>
                   </div>
-                  <div className={b.seats_block}>
-                    {getCurrentEventInfo.value && (
-                      <div className={b.newUpdated}>
-                        <div className={b.bg}></div>
-                        <div className={b.middleNotification}>
-                          <span>{getCurrentEventInfo.discription}</span>
-                          <div
-                            style={{ backgroundImage: "url(/images/802.gif)" }}
-                            className={b.payloder}
-                          ></div>
-                        </div>
-                      </div>
-                    )}
-                    <div className={b.screenFormContainer}>
-                      <span>Stage</span>
-                    </div>
-                    <div className={b.seats}>
-                      <div className={b.seatRow}>
-                        {parsedSeats.slice(0, 6).map((item) => {
-                          const itemId = item.id + item.letter;
-                          const checkIfItemChosen = chosenSeats.find(
-                            (item) => item === itemId
-                          );
-                          return (
-                            <button
-                              key={item.id}
-                              id={itemId}
-                              style={
-                                checkIfItemChosen || item.booked.length
-                                  ? {
-                                      backgroundColor: item.booked.length
-                                        ? "var(--color-red)"
-                                        : checkIfItemChosen &&
-                                          "var(--color-subtitle)",
-                                      pointerEvents: item.booked.length
-                                        ? "none"
-                                        : "unset",
-                                    }
-                                  : {
-                                      backgroundColor: "var(--color-lightgray)",
-                                      pointerEvents: !item.booked.length
-                                        ? "unset"
-                                        : "none",
-                                    }
-                              }
-                              className={b.seat}
-                              onClick={(event) =>
-                                handleShowingProccesMenu(event, item.price)
-                              }
-                              onMouseOver={
-                                item.price !== pricePerSeat
-                                  ? () => setPricePerSeat(item.price)
-                                  : null
-                              }
-                            >
-                              <span>
-                                {item.id}
-                                {item.letter}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <div className={b.seatRow}>
-                        {parsedSeats
-                          .slice(6, parsedSeats.length - 4)
-                          .map((item) => {
+                  <div className={b.screenFormContainer}>
+                    <span>Stage</span>
+                  </div>
+                  <TransformWrapper disabled={false}>
+                    <TransformComponent>
+                      <div className={b.seats}>
+                        {getCurrentEventInfo.value && (
+                          <div className={b.newUpdated}>
+                            <div className={b.bg}></div>
+                            <div className={b.middleNotification}>
+                              <span>{getCurrentEventInfo.discription}</span>
+                              <div
+                                style={{
+                                  backgroundImage: "url(/images/802.gif)",
+                                }}
+                                className={b.payloder}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+                        <div className={b.seatRow}>
+                          {parsedSeats.slice(0, 6).map((item) => {
                             const itemId = item.id + item.letter;
                             const checkIfItemChosen = chosenSeats.find(
                               (item) => item === itemId
@@ -467,87 +428,142 @@ export const BookEvent = () => {
                               </button>
                             );
                           })}
+                        </div>
+                        <div className={b.seatRow}>
+                          {parsedSeats
+                            .slice(6, parsedSeats.length - 4)
+                            .map((item) => {
+                              const itemId = item.id + item.letter;
+                              const checkIfItemChosen = chosenSeats.find(
+                                (item) => item === itemId
+                              );
+                              return (
+                                <button
+                                  key={item.id}
+                                  id={itemId}
+                                  style={
+                                    checkIfItemChosen || item.booked.length
+                                      ? {
+                                          backgroundColor: item.booked.length
+                                            ? "var(--color-red)"
+                                            : checkIfItemChosen &&
+                                              "var(--color-subtitle)",
+                                          pointerEvents: item.booked.length
+                                            ? "none"
+                                            : "unset",
+                                        }
+                                      : {
+                                          backgroundColor:
+                                            "var(--color-lightgray)",
+                                          pointerEvents: !item.booked.length
+                                            ? "unset"
+                                            : "none",
+                                        }
+                                  }
+                                  className={b.seat}
+                                  onClick={(event) =>
+                                    handleShowingProccesMenu(event, item.price)
+                                  }
+                                  onMouseOver={
+                                    item.price !== pricePerSeat
+                                      ? () => setPricePerSeat(item.price)
+                                      : null
+                                  }
+                                >
+                                  <span>
+                                    {item.id}
+                                    {item.letter}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                        </div>
+                        <div className={b.seatRow}>
+                          {parsedSeats
+                            .slice(parsedSeats.length - 4, parsedSeats.length)
+                            .map((item) => {
+                              const itemId = item.id + item.letter;
+                              const checkIfItemChosen = chosenSeats.find(
+                                (item) => item === itemId
+                              );
+                              return (
+                                <button
+                                  key={item.id}
+                                  id={itemId}
+                                  style={
+                                    checkIfItemChosen || item.booked.length
+                                      ? {
+                                          backgroundColor: item.booked.length
+                                            ? "var(--color-red)"
+                                            : checkIfItemChosen &&
+                                              "var(--color-subtitle)",
+                                          pointerEvents: item.booked.length
+                                            ? "none"
+                                            : "unset",
+                                        }
+                                      : {
+                                          backgroundColor: item.booked.length
+                                            ? "var(--color-red)"
+                                            : checkIfItemChosen &&
+                                              "var(--color-subtitle)",
+                                          pointerEvents: !item.booked.length
+                                            ? "unset"
+                                            : "none",
+                                        }
+                                  }
+                                  className={b.seat}
+                                  onClick={(event) =>
+                                    handleShowingProccesMenu(event, item.price)
+                                  }
+                                  onMouseOver={
+                                    item.price !== pricePerSeat
+                                      ? () => setPricePerSeat(item.price)
+                                      : null
+                                  }
+                                >
+                                  <span>
+                                    {item.id}
+                                    {item.letter}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                        </div>
                       </div>
-                      <div className={b.seatRow}>
-                        {parsedSeats
-                          .slice(parsedSeats.length - 4, parsedSeats.length)
-                          .map((item) => {
-                            const itemId = item.id + item.letter;
-                            const checkIfItemChosen = chosenSeats.find(
-                              (item) => item === itemId
-                            );
-                            return (
-                              <button
-                                key={item.id}
-                                id={itemId}
-                                style={
-                                  checkIfItemChosen || item.booked.length
-                                    ? {
-                                        backgroundColor: item.booked.length
-                                          ? "var(--color-red)"
-                                          : checkIfItemChosen &&
-                                            "var(--color-subtitle)",
-                                        pointerEvents: item.booked.length
-                                          ? "none"
-                                          : "unset",
-                                      }
-                                    : {
-                                        backgroundColor: item.booked.length
-                                          ? "var(--color-red)"
-                                          : checkIfItemChosen &&
-                                            "var(--color-subtitle)",
-                                        pointerEvents: !item.booked.length
-                                          ? "unset"
-                                          : "none",
-                                      }
-                                }
-                                className={b.seat}
-                                onClick={(event) =>
-                                  handleShowingProccesMenu(event, item.price)
-                                }
-                                onMouseOver={
-                                  item.price !== pricePerSeat
-                                    ? () => setPricePerSeat(item.price)
-                                    : null
-                                }
-                              >
-                                <span>
-                                  {item.id}
-                                  {item.letter}
-                                </span>
-                              </button>
-                            );
-                          })}
-                      </div>
+                    </TransformComponent>
+                  </TransformWrapper>
+
+                  <div className={b.seatsInfo}>
+                    <div className={b.seatInfoBlock}>
+                      <span
+                        style={{
+                          backgroundColor: "var(--color-lightgray)",
+                        }}
+                        className={b.seatColor}
+                      ></span>
+                      <span className={b.info}>Availabel</span>
                     </div>
-                    <div className={b.seatsInfo}>
-                      <div className={b.seatInfoBlock}>
-                        <span
-                          style={{ backgroundColor: "var(--color-lightgray)" }}
-                          className={b.seatColor}
-                        ></span>
-                        <span className={b.info}>Availabel</span>
-                      </div>
-                      <div className={b.seatInfoBlock}>
-                        <span
-                          style={{ backgroundColor: "var(--color-red)" }}
-                          className={b.seatColor}
-                        ></span>
-                        <span
-                          style={{ color: "var(--color-red)" }}
-                          className={b.info}
-                        >
-                          Booked
-                        </span>
-                      </div>
-                      <div className={b.seatInfoBlock}>
-                        <span>
-                          Price per seat -
-                          <b style={{ color: "var(--color-red)" }}>
-                            {pricePerSeat}$
-                          </b>
-                        </span>
-                      </div>
+                    <div className={b.seatInfoBlock}>
+                      <span
+                        style={{
+                          backgroundColor: "var(--color-red)",
+                        }}
+                        className={b.seatColor}
+                      ></span>
+                      <span
+                        style={{ color: "var(--color-red)" }}
+                        className={b.info}
+                      >
+                        Booked
+                      </span>
+                    </div>
+                    <div className={b.seatInfoBlock}>
+                      <span>
+                        Price per seat -
+                        <b style={{ color: "var(--color-red)" }}>
+                          {pricePerSeat}$
+                        </b>
+                      </span>
                     </div>
                   </div>
                 </div>

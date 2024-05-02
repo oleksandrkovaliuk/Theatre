@@ -3,8 +3,7 @@
   max-height: 800px;
   overflow-y: auto;
   scrollbar-width: none;
-
-  // border-radius: unset;
+  z-index: 2;
 }
 @media (max-width: 768px) {
   .custom-table {

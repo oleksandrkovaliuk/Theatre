@@ -6,6 +6,7 @@
   max-width: 1000px;
   margin: auto;
   gap: 40px;
+  padding-inline: 50px;
 }
 
 .formToCreateEvent {
@@ -213,5 +214,11 @@
         }
       }
     }
+  }
+}
+@media (max-width: 880px) {
+  .createEventSection {
+    flex-direction: column;
+    padding-inline: 15px;
   }
 }

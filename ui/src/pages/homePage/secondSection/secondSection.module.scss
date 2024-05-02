@@ -47,9 +47,11 @@
 }
 @media (max-width: 768px) {
   .upcomingEvents {
-    padding-inline: 25px;
+    padding-inline: 5px;
+
     .title {
       margin-bottom: 0px;
+      font-size: 26px;
     }
   }
 }

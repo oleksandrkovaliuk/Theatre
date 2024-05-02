@@ -279,5 +279,12 @@
 @media (max-width: 768px) {
   .navigationIntoPage {
     padding-inline: 25px;
+    flex-direction: column-reverse;
+    gap: 10px;
+    .searchBar {
+      .searchBarInput {
+        width: 100%;
+      }
+    }
   }
 }

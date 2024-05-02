@@ -232,15 +232,9 @@ export const UserBookedEvents = () => {
           </label>
         </div>
         <div className={u.filter}>
-          <Dropdown
-            showArrow
-            // classNames={{
-            //   base: "before:bg-default-200", // change arrow background
-            //   content: "p-0 border-small border-divider bg-background",
-            // }}
-          >
+          <Dropdown showArrow>
             <DropdownTrigger>
-              <button>
+              <button style={{ zIndex: "2" }}>
                 <Chip
                   size="sm"
                   color={statusColorMap[getFilterValue(statusFilter)]}
@@ -287,7 +281,7 @@ export const UserBookedEvents = () => {
           </Dropdown>
           <Dropdown showArrow>
             <DropdownTrigger>
-              <button>
+              <button style={{ zIndex: "2" }}>
                 {getFilterValue(timeFilter)} <TopArrow />
               </button>
             </DropdownTrigger>

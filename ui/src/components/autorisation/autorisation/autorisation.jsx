@@ -261,7 +261,7 @@ export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
               </div>
               <div className={a.autorisationField}>
                 <input
-                  placeholder=""
+                  placeholder=" "
                   type="password"
                   id="password"
                   name="password"

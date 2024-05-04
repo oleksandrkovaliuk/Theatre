@@ -99,7 +99,6 @@ export const BookEvent = () => {
       if (status === "succeeded" && bookEventStep !== "book") {
         setPaymentStatus(status);
         total = 0;
-        bookEvent.current.slickNext();
         const updatedSeats = currentEvent.map((item) => {
           item.map((seat) => {
             chosenSeats.map((chosen) => {
@@ -110,13 +109,14 @@ export const BookEvent = () => {
           });
           return item;
         });
-        console.log(updatedSeats, "hello");
         updatedAndSetBookedEvent({
           eventId: currentEventsInfo[0].id,
           eventSeats: JSON.stringify(updatedSeats[0]),
           chosenSeats: JSON.stringify(chosenSeats),
           userEmail: user.email,
           daybeenbooked: new Date(),
+        }).then(() => {
+          bookEvent.current.slickNext();
         });
       }
     } catch (error) {

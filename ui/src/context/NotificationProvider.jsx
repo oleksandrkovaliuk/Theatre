@@ -12,7 +12,7 @@ export const NotificationProvider = ({ children }) => {
       setCurrentMessage(mess.toString().split(":").pop());
       setIsError(true);
       toast.error(mess.toString().split(":").pop(), {
-        position: "bottom-right",
+        position: window.innerWidth > 768 ? "bottom-right" : "top-right",
         style: { padding: "15px 10px", border: "1px solid var(--color-red)" },
       });
     } else {
@@ -21,17 +21,17 @@ export const NotificationProvider = ({ children }) => {
       setIsError(false);
       if (type === "success") {
         toast.success(mess.toString(), {
-          position: "bottom-right",
+          position: window.innerWidth > 768 ? "bottom-right" : "top-right",
           style: { padding: "15px 10px" },
         });
       } else if (type === "info") {
         toast.info(mess.toString(), {
-          position: "bottom-right",
+          position: window.innerWidth > 768 ? "bottom-right" : "top-right",
           style: { padding: "15px 10px" },
         });
       } else if (type === "warning") {
         toast.warning(mess.toString(), {
-          position: "bottom-right",
+          position: window.innerWidth > 768 ? "bottom-right" : "top-right",
           style: { padding: "15px 10px" },
         });
       }

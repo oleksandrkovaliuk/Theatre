@@ -126,10 +126,14 @@ export const BookEvent = () => {
   // Navigation between pages
   const handleGoToPaymentSection = async () => {
     try {
-      setBookEventStep("payment");
-      bookEvent.current.slickNext();
+      if (user) {
+        setBookEventStep("payment");
+        bookEvent.current.slickNext();
+      } else {
+        console.log("hello");
+        setNotificationMessage("login first to book event", "warning");
+      }
     } catch (error) {
-      console.log(error);
       setNotificationMessage(error);
     }
   };
@@ -255,6 +259,13 @@ export const BookEvent = () => {
         });
     }
   }, [setUpClientSecret, setUpStripeConfig, subtotal]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
   return (
     <>
       <div className={b.navigationSteps}>
@@ -367,7 +378,20 @@ export const BookEvent = () => {
                   </div>
                   <TransformWrapper disabled={false}>
                     <TransformComponent>
-                      <div className={b.seats}>
+                      <div
+                        className={b.seats}
+                        style={
+                          bookEventStep === "payment"
+                            ? {
+                                opacity: "0",
+                                pointerEvents: "none",
+                              }
+                            : {
+                                opacity: "1",
+                                pointerEvents: "unset",
+                              }
+                        }
+                      >
                         {getCurrentEventInfo.value && (
                           <div className={b.newUpdated}>
                             <div className={b.bg}></div>

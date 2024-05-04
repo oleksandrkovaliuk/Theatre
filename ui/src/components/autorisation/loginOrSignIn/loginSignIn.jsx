@@ -70,7 +70,12 @@ export const LogInSignIn = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      if (!user && location.pathname === "/" && window.scrollY === 0) {
+      if (
+        !user &&
+        location.pathname === "/" &&
+        window.scrollY === 0 &&
+        window.innerWidth > 768
+      ) {
         openLogInAutorisationMenu();
         handleOpeningNavMenu();
       }

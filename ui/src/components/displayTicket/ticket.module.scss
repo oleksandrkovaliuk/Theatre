@@ -66,3 +66,17 @@
     }
   }
 }
+@media (max-width: 768px) {
+  .ticket {
+    max-width: unset;
+    width: 500px;
+    left: 50%;
+    position: relative;
+    transform: translateX(-50%) scale(0.8);
+  }
+}
+@media (max-width: 470px) {
+  .ticket {
+    transform: translateX(-50%) scale(0.6);
+  }
+}

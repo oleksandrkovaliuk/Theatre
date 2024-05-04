@@ -31,6 +31,7 @@
     font-size: 17px;
     letter-spacing: 0.6px;
     text-decoration: unset;
+    z-index: 5;
 
     transition: all 0.7s ease-in-out;
     &:hover {
@@ -220,5 +221,14 @@
   .createEventSection {
     flex-direction: column;
     padding-inline: 15px;
+  }
+}
+@media (max-width: 500px) {
+  .formToCreateEvent {
+    .submitChanges {
+      margin-inline: 15px;
+      max-width: unset;
+      width: unset;
+    }
   }
 }

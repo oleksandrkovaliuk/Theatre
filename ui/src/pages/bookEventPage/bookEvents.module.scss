@@ -461,6 +461,12 @@
     margin: auto;
     transform: scale(0.7);
   }
+  .recievePage {
+    .ticket_instruction {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+    }
+  }
 }
 @media (max-width: 545px) {
   .seats {

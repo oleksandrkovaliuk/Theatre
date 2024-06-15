@@ -68,7 +68,7 @@ const checkGitHubUser = (req, res) => {
         }
       });
     } else {
-      return res.status(401).json({ errorText: "fuck niggers" });
+      return res.status(401).json({ errorText: "couldt get user token" });
     }
   } catch (error) {
     return res.status(401).json({ errorText: "could find cookie" });

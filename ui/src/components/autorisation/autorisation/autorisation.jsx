@@ -31,11 +31,6 @@ import { loginUser } from "../../../store/thunks/user/loginUser";
 import { registerUser } from "../../../store/thunks/user/registerUser";
 import { GitHub } from "../../../icons/gitHub";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  getCookie,
-  getCookies,
-  setCookies,
-} from "../../../services/apiCallConfig";
 import { checkUserFromGit } from "../../../store/thunks/user/checkUserLogin";
 
 export const AutorisationMenu = ({ show, signIn, closeMenu }) => {
